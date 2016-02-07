@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <meta charset="utf-8" />
+      <title>Piet++仕様</title>
+      <style>.markdown-preview, .markdown-preview[data-use-github-style] { font-family: 'Helvetica Neue', Helvetica, 'Segoe UI', Arial, freesans, sans-serif; font-size: 16px; line-height: 1.6; word-wrap: break-word; overflow: scroll; box-sizing: border-box; padding: 20px; background-color: rgb(255, 255, 255); }
+.markdown-preview > :first-child, .markdown-preview[data-use-github-style] > :first-child { margin-top: 0px !important; }
+.markdown-preview > :last-child, .markdown-preview[data-use-github-style] > :last-child { margin-bottom: 0px !important; }
+.markdown-preview a:not([href]), .markdown-preview[data-use-github-style] a:not([href]) { color: inherit; text-decoration: none; }
+.markdown-preview .absent, .markdown-preview[data-use-github-style] .absent { color: rgb(204, 0, 0); }
+.markdown-preview .anchor, .markdown-preview[data-use-github-style] .anchor { position: absolute; top: 0px; left: 0px; display: block; padding-right: 6px; padding-left: 30px; margin-left: -30px; }
+.markdown-preview .anchor:focus, .markdown-preview[data-use-github-style] .anchor:focus { outline: none; }
+.markdown-preview h1, .markdown-preview[data-use-github-style] h1, .markdown-preview h2, .markdown-preview[data-use-github-style] h2, .markdown-preview h3, .markdown-preview[data-use-github-style] h3, .markdown-preview h4, .markdown-preview[data-use-github-style] h4, .markdown-preview h5, .markdown-preview[data-use-github-style] h5, .markdown-preview h6, .markdown-preview[data-use-github-style] h6 { position: relative; margin-top: 1em; margin-bottom: 16px; font-weight: bold; line-height: 1.4; }
+.markdown-preview h1 .octicon-link, .markdown-preview[data-use-github-style] h1 .octicon-link, .markdown-preview h2 .octicon-link, .markdown-preview[data-use-github-style] h2 .octicon-link, .markdown-preview h3 .octicon-link, .markdown-preview[data-use-github-style] h3 .octicon-link, .markdown-preview h4 .octicon-link, .markdown-preview[data-use-github-style] h4 .octicon-link, .markdown-preview h5 .octicon-link, .markdown-preview[data-use-github-style] h5 .octicon-link, .markdown-preview h6 .octicon-link, .markdown-preview[data-use-github-style] h6 .octicon-link { display: none; color: rgb(0, 0, 0); vertical-align: middle; }
+.markdown-preview h1:hover .anchor, .markdown-preview[data-use-github-style] h1:hover .anchor, .markdown-preview h2:hover .anchor, .markdown-preview[data-use-github-style] h2:hover .anchor, .markdown-preview h3:hover .anchor, .markdown-preview[data-use-github-style] h3:hover .anchor, .markdown-preview h4:hover .anchor, .markdown-preview[data-use-github-style] h4:hover .anchor, .markdown-preview h5:hover .anchor, .markdown-preview[data-use-github-style] h5:hover .anchor, .markdown-preview h6:hover .anchor, .markdown-preview[data-use-github-style] h6:hover .anchor { padding-left: 8px; margin-left: -30px; text-decoration: none; }
+.markdown-preview h1:hover .anchor .octicon-link, .markdown-preview[data-use-github-style] h1:hover .anchor .octicon-link, .markdown-preview h2:hover .anchor .octicon-link, .markdown-preview[data-use-github-style] h2:hover .anchor .octicon-link, .markdown-preview h3:hover .anchor .octicon-link, .markdown-preview[data-use-github-style] h3:hover .anchor .octicon-link, .markdown-preview h4:hover .anchor .octicon-link, .markdown-preview[data-use-github-style] h4:hover .anchor .octicon-link, .markdown-preview h5:hover .anchor .octicon-link, .markdown-preview[data-use-github-style] h5:hover .anchor .octicon-link, .markdown-preview h6:hover .anchor .octicon-link, .markdown-preview[data-use-github-style] h6:hover .anchor .octicon-link { display: inline-block; }
+.markdown-preview h1 tt, .markdown-preview[data-use-github-style] h1 tt, .markdown-preview h2 tt, .markdown-preview[data-use-github-style] h2 tt, .markdown-preview h3 tt, .markdown-preview[data-use-github-style] h3 tt, .markdown-preview h4 tt, .markdown-preview[data-use-github-style] h4 tt, .markdown-preview h5 tt, .markdown-preview[data-use-github-style] h5 tt, .markdown-preview h6 tt, .markdown-preview[data-use-github-style] h6 tt, .markdown-preview h1 code, .markdown-preview[data-use-github-style] h1 code, .markdown-preview h2 code, .markdown-preview[data-use-github-style] h2 code, .markdown-preview h3 code, .markdown-preview[data-use-github-style] h3 code, .markdown-preview h4 code, .markdown-preview[data-use-github-style] h4 code, .markdown-preview h5 code, .markdown-preview[data-use-github-style] h5 code, .markdown-preview h6 code, .markdown-preview[data-use-github-style] h6 code { font-size: inherit; }
+.markdown-preview h1, .markdown-preview[data-use-github-style] h1 { padding-bottom: 0.3em; font-size: 2.25em; line-height: 1.2; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(238, 238, 238); }
+.markdown-preview h1 .anchor, .markdown-preview[data-use-github-style] h1 .anchor { line-height: 1; }
+.markdown-preview h2, .markdown-preview[data-use-github-style] h2 { padding-bottom: 0.3em; font-size: 1.75em; line-height: 1.225; border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: rgb(238, 238, 238); }
+.markdown-preview h2 .anchor, .markdown-preview[data-use-github-style] h2 .anchor { line-height: 1; }
+.markdown-preview h3, .markdown-preview[data-use-github-style] h3 { font-size: 1.5em; line-height: 1.43; }
+.markdown-preview h3 .anchor, .markdown-preview[data-use-github-style] h3 .anchor { line-height: 1.2; }
+.markdown-preview h4, .markdown-preview[data-use-github-style] h4 { font-size: 1.25em; }
+.markdown-preview h4 .anchor, .markdown-preview[data-use-github-style] h4 .anchor { line-height: 1.2; }
+.markdown-preview h5, .markdown-preview[data-use-github-style] h5 { font-size: 1em; }
+.markdown-preview h5 .anchor, .markdown-preview[data-use-github-style] h5 .anchor { line-height: 1.1; }
+.markdown-preview h6, .markdown-preview[data-use-github-style] h6 { font-size: 1em; color: rgb(119, 119, 119); }
+.markdown-preview h6 .anchor, .markdown-preview[data-use-github-style] h6 .anchor { line-height: 1.1; }
+.markdown-preview p, .markdown-preview[data-use-github-style] p, .markdown-preview blockquote, .markdown-preview[data-use-github-style] blockquote, .markdown-preview ul, .markdown-preview[data-use-github-style] ul, .markdown-preview ol, .markdown-preview[data-use-github-style] ol, .markdown-preview dl, .markdown-preview[data-use-github-style] dl, .markdown-preview table, .markdown-preview[data-use-github-style] table, .markdown-preview pre, .markdown-preview[data-use-github-style] pre { margin-top: 0px; margin-bottom: 16px; }
+.markdown-preview hr, .markdown-preview[data-use-github-style] hr { height: 4px; padding: 0px; margin: 16px 0px; border: 0px none; background-color: rgb(231, 231, 231); }
+.markdown-preview ul, .markdown-preview[data-use-github-style] ul, .markdown-preview ol, .markdown-preview[data-use-github-style] ol { padding-left: 2em; }
+.markdown-preview ul.no-list, .markdown-preview[data-use-github-style] ul.no-list, .markdown-preview ol.no-list, .markdown-preview[data-use-github-style] ol.no-list { padding: 0px; list-style-type: none; }
+.markdown-preview ul ul, .markdown-preview[data-use-github-style] ul ul, .markdown-preview ul ol, .markdown-preview[data-use-github-style] ul ol, .markdown-preview ol ol, .markdown-preview[data-use-github-style] ol ol, .markdown-preview ol ul, .markdown-preview[data-use-github-style] ol ul { margin-top: 0px; margin-bottom: 0px; }
+.markdown-preview li > p, .markdown-preview[data-use-github-style] li > p { margin-top: 16px; }
+.markdown-preview dl, .markdown-preview[data-use-github-style] dl { padding: 0px; }
+.markdown-preview dl dt, .markdown-preview[data-use-github-style] dl dt { padding: 0px; margin-top: 16px; font-size: 1em; font-style: italic; font-weight: bold; }
+.markdown-preview dl dd, .markdown-preview[data-use-github-style] dl dd { padding: 0px 16px; margin-bottom: 16px; }
+.markdown-preview blockquote, .markdown-preview[data-use-github-style] blockquote { padding: 0px 15px; color: rgb(119, 119, 119); border-left-width: 4px; border-left-style: solid; border-left-color: rgb(221, 221, 221); }
+.markdown-preview blockquote > :first-child, .markdown-preview[data-use-github-style] blockquote > :first-child { margin-top: 0px; }
+.markdown-preview blockquote > :last-child, .markdown-preview[data-use-github-style] blockquote > :last-child { margin-bottom: 0px; }
+.markdown-preview table, .markdown-preview[data-use-github-style] table { display: block; width: 100%; overflow: auto; word-break: normal; }
+.markdown-preview table th, .markdown-preview[data-use-github-style] table th { font-weight: bold; }
+.markdown-preview table th, .markdown-preview[data-use-github-style] table th, .markdown-preview table td, .markdown-preview[data-use-github-style] table td { padding: 6px 13px; border: 1px solid rgb(221, 221, 221); }
+.markdown-preview table tr, .markdown-preview[data-use-github-style] table tr { border-top-width: 1px; border-top-style: solid; border-top-color: rgb(204, 204, 204); background-color: rgb(255, 255, 255); }
+.markdown-preview table tr:nth-child(2n), .markdown-preview[data-use-github-style] table tr:nth-child(2n) { background-color: rgb(248, 248, 248); }
+.markdown-preview img, .markdown-preview[data-use-github-style] img { max-width: 100%; box-sizing: border-box; }
+.markdown-preview .emoji, .markdown-preview[data-use-github-style] .emoji { max-width: none; }
+.markdown-preview span.frame, .markdown-preview[data-use-github-style] span.frame { display: block; overflow: hidden; }
+.markdown-preview span.frame > span, .markdown-preview[data-use-github-style] span.frame > span { display: block; float: left; width: auto; padding: 7px; margin: 13px 0px 0px; overflow: hidden; border: 1px solid rgb(221, 221, 221); }
+.markdown-preview span.frame span img, .markdown-preview[data-use-github-style] span.frame span img { display: block; float: left; }
+.markdown-preview span.frame span span, .markdown-preview[data-use-github-style] span.frame span span { display: block; padding: 5px 0px 0px; clear: both; color: rgb(51, 51, 51); }
+.markdown-preview span.align-center, .markdown-preview[data-use-github-style] span.align-center { display: block; overflow: hidden; clear: both; }
+.markdown-preview span.align-center > span, .markdown-preview[data-use-github-style] span.align-center > span { display: block; margin: 13px auto 0px; overflow: hidden; text-align: center; }
+.markdown-preview span.align-center span img, .markdown-preview[data-use-github-style] span.align-center span img { margin: 0px auto; text-align: center; }
+.markdown-preview span.align-right, .markdown-preview[data-use-github-style] span.align-right { display: block; overflow: hidden; clear: both; }
+.markdown-preview span.align-right > span, .markdown-preview[data-use-github-style] span.align-right > span { display: block; margin: 13px 0px 0px; overflow: hidden; text-align: right; }
+.markdown-preview span.align-right span img, .markdown-preview[data-use-github-style] span.align-right span img { margin: 0px; text-align: right; }
+.markdown-preview span.float-left, .markdown-preview[data-use-github-style] span.float-left { display: block; float: left; margin-right: 13px; overflow: hidden; }
+.markdown-preview span.float-left span, .markdown-preview[data-use-github-style] span.float-left span { margin: 13px 0px 0px; }
+.markdown-preview span.float-right, .markdown-preview[data-use-github-style] span.float-right { display: block; float: right; margin-left: 13px; overflow: hidden; }
+.markdown-preview span.float-right > span, .markdown-preview[data-use-github-style] span.float-right > span { display: block; margin: 13px auto 0px; overflow: hidden; text-align: right; }
+.markdown-preview code, .markdown-preview[data-use-github-style] code, .markdown-preview tt, .markdown-preview[data-use-github-style] tt { padding: 0.2em 0px; margin: 0px; font-size: 85%; border-radius: 3px; background-color: rgba(0, 0, 0, 0.0392157); }
+.markdown-preview code::before, .markdown-preview[data-use-github-style] code::before, .markdown-preview tt::before, .markdown-preview[data-use-github-style] tt::before, .markdown-preview code::after, .markdown-preview[data-use-github-style] code::after, .markdown-preview tt::after, .markdown-preview[data-use-github-style] tt::after { letter-spacing: -0.2em; content: ' '; }
+.markdown-preview code br, .markdown-preview[data-use-github-style] code br, .markdown-preview tt br, .markdown-preview[data-use-github-style] tt br { display: none; }
+.markdown-preview del code, .markdown-preview[data-use-github-style] del code { text-decoration: inherit; }
+.markdown-preview pre > code, .markdown-preview[data-use-github-style] pre > code { padding: 0px; margin: 0px; font-size: 100%; word-break: normal; white-space: pre; border: 0px; background: transparent; }
+.markdown-preview .highlight, .markdown-preview[data-use-github-style] .highlight { margin-bottom: 16px; }
+.markdown-preview .highlight pre, .markdown-preview[data-use-github-style] .highlight pre, .markdown-preview pre, .markdown-preview[data-use-github-style] pre { padding: 16px; overflow: auto; font-size: 85%; line-height: 1.45; border-radius: 3px; background-color: rgb(247, 247, 247); }
+.markdown-preview .highlight pre, .markdown-preview[data-use-github-style] .highlight pre { margin-bottom: 0px; word-break: normal; }
+.markdown-preview pre, .markdown-preview[data-use-github-style] pre { word-wrap: normal; }
+.markdown-preview pre code, .markdown-preview[data-use-github-style] pre code, .markdown-preview pre tt, .markdown-preview[data-use-github-style] pre tt { display: inline; max-width: initial; padding: 0px; margin: 0px; overflow: initial; line-height: inherit; word-wrap: normal; border: 0px; background-color: transparent; }
+.markdown-preview pre code::before, .markdown-preview[data-use-github-style] pre code::before, .markdown-preview pre tt::before, .markdown-preview[data-use-github-style] pre tt::before, .markdown-preview pre code::after, .markdown-preview[data-use-github-style] pre code::after, .markdown-preview pre tt::after, .markdown-preview[data-use-github-style] pre tt::after { content: normal; }
+.markdown-preview kbd, .markdown-preview[data-use-github-style] kbd { display: inline-block; padding: 3px 5px; font-size: 11px; line-height: 10px; color: rgb(85, 85, 85); vertical-align: middle; border-style: solid; border-width: 1px; border-color: rgb(204, 204, 204) rgb(204, 204, 204) rgb(187, 187, 187); border-radius: 3px; box-shadow: rgb(187, 187, 187) 0px -1px 0px inset; background-color: rgb(252, 252, 252); }
+.markdown-preview, .markdown-preview[data-use-github-style], .markdown-preview code, .markdown-preview[data-use-github-style] code { color: rgb(51, 51, 51); }
+.markdown-preview h1, .markdown-preview[data-use-github-style] h1, .markdown-preview h2, .markdown-preview[data-use-github-style] h2, .markdown-preview h3, .markdown-preview[data-use-github-style] h3, .markdown-preview h4, .markdown-preview[data-use-github-style] h4, .markdown-preview h5, .markdown-preview[data-use-github-style] h5, .markdown-preview h6, .markdown-preview[data-use-github-style] h6 { -webkit-font-smoothing: antialiased; cursor: text; }
+.markdown-preview > h1:first-child, .markdown-preview[data-use-github-style] > h1:first-child, .markdown-preview > h1:first-child + h2, .markdown-preview[data-use-github-style] > h1:first-child + h2, .markdown-preview > h2:first-child, .markdown-preview[data-use-github-style] > h2:first-child, .markdown-preview > h3:first-child, .markdown-preview[data-use-github-style] > h3:first-child, .markdown-preview > h4:first-child, .markdown-preview[data-use-github-style] > h4:first-child, .markdown-preview > h5:first-child, .markdown-preview[data-use-github-style] > h5:first-child, .markdown-preview > h6:first-child, .markdown-preview[data-use-github-style] > h6:first-child { margin-top: 0px; padding-top: 0px; }
+.markdown-preview a, .markdown-preview[data-use-github-style] a, .markdown-preview a code, .markdown-preview[data-use-github-style] a code { color: rgb(65, 131, 196); }
+.markdown-preview a:first-child h1, .markdown-preview[data-use-github-style] a:first-child h1, .markdown-preview a:first-child h2, .markdown-preview[data-use-github-style] a:first-child h2, .markdown-preview a:first-child h3, .markdown-preview[data-use-github-style] a:first-child h3, .markdown-preview a:first-child h4, .markdown-preview[data-use-github-style] a:first-child h4, .markdown-preview a:first-child h5, .markdown-preview[data-use-github-style] a:first-child h5, .markdown-preview a:first-child h6, .markdown-preview[data-use-github-style] a:first-child h6 { margin-top: 0px; padding-top: 0px; }
+.markdown-preview h1 + p, .markdown-preview[data-use-github-style] h1 + p, .markdown-preview h2 + p, .markdown-preview[data-use-github-style] h2 + p, .markdown-preview h3 + p, .markdown-preview[data-use-github-style] h3 + p, .markdown-preview h4 + p, .markdown-preview[data-use-github-style] h4 + p, .markdown-preview h5 + p, .markdown-preview[data-use-github-style] h5 + p, .markdown-preview h6 + p, .markdown-preview[data-use-github-style] h6 + p { margin-top: 0px; }
+.markdown-preview li p.first, .markdown-preview[data-use-github-style] li p.first { display: inline-block; }
+.markdown-preview ul, .markdown-preview[data-use-github-style] ul { list-style-type: disc; }
+.markdown-preview ol, .markdown-preview[data-use-github-style] ol { list-style-type: decimal; }
+.markdown-preview ul li > :first-child, .markdown-preview[data-use-github-style] ul li > :first-child, .markdown-preview ol li > :first-child, .markdown-preview[data-use-github-style] ol li > :first-child, .markdown-preview ul li ul:first-of-type, .markdown-preview[data-use-github-style] ul li ul:first-of-type, .markdown-preview ol li ul:first-of-type, .markdown-preview[data-use-github-style] ol li ul:first-of-type { margin-top: 0px; }
+.markdown-preview ol > li, .markdown-preview[data-use-github-style] ol > li { list-style-type: inherit; }
+.markdown-preview ul > li, .markdown-preview[data-use-github-style] ul > li { list-style-type: inherit; }
+.markdown-preview dl dt:first-child, .markdown-preview[data-use-github-style] dl dt:first-child { padding: 0px; }
+.markdown-preview dl dt > :first-child, .markdown-preview[data-use-github-style] dl dt > :first-child { margin-top: 0px; }
+.markdown-preview dl dt > :last-child, .markdown-preview[data-use-github-style] dl dt > :last-child { margin-bottom: 0px; }
+.markdown-preview dl dd > :first-child, .markdown-preview[data-use-github-style] dl dd > :first-child { margin-top: 0px; }
+.markdown-preview dl dd > :last-child, .markdown-preview[data-use-github-style] dl dd > :last-child { margin-bottom: 0px; }
+.markdown-preview blockquote p, .markdown-preview[data-use-github-style] blockquote p { font-size: 16px; line-height: 1.5; }
+.markdown-preview pre.editor-colors, .markdown-preview[data-use-github-style] pre.editor-colors { padding: 16px; overflow: auto; font-size: 84%; line-height: 1.45; border-radius: 3px; background-color: rgb(255, 255, 255); }
+.markdown-preview pre, .markdown-preview[data-use-github-style] pre, .markdown-preview pre.editor-colors, .markdown-preview[data-use-github-style] pre.editor-colors { margin-bottom: 16px; word-break: normal; }
+.markdown-preview pre, .markdown-preview[data-use-github-style] pre, .markdown-preview code, .markdown-preview[data-use-github-style] code, .markdown-preview tt, .markdown-preview[data-use-github-style] tt, .markdown-preview pre.editor-colors, .markdown-preview[data-use-github-style] pre.editor-colors { font-family: Consolas, 'Liberation Mono', Courier, monospace; }
+.markdown-preview .emoji, .markdown-preview[data-use-github-style] .emoji { height: 20px; width: 20px; }
+.markdown-preview del, .markdown-preview[data-use-github-style] del { text-decoration: none; position: relative; }
+.markdown-preview del::after, .markdown-preview[data-use-github-style] del::after { border-bottom-width: 1px; border-bottom-style: solid; border-bottom-color: black; content: ''; left: 0px; position: absolute; right: 0px; top: 50%; }
+.markdown-preview .flash, .markdown-preview[data-use-github-style] .flash { -webkit-animation: flash 1s ease-out 1; animation-duration: 1s; animation-timing-function: ease-out; animation-delay: initial; animation-direction: initial; animation-fill-mode: initial; -webkit-animation-play-state: initial; animation-play-state: initial; animation-name: flash; animation-iteration-count: 1; outline: rgba(255, 0, 0, 0) solid 1px; }
+.markdown-preview .flash:not(li), .markdown-preview[data-use-github-style] .flash:not(li) { display: block; }
+.markdown-preview code { text-shadow: none; }
+.markdown-preview { font-family: 'Migu 1M'; }
+.markdown-preview h1, .markdown-preview h2, .markdown-preview h3, .markdown-preview h4, .markdown-preview h5, .markdown-preview h6 { font-family: 'Migu 1M'; }
+.bracket-matcher .region {
+  border-bottom: 1px dotted lime;
+  position: absolute;
+}
+
+.spell-check-misspelling .region {
+  border-bottom: 2px dotted rgba(255, 51, 51, 0.75);
+}
+
+pre.editor-colors,
+.host {
+  background-color: #22282A;
+  color: #C8C8C8;
+}
+pre.editor-colors .cursor,
+.host .cursor {
+  border-color: #AEAFAD;
+}
+pre.editor-colors .selection .region,
+.host .selection .region {
+  background-color: #4F6164;
+}
+pre.editor-colors .line-number.cursor-line-no-selection,
+.host .line-number.cursor-line-no-selection,
+pre.editor-colors .line.cursor-line,
+.host .line.cursor-line {
+  background-color: #42464C;
+}
+pre.editor-colors .comment,
+.host .comment {
+  color: #66747B;
+}
+pre.editor-colors .keyword.operator.js,
+.host .keyword.operator.js,
+pre.editor-colors .entity.name.tag,
+.host .entity.name.tag,
+pre.editor-colors .constant.other,
+.host .constant.other,
+pre.editor-colors .source.php.embedded.line,
+.host .source.php.embedded.line,
+pre.editor-colors .variable.parameter,
+.host .variable.parameter,
+pre.editor-colors .meta.tag,
+.host .meta.tag,
+pre.editor-colors .declaration.tag,
+.host .declaration.tag {
+  color: #F1F2F3;
+}
+pre.editor-colors .variable,
+.host .variable,
+pre.editor-colors .support.other.variable,
+.host .support.other.variable,
+pre.editor-colors .string.other.link,
+.host .string.other.link,
+pre.editor-colors .entity.name.tag,
+.host .entity.name.tag,
+pre.editor-colors .entity.name.filename.find-in-files,
+.host .entity.name.filename.find-in-files {
+  color: #93C763;
+}
+pre.editor-colors .string.regexp,
+.host .string.regexp,
+pre.editor-colors .meta.link,
+.host .meta.link {
+  color: #81A2BE;
+}
+pre.editor-colors .constant.numeric,
+.host .constant.numeric,
+pre.editor-colors .support.constant,
+.host .support.constant,
+pre.editor-colors .punctuation.section.embedded,
+.host .punctuation.section.embedded,
+pre.editor-colors .keyword.other.unit,
+.host .keyword.other.unit,
+pre.editor-colors .constant.character.escape,
+.host .constant.character.escape {
+  color: #FFCD22;
+}
+pre.editor-colors .entity.name.class,
+.host .entity.name.class,
+pre.editor-colors .entity.name.type.class,
+.host .entity.name.type.class,
+pre.editor-colors .support.type,
+.host .support.type,
+pre.editor-colors .support.class,
+.host .support.class {
+  color: #4EC9B0;
+}
+pre.editor-colors .string,
+.host .string,
+pre.editor-colors .constant.other.symbol,
+.host .constant.other.symbol,
+pre.editor-colors .constant.character,
+.host .constant.character,
+pre.editor-colors .entity.other.inherited-class,
+.host .entity.other.inherited-class,
+pre.editor-colors .markup.heading,
+.host .markup.heading,
+pre.editor-colors .constant.numeric.line-number.match.find-in-files,
+.host .constant.numeric.line-number.match.find-in-files {
+  color: #EC7600;
+}
+pre.editor-colors .entity.name.tag.localname,
+.host .entity.name.tag.localname,
+pre.editor-colors .entity.name.type.class,
+.host .entity.name.type.class {
+  color: #4EC9B0;
+}
+pre.editor-colors .keyword,
+.host .keyword,
+pre.editor-colors .storage,
+.host .storage,
+pre.editor-colors .entity.name.tag.css,
+.host .entity.name.tag.css,
+pre.editor-colors .constant.language,
+.host .constant.language,
+pre.editor-colors .keyword.operator,
+.host .keyword.operator {
+  color: #93C763;
+}
+pre.editor-colors .invalid,
+.host .invalid {
+  color: #ffffff;
+  background-color: #963a46;
+}
+pre.editor-colors .meta.separator,
+.host .meta.separator {
+  color: #ffffff;
+  background-color: #82A3BF;
+}
+pre.editor-colors .invalid.deprecated,
+.host .invalid.deprecated {
+  color: #ffffff;
+  background-color: #a082bd;
+}
+pre.editor-colors .invisible-character,
+.host .invisible-character,
+pre.editor-colors .indent-guide,
+.host .indent-guide {
+  color: #66747B;
+}
+</style>
+  </head>
+  <body class='markdown-preview'><h1>僕の考えた最強のPiet拡張</h1>
+<h2>はじめに</h2>
+<p>murataと申します.TwitterIDは@paradigm_9です.
+nona7さんと同じくKMC(京大マイコンクラブ)というサークルに所属しています.
+今回Pietで一つのサークルとして出店するという@nona7さんの挑戦を聞いて,
+「これは寄稿するしかない！」と勢いだけで寄稿します.
+僕は強いプログラミングが書けないので,お絵かき的なPietを描いて楽しんでいます.</p>
+<h2>Pietは凄い！</h2>
+<p>今現在様々な言語が世の中にはありますが,
+Pietは画像でプログラミングが出来るというとても異彩な言語です.
+画像でプログラミングが出来るというのは大変すごいことです.
+例えば,一見キャラクターの顔画像にしか見えないのに,
+Pietとして実行すると「72CHIHAYA」と出力し続けるものを描いたことがあります.<br>
+<img src="C:\Users\3104\Desktop\Programing\Piet\100.png?v=1451157455518" alt="CHIHAYA"></p>
+<p>rubyが「プログラミングが楽しく出来るように」を,
+perlが「There’s more than one way to do it(やり方は一つじゃない)」を
+モットーにしていますが,
+Pietは画像でプログラミングが出来るので楽しく,
+上記の例のようにプログラミングを表現する絵は自分の好きなように描けますので,
+PietはRubyやPerlとおなじコンセプトを持った凄い言語と言えるでしょう！</p>
+<h2>僕の考えた最強のPiet (Piet++)</h2>
+<p>そんな素晴らしいPietですが,未だに難解プログラミング言語として扱われています.
+Piet自体には本当はもっと表現力があるのに….
+今回の記事は,そんなPietを拡張してもっともっと実用的な
+最強のPiet「Piet++」の仕様を考えたという記事です.</p>
+<h2>Piet++の新機能</h2>
+<ul>
+<li>DLLのインポート</li>
+<li>他のPietのコードの呼び出し</li>
+<li>スタックにスタックを積める</li>
+<li>強力な文字処理機構</li>
+<li>自分の好きな18色によるコーディング</li>
+</ul>
+<h2>Piet++で新たに出来ること</h2>
+<h3>Webアプリケーションやゲームを簡単に作れる！</h3>
+<p>旧Pietでは標準入出力になにかをするので手一杯でした.
+しかし,Piet++では前述のDLLのインポートをサポートしているので,
+気軽に素晴らしいプログラミングができます！
+更に,他のPietコードを呼び出せるので,
+作成した機能はモジュール化することができ,
+ライブラリを揃えれば上述のことはたやすく実現できます！</p>
+<h3>高い表現力により自由なコーディングが出来る！</h3>
+<p>旧Pietでは数字しかスタックに積めませんでした.
+そのため,とても表現力が低かったのです.
+しかし,Piet++では,新たにスタックにスタックを積むことが出来て,
+とても表現力豊かなプログラミングが出来ます.
+スタックにスタックに,…,スタックに,スタックを積むというふうに
+無限にスタックにはスタックを積めるので,
+木構造のようなデータ構造も再現できます.
+また,新たにスタックに積んだスタックを
+文字列とみなすことで高度な文字処理が出来る機構も搭載していて,
+ファイル処理や高度な文字処理にも耐えうるコーディングが可能となります.</p>
+<h3>楽しく直感的なプログラミングが出来る！</h3>
+<p>旧Pietでも楽しくプログラミングが出来たのですが,
+コメントの挿入も出来ず,決まった18色しか出来ないなどの成約がありました.
+しかし,Piet++では専用のIDEでそれらをカバーする予定です.
+また,Piet++のプログラミングで本質的に変わったことは,
+新たにスタックが積めるようになったことだけなので,
+学習コストも少なくて済みます！
+Pietがコードとして利用するPNG画像にはメタデータを挿入できることを利用して,
+コメントの挿入,好きな18色でのコーディングなどをサポートし,
+より快適なプログラミングを目指します！</p>
+<h2>PietとしてのPiet++</h2>
+<p>Piet++はあくまでもPietです.
+色は18色しか扱わないし,
+画像のみがあれば誰でも同じコードを再現できます.
+これらを守ることで,Cに対するC++のように,
+旧Pietのコードもそのまま動かすことが可能となります.</p>
+<h2>色の問題</h2>
+<p>Piet標準色はチカチカするものばかり…
+しかも特に青系の色など,違いがわかりにくいものもあります.
+Piet++では,自分で18色を定義できます.
+とはいえ,好き勝手定義しては読みにくいですので,指針を.
+色相(H)の順序付けが出来て,明度(彩度)の順序付けができればいいですよね.
+6色なので,色相は基本的には60度程度違えばよいですね.
+色を見分けられるように,30度以上の差を全てが保つ色にしましょう.
+明度と彩度でSVの三角形は,色が分かるように,
+0.5 &lt; V &lt; 1 ,0.2 &lt; S &lt;= 1であるという条件のもと,
+V,Sを変えればすきな組み合わせに出来ますね.</p>
+<h2>Piet++としての情報の保存方法</h2>
+<p>Piet++(Pietも！)が実行するコードはPNGファイルです.
+実はPNGにはメタデータを入れることが出来ます.
+Piet++のIDEではコメントを挿入することが出来ます.
+また,前述のとおり18色の指定も出来ます.
+そのほかにも,IDEとして保存しておきたい情報は数多くあります.
+それも全てこのメタデータに保存すればよいですね.</p>
+<h2>記法の定義</h2>
+<p>今までの項でPiet++の新たな機能を見ました.
+以降の項でPiet++の具体的な仕様を見ていくことにしましょう.
+まずは記法の定義から見ていきましょう.
+DirectionPointerをDPと略します.
+CodelChooserをCCと略します.</p>
+<p>空のスタックに順番に, <strong>1 をPush, 2 をPush, 3 をPush, 4 をPush</strong> した時,
+スタックの変化を <strong>[] =&gt; [1] =&gt; [1,2] =&gt; [1,2,3] =&gt; [1,2,3,4]</strong> と表記します.
+つまり,一番右にあるものが一番最近Pushしたものとなります.</p>
+<p>また, <strong>[1,2,3,4]</strong> にAdd命令を行うことを,
+<strong>Add [1,2,3,4] =&gt; [1,2,7]</strong> と表記できます.
+この場合,1,2 は直接演算に関係ないので,
+<strong>Add […,3,4] =&gt; […,7]</strong> のように記すことができます.
+さらに演算に関係ない項目 <strong>…</strong> を省略し,以降の文章では
+<strong>Add [3,4] =&gt; [7]</strong> のように記します.
+例えば,Sub[7,2] =&gt;[5] は,7 - 2 = 5 をしたことを意味しますね.</p>
+<p>また,Piet++では前述のとおり数字とスタックのみで構成されています.
+しかし,文字処理のために糖衣構文を定義しておきます.
+まず,65 =“A”; 66 =“B”;67 =“C”;とUnicodeで対応しています.
+文字処理のために [65,66,67] と積んだ場合,
+その数字が何を指しているかで表現したほうが見やすいので,
+[65,66,67] = [A,B,C] と表記しましょう.
+さらにもっと省略して,[A,B,C] = “ABC” という糖衣構文も定義します.
+Piet++ では数字とスタックしか使わないということは
+大事なことなので忘れないでください.</p>
+<h2>モジュール呼び出しとスタック型の導入</h2>
+<p>Piet++では新たに２つの命令を導入します.
+既存のPietと競合しないように導入しなければなりません.
+そこで,普通しない命令である 0除算命令,0剰余命令に
+新たな命令としての意味を持たせるという形で導入します.</p>
+<h4>モジュール呼び出し</h4>
+<p><strong>Div [n,0] =&gt; []</strong><br>
+<strong>n.png という名前のPietを読み込んで実行します.</strong><br>
+現在の標準入力,標準出力,スタックのまま,
+そしてDP は 0 ,CC は 1 で初期化されて
+そのPietを一番左上の位置から実行します.
+終了後,退避されていたDP,CCは元に戻ります.
+この命令によりファイルをモジュール化でき,
+ファイルの分割が可能になります.
+また,言語としての強さの要素である標準ライブラリを搭載し
+簡単にこの命令でアクセス出来るように,
+nが負の場合は標準ライブラリから探すというふうにする予定です.</p>
+<h4>スタックの新規作成</h4>
+<p><strong>Mod […,x1,x2,…,xn,n,0] =&gt; […,[x1,x2,…,xn]]</strong><br>
+<strong>深さnまでの要素を積んだ新たなスタックをPushします</strong><br>
+この関数により,Piet++のスタックに,
+新たなスタックを積むことが出来るようになります<br>
+例： Mod […,C,H,Y,3,0] =&gt; […,[C,H,Y]]</p>
+<h2>スタック演算</h2>
+<p>今回の拡張によって数字だけでなくスタックも積めるようになりました.
+スタック同士の演算を新たに定義しましょう.
+スタックとスタック,数字と数字との演算なら問題はないのですが,
+スタックと数字が混じっていた場合についてはちょっと考えないといけません.
+結論としては,その数字を一つのみを積んだ新たなスタックを作成して,
+それを利用してスタックとスタックの演算として扱います.</p>
+<p>例えば,加算の関数 Add は,
+<strong>Add […,72,28] =&gt; […,100]</strong> と,数字同士なら演算されますが,
+スタック同士に Add を作用させると結合の意味になります.<br>
+例：) <strong>Add […,[A,B,C],[X,Y]] =&gt; […,[A,B,C,X,Y]]</strong><br>
+そして,数字とスタックの演算の場合は,
+その数字を一つのみを積んだ新たなスタックを作成して,
+それを利用してスタックとスタックの演算として扱うので,
+<strong>Add […,C,[H,Y]] =&gt; Add […,[C],[H,Y]] =&gt; […,[C,H,Y]]</strong> と計算されます.</p>
+<p>それでは早速命令を見ていきましょう！</p>
+<h3>ゼロ引数関数</h3>
+<p>Push , In(char) , In (number) はスタックとしては定義されません.</p>
+<h3>一引数関数</h3>
+<p>スタックの先頭から一つとり,それに演算を適用します.</p>
+<h4>Switch: 平坦化する (Flatten)</h4>
+<p>型 :: […] =&gt; […]<br>
+スタックにスタックが積まれて,更にそれにスタックが…という状態に
+陥いったときにそれを全て平坦化してくれます.
+例を見てみますよ.</p>
+<ul>
+<li>Switch […,[A,[B,C,[D],E],F,G]] =&gt; […,[A,B,C,D,E,F,G]]</li>
+<li>Switch […,[A,B,C]] =&gt; […,[A,B,C]]</li>
+<li>Switch […,[A]] =&gt; […,[A]]</li>
+<li>Switch […,[]] =&gt; […,[]]</li>
+</ul>
+<h4>Point : スタックの先頭を取得する</h4>
+<p>型 :: […,T] =&gt; […], T<br>
+スタックの先頭要素を一つとりだしてPushします.例をあげましょう.</p>
+<ul>
+<li>Point […,[A,B,C]] =&gt; […,[A,B],C]</li>
+<li>Point […,[A,B,C,[X,Y]]] =&gt; […,[A,B,C],[X,Y]]</li>
+<li>Point [[[Xn,Yn],…,[X1,Y1]]] =&gt; [[[Xn,Yn],…,[X2,Y2]],[X1,Y1]]</li>
+<li>Point […,[A]] =&gt; […,[],A]</li>
+<li>Point [[]] =&gt; []</li>
+</ul>
+<h4>Dup: コピーする (Duplicate)</h4>
+<p>型 :: […] =&gt; […],[…]
+数字版のDupと同じです.例を見せます.</p>
+<ul>
+<li>Dup […,[[1,3,4],4,32]] =&gt; […,[[1,3,4],4,32],[[1,3,4],4,32]]</li>
+</ul>
+<h4>Not: スタックの中身が空の時 1 を,それ以外では 0 を返す</h4>
+<p>型 :: […] =&gt; Num<br>
+数字版のNotと意味的には一緒です.
+NotとSwitchを組み合わせることで条件分岐に使用出来ますね.</p>
+<ul>
+<li>Not [“Hello”] =&gt; [0]</li>
+<li>Not [[A]] =&gt; [0]</li>
+<li>Not [[]] =&gt; [1]</li>
+</ul>
+<h4>Pop: 捨てる</h4>
+<p>型 :: […] =&gt; []<br>
+数字版のPopと一緒です.例を一応載せときます.</p>
+<ul>
+<li>Pop [[A,B,C]] =&gt; []</li>
+</ul>
+<h4>Out(Char) : 文字列として出力する</h4>
+<p>型 :: […] =&gt; []<br>
+Switchで平坦化して文字列と見なせるようにしてから出力します.</p>
+<ul>
+<li>Out(Char) [[C,H,Y]] =&gt; [] : &quot;CHY&quot;と出力する</li>
+<li>Out(Char) [[千,早]] =&gt; [] : &quot;千早&quot;と出力する</li>
+<li>Out(Char) [[C,[H,I,[H,A],Y],A]] =&gt; [] : &quot;CHIHAYA&quot;と出力する</li>
+<li>Out(Char) [[C]] =&gt; [] : “C” と出力する.</li>
+<li>Out(Char) [[]] =&gt; [] : 何も出力しない.</li>
+</ul>
+<h4>Out(Num) : スタックの中身を全て取り出し,先頭に要素数を積む</h4>
+<p>型 :: [Tn,…,T1] =&gt; Tn,…,T1,Num<br>
+Out(Num) という名前ですが出力はしませんので注意して下さい.
+Mod0命令の逆演算となります.</p>
+<ul>
+<li>Out(Num) […,[A,B,C]] =&gt; […,A,B,C,3]</li>
+<li>Out(Num) […,[A,[B,C],D]] =&gt; […,A,[B,C],D,3]</li>
+<li>Out(Num) […,[A]] =&gt; […,A,1]</li>
+<li>Out(Num) […,[]] =&gt; […,0]</li>
+</ul>
+<h4>Div 0: モジュール呼び出し</h4>
+<p>Div 0 の 被除数が スタックの場合,それをSwitchで平坦化して
+文字列にし,その文字列のパスにあるPietモジュールを実行します.</p>
+<h4>Mod 0 : スタックの新規作成</h4>
+<p>Mod […,x1,x2,…,xn,n,0] =&gt; […,[x1,x2,…,xn]]<br>
+深さnまでの要素を積んだ新たなスタックをPushします.
+x1,…,xn がスタック型であっても大丈夫です.
+n がスタックであった場合は n = ∞ として(つまり深さ無限で)演算します.</p>
+<ul>
+<li>Mod […,C,H,Y,3,0] =&gt; […,[C,H,Y]]</li>
+<li>Mod […,[C,H,I],[H,A,Y,A],2,0] =&gt; […,[[C,H,I],[H,A,Y,A]] ]</li>
+<li>Mod […,C,H,Y,[],0] =&gt; [[…,C,H,Y]]</li>
+</ul>
+<h3>二引数関数</h3>
+<p>スタックの先頭から２つとり,それらに演算を適用します.</p>
+<h4>Add: 結合する (Append)</h4>
+<p>型 :: […],[…] =&gt; […]<br>
+単純に結合します.例を示します.
+[A,B,C] =“ABC” という糖衣構文を思い出してくださいね.</p>
+<ul>
+<li>Add […,[C,H,I],[h,a,y,a]] =&gt; […,[C,H,I,h,a,y,a]]</li>
+<li>Add […,“CHIhaya”,“isGOD”) =&gt; […,“CHIhayaisGOD”]</li>
+<li>Add […,1,[10,100,1000]] =&gt; […,[1,10,100,1000]]</li>
+<li>Add […,[1,10,100],1000] =&gt; […,[1,10,100,1000]]</li>
+<li>Add […,[A,B,C],[]] =&gt; […,[A,B,C]]</li>
+<li>Add […,[],[]] =&gt; […,[]]</li>
+</ul>
+<h4>Sub: 正規表現で分割する (Split)</h4>
+<p>型 :: […],[…] =&gt; […]<br>
+Switch で平坦化し,文字列として見なせるようにしてからSplitします.
+[A,B,C] =“ABC” という糖衣構文を思い出してくださいね.</p>
+<ul>
+<li>Sub […,“Pietはx楽しい”,“x”]=&gt; […,[“Pietは”,“楽しい”]]</li>
+<li>Sub [“12/12 21:41”,&quot; |/|:&quot;] =&gt; [[“12”,“12”,“21”,“41”]]</li>
+<li>Sub […,“helloHWWH!”,H] =&gt; […,[“hello”,[W,W],[!]]]</li>
+<li>Sub […,[h,[e,H],[l,l,[[o]]]],[H] =&gt; […,[“he”,“llo”]]</li>
+<li>Sub […,H,&quot;\s&quot;] =&gt; […,[H]]</li>
+<li>Sub […,H,“H”] =&gt; […,[]]</li>
+</ul>
+<h4>Mul: 直積集合を取得する</h4>
+<p>型 :: […],[…] =&gt; […]<br>
+便利な未来を作る直積集合ですよ.</p>
+<ul>
+<li>Mul [ [A,B,C],[X,Y] ] =&gt; [ [[A,X],[A,Y],[B,X],[B,Y],[C,X],[C,Y]] ]</li>
+<li>Mul […,H,[J,I]] =&gt; […, [ [H,J],[H,I] ] ]</li>
+<li>Mul […,[A],H] =&gt; […,[A,H]]</li>
+<li>Mul […,[],A]=&gt; […,[]]</li>
+<li>Mul [[A,B,C],[[X,Y]]] =&gt; [[A,[X,Y]],[B,[X,Y]],[C,[X,Y]]]</li>
+<li>これにより,例えば 0 &lt; n,m ≦ 20 の n * m の取りうる値を列挙できます
+<ol>
+<li>1~20までと20と0を順に積む =&gt; [1,…,20,20,0]</li>
+<li>Mod0 を実行してスタック化 =&gt; [[1,…,20]]</li>
+<li>Dupでコピーを作成 =&gt; [[1,…,20],[1,…20]]</li>
+<li>Mul で直積を取る =&gt; [[[1,1],…,[20,20]]]</li>
+<li>Point で先頭の要素を取得 =&gt; [[[1,1],…,[20,19]],[20,20]]</li>
+<li>Out(N)で分解する =&gt; [[[1,1],…,[20,19]],20,20,2]</li>
+<li>2 を Pop =&gt; [[[1,1],…,[20,19]],20,20]</li>
+<li>Mulで掛け算する =&gt; [[[1,1],…,[20,19]],400]</li>
+<li>Roll 2 1 で入れ替える =&gt; [400,[[1,1],…,[20,19]]]</li>
+<li>5~9 を繰り返す.</li>
+<li>[400,…,1] が出来上がる.</li>
+</ol>
+</li>
+</ul>
+<h4>Div: 正規表現でマッチさせる (Match)</h4>
+<p>型 :: […],[…] =&gt; […]<br>
+Switch で平坦化し,文字列として見なせるようにしてからMatchします.
+[A,B,C] =“ABC” という糖衣構文を思い出してくださいね.</p>
+<ul>
+<li>Div [“aa9bb1cc”,&quot;.[1-9].&quot;] =&gt; [[“a9b”,“b1c”,“aa9bb1cc”]]</li>
+<li>Div [“aa”,&quot;.[1-9].&quot;] =&gt; [[]]</li>
+<li>Div [“aHxH”,H]=&gt; [[“H”,“H”,“aHxH”]]</li>
+<li>Div [H,“h|H”] =&gt; [[“H”,“H”]]</li>
+<li>Div [[],“A|B”] =&gt; [[]]</li>
+<li>Div [“ABC”,[]] =&gt; [[]]</li>
+</ul>
+<h4>Mod: スタックを順番に結合する (Combine)</h4>
+<p>型 :: […],[…] =&gt; […]<br>
+それぞれの要素を結合します。Mulと上手く組み合わせてご使用下さい。</p>
+<ul>
+<li>Mod [“01234”,“abc”] =&gt; [[“2a”,“3b”,“4c”]]</li>
+<li>Mod [[a,b,c,d,e],[x,y]] =&gt; [[[d,x],[e,y]]]</li>
+<li>Mod [[[a,b,c],[d,e]],[x,y]] =&gt; [[[[a,b,c],x],[[d,e],y]]]</li>
+<li>Mod [H,“abc”]=&gt; [[H,c]]</li>
+<li>Mod [“abc”,H]=&gt; [[c,H]]</li>
+<li>Mod [“abc”,[]]=&gt; [[]]</li>
+<li>Mod [[],[]]=&gt; [[]]</li>
+</ul>
+<h4>Greater: ファイルを読み書きする</h4>
+<p>型 :: […],[…] =&gt; Num<br>
+ファイルを開いて標準入出力へリダイレクトします.
+成功したら 1 ,失敗したら 0 が積まれます.
+第一引数は開くファイル名です.
+第二引数は開くモードを指定します.<br>
+<strong>モード</strong></p>
+<ul>
+<li>[R] or [r] or [0] : 読み込み(Read)モードで開く.</li>
+<li>[W] or [w] or [1] : 書き込み(Write)モードで開く.</li>
+<li>[A] or [a] or [2] : 追加書き込み(Append)モードで開く</li>
+<li>[CR] or [cr] or [3] : Readで開いたファイルを閉じる.</li>
+<li>[Cw] or [cw] or [4] : Writeで開いたファイルを閉じる.</li>
+<li>その他 : 現在開いているファイルをRead,Writeともに閉じる.</li>
+</ul>
+<p>新たにファイルを開いた場合,現在開いているファイルは閉じられます.
+例を示します.</p>
+<ol>
+<li>Greater [“f1.txt”,r] =&gt; [1] : f1.txtを開き標準入力をリダイレクトする</li>
+<li>Greater [“f2.txt”,1] =&gt; [1] : f2.txtを開き標準出力をリダイレクトする</li>
+<li>Greater [“f.t”,r] =&gt; [0] : f.tが開けなかった.</li>
+<li>Greater [“f3.txt”,a] =&gt; [1]
+: 2.で開いていたf2.txtを閉じて新たにf3.txtを
+追加書き込みモードで開き,標準出力をリダイレクトする.</li>
+<li>Greater [[],[cr]] =&gt; [0] : 1.で開いていたf1.txtを閉じる.</li>
+</ol>
+<h3>四引数関数</h3>
+<h3>Roll: Dllを読み込む</h3>
+<p>型 :: […],[…],[…],[…] =&gt; Num or […] or Empty<br>
+Pietが何でも出来るようになる魔法の関数です.
+この関数により,ゲームやアプリを作ることが出来るようになります.
+実用的なマルチメディアな操作をPietで体感しよう！<br>
+<strong>引数</strong><br>
+第一引数 : DLLへのファイル名を含むパス<br>
+第二引数 : DLL内の関数名<br>
+第三引数 : DLLに渡される型の宣言<br>
+第四引数 : DLLを呼び出すための引数リスト<br>
+<strong>例</strong></p>
+<ul>
+<li>Roll [“user32.dll”,“MessageBoxA”, “vssui”,
+[[],“Hello World.”,“Caption”,0]]<br>
+C製Dllであるuser32.dllの,MessageBoxA関数を呼び出します.
+&quot;vssui&quot;というのは的確にDLLを扱う為の型情報の宣言です.
+引数の型は前から順に void*(HANDLE),char*(LPSTR),
+char*(LPSTR),unsigned int (UINT) で,
+返り値はint型にするという宣言で,
+前から順にvoid*,char*,char*,unsigned int,intなので
+頭文字をとって &quot;vssui&quot;です.</li>
+<li>Roll [“TestDLL.dll”,“TestDll.CsDll.LangA”,0,[123,“RA”]]<br>
+自作.Net製DllでTestDll.CsDll.LangA(123,“RA”)を実行します.
+第二引数は NAMESPACE.CLASSNAME.STATICFUNCTIONNAME とします.
+.Net製Dllは型情報が内蔵されているために,
+型を推論することができ,第三引数は省略できます.
+　というか,型を書いても無視されます.
+C製Dllで扱えるプリミティブな型以外はサポートしません.</li>
+</ul>
+<h5>DLL読み込みの型</h5>
+<p>Pietの最強のIDEであるPidetがC#製なので
+Piet++のIDE,実行ファイルもC#製です.
+そのため,内部的にはC#で処理します.
+型の相互変換表は下のようになります.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Pietでの型</th>
+<th>Cでの型</th>
+<th>Cでの別名</th>
+<th>C#での型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">Number</td>
+<td>int,long</td>
+<td>INT,LONG,BOOL</td>
+<td>int</td>
+</tr>
+<tr>
+<td style="text-align:left">Number</td>
+<td>unsigned int,unsigned long</td>
+<td>UINT,DWORD,ULONG</td>
+<td>uint</td>
+</tr>
+<tr>
+<td style="text-align:left">Number</td>
+<td>unsigned char</td>
+<td>BYTE</td>
+<td>byte</td>
+</tr>
+<tr>
+<td style="text-align:left">Number</td>
+<td>char</td>
+<td>CHAR</td>
+<td>char</td>
+</tr>
+<tr>
+<td style="text-align:left">Number</td>
+<td>unsigned short</td>
+<td>WORD</td>
+<td>ushort</td>
+</tr>
+<tr>
+<td style="text-align:left">Number</td>
+<td>short</td>
+<td>SHORT</td>
+<td>short</td>
+</tr>
+<tr>
+<td style="text-align:left">Number</td>
+<td>float</td>
+<td>FLOAT</td>
+<td>float</td>
+</tr>
+<tr>
+<td style="text-align:left">Stack</td>
+<td>char*</td>
+<td>LPSTR,LPWSTR</td>
+<td>string</td>
+</tr>
+<tr>
+<td style="text-align:left">Stack</td>
+<td>void*</td>
+<td>HANDLE</td>
+<td>IntPtr</td>
+</tr>
+</tbody>
+</table>
+<h2>実装</h2>
+<p>ここまで,仕様を詳細に示してきました.
+あとは実装するだけですね！
+C#で書かれたPidetがあるのでそれをforkして作りたいと思います.
+Piet++.exe を実行すれば出来るようにしたいですね.
+スクリプト言語としてのPietとなって,
+Perl,PHP,Python,Piet++ の 4Pとなることを願っています.
+このPiet++プロジェクトは,ここまでの基本仕様が出来た時点で公開します.
+オープンソースプロジェクトとして,
+公開後は標準ライブラリの実装のContributeをお待ちしております！
+最新情報は Github : Muratam, Twitter : paradigm_9 を参照下さい！</p></body>
+</html>
