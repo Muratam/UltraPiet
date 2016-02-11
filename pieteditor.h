@@ -1,17 +1,17 @@
-#ifndef ICONEDITOR_H
-#define ICONEDITOR_H
+#ifndef PIETEDITOR_H
+#define PIETEDITOR_H
 #include <QColor>
 #include <QImage>
 #include <QWidget>
 #include <QStack>
 
-class IconEditor : public QWidget {
+class PietEditor : public QWidget {
     Q_OBJECT
     Q_PROPERTY(QColor penColor READ penColor WRITE setPenColor)
     Q_PROPERTY(QImage iconImage READ iconImage WRITE setIconImage)
     Q_PROPERTY(int zoomFactor READ zoomFactor WRITE setZoomFactor) //NOTIFY?
 public:
-    IconEditor(QWidget * parent = 0);
+    PietEditor(QWidget * parent = 0);
     int zoomFactor()const {return zoom;}
     QImage iconImage()const{return image;}
     QColor penColor() const {return curColor;}
@@ -40,4 +40,4 @@ private:
     int zoom;
 };
 
-#endif // ICONEDITOR_H
+#endif // PIETEDITOR_H

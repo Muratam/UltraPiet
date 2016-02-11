@@ -16,13 +16,13 @@ QMAKE_CXXFLAGS += -std=c++11
 SOURCES += main.cpp\
         mainwindow.cpp \
     widgettest.cpp \
-    iconeditor.cpp
+    pieteditor.cpp
 
 HEADERS  += mainwindow.h \
     widgettest.h \
-    iconeditor.h \
     pietcore.h \
-    defines.h
+    defines.h \
+    pieteditor.h
 
 FORMS    += mainwindow.ui \
     widgettest.ui

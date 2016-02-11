@@ -109,7 +109,7 @@
                <number>0</number>
               </property>
               <item row="0" column="0">
-               <widget class="IconEditor" name="PietEditor" native="true"/>
+               <widget class="PietEditor" name="pietEditor" native="true"/>
               </item>
              </layout>
             </widget>
@@ -240,12 +240,7 @@
         <bool>true</bool>
        </property>
        <property name="plainText">
-        <string>$ 72(H)
-$ 73(I)
-$ { HI }
-$ { HI { HI { HI } } { HI } }
-$ { HI { HI } }
-$ { HIHIHI {  }  {  }  }</string>
+        <string/>
        </property>
       </widget>
      </item>
@@ -1373,9 +1368,9 @@ selection-background-color: rgb(192, 192, 255);</string>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
-   <class>IconEditor</class>
+   <class>PietEditor</class>
    <extends>QWidget</extends>
-   <header>iconeditor.h</header>
+   <header>pieteditor.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

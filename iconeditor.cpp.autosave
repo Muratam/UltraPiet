@@ -5,7 +5,7 @@
 
 //IconEditorという名前になっていますが、Pietの描画領域Wigdetのことです...Todo::次回Pull後変更
 
-IconEditor::IconEditor(QWidget *parent) : QWidget (parent){
+PietEditor::IconEditor(QWidget *parent) : QWidget (parent){
     setAttribute(Qt::WA_StaticContents);
     setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
     curColor = Qt::black;
