@@ -20,7 +20,9 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     widgettest.h \
-    iconeditor.h
+    iconeditor.h \
+    pietcore.h \
+    defines.h
 
 FORMS    += mainwindow.ui \
     widgettest.ui

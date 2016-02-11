@@ -59,7 +59,7 @@
          <string notr="true"/>
         </property>
         <property name="currentIndex">
-         <number>1</number>
+         <number>0</number>
         </property>
         <widget class="QWidget" name="tab">
          <attribute name="title">
@@ -91,7 +91,7 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>375</width>
+               <width>387</width>
                <height>381</height>
               </rect>
              </property>
@@ -425,14 +425,14 @@ $ { HIHIHI {  }  {  }  }</string>
   <widget class="QDockWidget" name="DockStatus">
    <property name="minimumSize">
     <size>
-     <width>0</width>
+     <width>440</width>
      <height>202</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
      <width>440</width>
-     <height>172</height>
+     <height>202</height>
     </size>
    </property>
    <property name="font">
@@ -514,7 +514,7 @@ $ { HIHIHI {  }  {  }  }</string>
         <number>0</number>
        </property>
        <item row="1" column="1">
-        <widget class="QPushButton" name="pushButton_3">
+        <widget class="QPushButton" name="B01">
          <property name="minimumSize">
           <size>
            <width>50</width>
@@ -550,7 +550,7 @@ selection-background-color: rgb(255, 255, 192);</string>
         </widget>
        </item>
        <item row="3" column="0">
-        <widget class="QPushButton" name="pushButton_5">
+        <widget class="QPushButton" name="B20">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -592,7 +592,7 @@ selection-background-color: rgb(192, 0, 0);</string>
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QPushButton" name="pushButton_4">
+        <widget class="QPushButton" name="B10">
          <property name="minimumSize">
           <size>
            <width>50</width>
@@ -628,7 +628,7 @@ selection-background-color: rgb(255, 0, 0);</string>
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QPushButton" name="pushButton_6">
+        <widget class="QPushButton" name="B21">
          <property name="minimumSize">
           <size>
            <width>50</width>
@@ -664,7 +664,7 @@ selection-background-color: rgb(192, 192, 0);</string>
         </widget>
        </item>
        <item row="1" column="3">
-        <widget class="QPushButton" name="pushButton_12">
+        <widget class="QPushButton" name="B03">
          <property name="minimumSize">
           <size>
            <width>50</width>
@@ -700,7 +700,7 @@ selection-background-color: rgb(192, 255, 255);</string>
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QPushButton" name="pushButton_8">
+        <widget class="QPushButton" name="B11">
          <property name="minimumSize">
           <size>
            <width>50</width>
@@ -736,7 +736,7 @@ selection-background-color: rgb(255, 255, 0);</string>
         </widget>
        </item>
        <item row="2" column="5">
-        <widget class="QPushButton" name="pushButton_19">
+        <widget class="QPushButton" name="B15">
          <property name="minimumSize">
           <size>
            <width>50</width>
@@ -772,7 +772,7 @@ selection-background-color: rgb(255, 0, 255);</string>
         </widget>
        </item>
        <item row="1" column="0">
-        <widget class="QPushButton" name="pushButton_7">
+        <widget class="QPushButton" name="B00">
          <property name="minimumSize">
           <size>
            <width>50</width>
@@ -808,7 +808,7 @@ selection-background-color: rgb(255, 192, 192);</string>
         </widget>
        </item>
        <item row="1" column="2">
-        <widget class="QPushButton" name="pushButton_9">
+        <widget class="QPushButton" name="B02">
          <property name="minimumSize">
           <size>
            <width>50</width>
@@ -844,7 +844,7 @@ selection-background-color: rgb(192, 255, 192);</string>
         </widget>
        </item>
        <item row="2" column="2">
-        <widget class="QPushButton" name="pushButton_10">
+        <widget class="QPushButton" name="B12">
          <property name="minimumSize">
           <size>
            <width>50</width>
@@ -880,7 +880,7 @@ selection-background-color: rgb(0, 255, 0);</string>
         </widget>
        </item>
        <item row="3" column="2">
-        <widget class="QPushButton" name="pushButton_11">
+        <widget class="QPushButton" name="B22">
          <property name="minimumSize">
           <size>
            <width>50</width>
@@ -916,7 +916,7 @@ selection-background-color: rgb(0, 192, 0);</string>
         </widget>
        </item>
        <item row="1" column="6">
-        <widget class="QPushButton" name="pushButton_21">
+        <widget class="QPushButton" name="B06">
          <property name="minimumSize">
           <size>
            <width>50</width>
@@ -942,9 +942,7 @@ alternate-background-color: rgb(255, 255, 255);
 selection-background-color: rgb(255, 255, 255);</string>
          </property>
          <property name="text">
-          <string>
- 
-</string>
+          <string/>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -952,7 +950,7 @@ selection-background-color: rgb(255, 255, 255);</string>
         </widget>
        </item>
        <item row="2" column="6">
-        <widget class="QPushButton" name="pushButton_22">
+        <widget class="QPushButton" name="B16">
          <property name="minimumSize">
           <size>
            <width>50</width>
@@ -986,7 +984,7 @@ selection-background-color: rgb(0, 0, 0);</string>
         </widget>
        </item>
        <item row="3" column="6">
-        <widget class="QPushButton" name="pushButton_23">
+        <widget class="QPushButton" name="BUSER">
          <property name="minimumSize">
           <size>
            <width>50</width>
@@ -1020,7 +1018,7 @@ selection-background-color: rgb(0, 0, 0);</string>
         </widget>
        </item>
        <item row="2" column="4">
-        <widget class="QPushButton" name="pushButton_16">
+        <widget class="QPushButton" name="B14">
          <property name="minimumSize">
           <size>
            <width>50</width>
@@ -1056,7 +1054,7 @@ selection-background-color: rgb(0, 0, 255);</string>
         </widget>
        </item>
        <item row="1" column="5">
-        <widget class="QPushButton" name="pushButton_18">
+        <widget class="QPushButton" name="B05">
          <property name="minimumSize">
           <size>
            <width>50</width>
@@ -1092,7 +1090,7 @@ selection-background-color: rgb(255, 192, 255);</string>
         </widget>
        </item>
        <item row="3" column="4">
-        <widget class="QPushButton" name="pushButton_17">
+        <widget class="QPushButton" name="B24">
          <property name="minimumSize">
           <size>
            <width>50</width>
@@ -1128,7 +1126,7 @@ selection-background-color: rgb(0, 0, 192,);</string>
         </widget>
        </item>
        <item row="2" column="3">
-        <widget class="QPushButton" name="pushButton_13">
+        <widget class="QPushButton" name="B13">
          <property name="minimumSize">
           <size>
            <width>50</width>
@@ -1164,7 +1162,7 @@ selection-background-color: rgb(0, 255, 255);</string>
         </widget>
        </item>
        <item row="3" column="3">
-        <widget class="QPushButton" name="pushButton_14">
+        <widget class="QPushButton" name="B23">
          <property name="minimumSize">
           <size>
            <width>50</width>
@@ -1200,7 +1198,7 @@ selection-background-color: rgb(0, 192, 192);</string>
         </widget>
        </item>
        <item row="3" column="5">
-        <widget class="QPushButton" name="pushButton_20">
+        <widget class="QPushButton" name="B25">
          <property name="minimumSize">
           <size>
            <width>50</width>
@@ -1236,7 +1234,7 @@ selection-background-color: rgb(192, 0, 192);</string>
         </widget>
        </item>
        <item row="1" column="4">
-        <widget class="QPushButton" name="pushButton_15">
+        <widget class="QPushButton" name="B04">
          <property name="minimumSize">
           <size>
            <width>50</width>
@@ -1285,15 +1283,24 @@ selection-background-color: rgb(192, 192, 255);</string>
    <property name="text">
     <string>&amp;New</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
   </action>
   <action name="action_Open">
    <property name="text">
     <string>&amp;Open</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="action_Save">
    <property name="text">
     <string>&amp;Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="action_Quit">
@@ -1305,25 +1312,40 @@ selection-background-color: rgb(192, 192, 255);</string>
    <property name="text">
     <string>Undo</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
   </action>
   <action name="actionRedo">
    <property name="text">
     <string>Redo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
    </property>
   </action>
   <action name="actionCut">
    <property name="text">
     <string>Cut</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
   </action>
   <action name="actionCopy">
    <property name="text">
     <string>Copy</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
   </action>
   <action name="actionPaste">
    <property name="text">
     <string>Paste</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
    </property>
   </action>
   <action name="actionChange_Tool">
@@ -1363,15 +1385,15 @@ selection-background-color: rgb(192, 192, 255);</string>
   <tabstop>plainTextEdit</tabstop>
   <tabstop>plainTextEdit_2</tabstop>
   <tabstop>treeWidget</tabstop>
-  <tabstop>pushButton_7</tabstop>
-  <tabstop>pushButton_4</tabstop>
-  <tabstop>pushButton_5</tabstop>
-  <tabstop>pushButton_3</tabstop>
-  <tabstop>pushButton_8</tabstop>
-  <tabstop>pushButton_6</tabstop>
-  <tabstop>pushButton_9</tabstop>
-  <tabstop>pushButton_10</tabstop>
-  <tabstop>pushButton_11</tabstop>
+  <tabstop>B00</tabstop>
+  <tabstop>B10</tabstop>
+  <tabstop>B20</tabstop>
+  <tabstop>B01</tabstop>
+  <tabstop>B11</tabstop>
+  <tabstop>B21</tabstop>
+  <tabstop>B02</tabstop>
+  <tabstop>B12</tabstop>
+  <tabstop>B22</tabstop>
   <tabstop>scrollArea</tabstop>
  </tabstops>
  <resources/>

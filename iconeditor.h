@@ -3,6 +3,7 @@
 #include <QColor>
 #include <QImage>
 #include <QWidget>
+#include <QStack>
 
 class IconEditor : public QWidget {
     Q_OBJECT
@@ -21,15 +22,21 @@ public slots :
     void decrementZoomFactor(){setZoomFactor(zoom-1);}
     void setIconImage (const QImage &newImage);
     void setPenColor(const QColor &newColor);
+    void undo();
+    void openImage(const QString& filePath);
+signals :
+    void changedPenColor(const QColor &color);
 protected :
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
     void paintEvent(QPaintEvent *event);
 private:
-    void setImagePixel(const QPoint &pos,bool opaque);
+    void setImagePixel(const QPoint &pos,const QRgb &rgb);
+    QRgb getImagePixel(const QPoint &pos);
     QRect pixelRect(int i,int j)const;
     QColor curColor;
     QImage image;
+    QStack<QImage> imageStack;
     int zoom;
 };
 
