@@ -3,8 +3,6 @@
 #include <stdio.h>
 #include "defines.h"
 
-//PietEditorという名前になっていますが、Pietの描画領域Wigdetのことです...Todo::次回Pull後変更
-
 PietEditor::PietEditor(QWidget *parent) : QWidget (parent){
     setAttribute(Qt::WA_StaticContents);
     setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
@@ -13,6 +11,7 @@ PietEditor::PietEditor(QWidget *parent) : QWidget (parent){
     image = QImage(16,16,QImage::Format_ARGB32);
     image.fill(qRgba(255,255,255,255));
     imageStack.push_back(image.copy());
+    setAcceptDrops(true);
 }
 QSize PietEditor::sizeHint()const{
     auto size = zoom * image.size();
@@ -59,6 +58,14 @@ void PietEditor::paintEvent(QPaintEvent *event){
             }
         }
     }
+}
+void PietEditor::dragEnterEvent(QDragEnterEvent *event){
+    if(event->mimeData()->hasFormat("text/uri-list")) event->acceptProposedAction();
+}
+
+void PietEditor::dropEvent(QDropEvent *event){
+    if(!event->mimeData()->hasFormat("text/uri-list"))return;
+    openImage(event->mimeData()->urls().first().toLocalFile() );
 }
 
 QRect PietEditor::pixelRect(int i, int j) const{
@@ -109,7 +116,10 @@ QRgb PietEditor::getImagePixel(const QPoint &pos){
 }
 
 void PietEditor::openImage(const QString& FilePath){
-    image = QImage(FilePath);
+    if(FilePath.isEmpty())return;
+    auto loadedimage = QImage(FilePath);
+    if(loadedimage.isNull()){MSGBOX("Invalid Image");return;}
+    image = loadedimage;
     imageStack.clear();
     imageStack.push_back(image.copy());
 }

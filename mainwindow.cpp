@@ -7,7 +7,17 @@
 #include <QString>
 #include <QDebug>
 
-#define CB(i,j) connect(ui->B ## i ## j,QPushButton::clicked,[=](){auto c = PietCore::normalColors[i][j];ui->pietEditor->setPenColor(c); setEditColor(c);})
+#define CB(i,j) \
+    {  auto c = QColor(PietCore::normalColors[i][j]); \
+       auto strrgb = QString("background-color : rgb(%1,%2,%3);\n").arg(c.red()).arg(c.green()).arg(c.blue()); \
+       auto strrgbfontcolor = QString ("color : rgb(%1,%1,%1);\n").arg(PietCore::getVividGrayScale(c)); \
+       ui->B ## i ## j->setStyleSheet(strrgb + strrgbfontcolor+"selection-"+strrgbfontcolor); \
+       ui->B##i##j->setText( PietCore::normalOrders(i,j)); \
+    }\
+    connect(ui->B ## i ## j,QPushButton::clicked,[=](){ \
+        auto c = PietCore::normalColors[i][j]; \
+        ui->pietEditor->setPenColor(c); setEditColor(c); \
+    })
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
@@ -33,10 +43,10 @@ MainWindow::~MainWindow(){
 
 void MainWindow::openImage(){
     auto fileName = QFileDialog::getOpenFileName(this,tr("Open Image"), "", tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
-    //MSGBOX(fileName);
     ui->pietEditor->openImage(fileName);
 }
 void MainWindow::setEditColor(const QColor &c){
-    QString strrgb = QString("background-color : rgb(%1,%2,%3);").arg(c.red()).arg(c.green()).arg(c.blue());
-    ui->BUSER->setStyleSheet(strrgb+" \nalternate-"+strrgb+"\nselection-"+strrgb);
+    QString strrgb = QString("background-color : rgb(%1,%2,%3);\n").arg(c.red()).arg(c.green()).arg(c.blue());
+    QString strrgbfontcolor = QString ("color : rgb(%1,%1,%1);\n").arg(PietCore::getVividGrayScale(c));
+    ui->BUSER->setStyleSheet(strrgb+strrgbfontcolor+"selection-"+strrgbfontcolor);//"alternate-"+strrgb+"selection-"+strrgb +
 }

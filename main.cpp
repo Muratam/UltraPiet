@@ -18,7 +18,7 @@ int main(int argc, char *argv[]){
     ApplyDarkStyleSheet(a);
     MainWindow w;
     w.show();
-    //auto wg = new WidgetTest(&w);
-    //wg->show();
     return a.exec();
 }
+//auto wg = new WidgetTest(&w);
+//wg->show();
