@@ -3,7 +3,7 @@
 #include "widgettest.h"
 #include <QFile>
 #include <QTextStream>
-
+#include "pietcore.h"
 void ApplyDarkStyleSheet(QApplication& a ){
     QFile f(":qdarkstyle/style.qss");
     if (f.exists()) {

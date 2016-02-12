@@ -12,6 +12,7 @@ PietEditor::PietEditor(QWidget *parent) : QWidget (parent){
     image.fill(qRgba(255,255,255,255));
     imageStack.push_back(image.copy());
     setAcceptDrops(true);
+    core.setImage(image);
 }
 QSize PietEditor::sizeHint()const{
     auto size = zoom * image.size();
@@ -44,17 +45,20 @@ void PietEditor::setZoomFactor(int newZoom){
 
 void PietEditor::paintEvent(QPaintEvent *event){
     QPainter painter (this);
-    if(zoom >= 3){
+    if(zoom >= 3){ //grid line
         painter.setPen(palette().foreground().color());
         REP(i,image.width()+1)  painter.drawLine(zoom*i,0,zoom*i,zoom*image.height());
-        REP(i,image.height()+1) painter.drawLine(0,zoom*i,zoom*image.width(),zoom*i);
+        REP(i,image.height()+1) painter.drawLine(0,zoom*i,zoom*image.width(),zoom*i);    
     }
+    painter.setFont(QFont("Arial",zoom / 1.5 ));
+
     REP(i,image.width()){
         REP(j,image.height()){
             auto rect = pixelRect(i,j);
             if(!event->region().intersected(rect).isEmpty()){
                 auto color = QColor::fromRgba(image.pixel(i,j));
                 painter.fillRect(rect,color);
+                //if(zoom > 6)painter.drawText(rect.x()+zoom/6,rect.y()+rect.width()-zoom/6,QString("あ")); //文字が描けます
             }
         }
     }
@@ -122,4 +126,10 @@ void PietEditor::openImage(const QString& FilePath){
     image = loadedimage;
     imageStack.clear();
     imageStack.push_back(image.copy());
+}
+
+void PietEditor::execPiet(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow){
+    core.init(image);
+    QString str = core.exec();
+    outputWindow->setPlainText(str);
 }

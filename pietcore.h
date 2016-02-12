@@ -1,32 +1,43 @@
 #ifndef PIETCORE_H
 #define PIETCORE_H
-#include <QWidget>
 #include <QColor>
 #include <QImage>
 #include <QString>
-#include <QVector>
-class PietCore {
-    //Q_OBJECT
- private :
-    QImage image;
- public :
-    static constexpr QRgb normalColors[3][7] = {
-        { qRgb(255,192,192),qRgb(255,255,192),qRgb(192,255,192),qRgb(192,255,255),qRgb(192,192,255),qRgb(255,192,255),qRgb(255,255,255)},
-        { qRgb(255,  0,  0),qRgb(255,255,  0),qRgb(  0,255,  0),qRgb(  0,255,255),qRgb(  0,  0,255),qRgb(255,  0,255),qRgb(  0,  0,  0)},
-        { qRgb(192,  0,  0),qRgb(192,192,  0),qRgb(  0,192,  0),qRgb(  0,192,192),qRgb(  0,  0,192),qRgb(192,  0,192),qRgb(128,128,128)}
-    };
-    static const QString normalOrders(int i,int j){
-        if(i < 0 || j < 0 || i >= 3 || j >= 7 ) return QString ("");
-        QString strs[3][7] = {
-            {QString("*"),   QString("add"),QString("div"),QString("great"), QString("dup"),  QString("in(c)") ,QString("")},
-            {QString("push"),QString("sub"),QString("mod"),QString("point"), QString("roll"), QString("out(n)"),QString("")},
-            {QString("pop"), QString("mul"),QString("not"),QString("switch"),QString("in(n)"),QString("out(c)"),QString("")}
-        };
-        return strs[i][j];
-    }
-    static int getVividGrayScale(const QColor &c) {return 255 - [](int x){return x*x;}((c.red() + c.blue() + c.green())/3);}
-    void setImage(const QImage & image){ this->image = image.copy();}
+#include <vector>
+#include <stack>
+#include "defines.h"
+//UltraPietの実際の命令処理をするクラス (なのでGUIには依存しません)
 
+// 0 3 6 9  12 15 18
+// 1 4 7 10 13 16 19
+// 2 5 8 11 14 17 20(将来のための)
+// 他は*=-1;
+enum EDirectPointer{dpR=0,dpD=1,dpL=2,dpU=3};
+enum ECodelChooser{ccL=0,ccR=1};
+enum class EOrder{Same=0,Push,Pop,Add,Sub,Mul,Div,Mod,Not,Great,Point,Switch,Dup,Roll,InN,InC,OutN,OutC,Exception};
+class PietCore {
+private :
+    std::vector<std::vector<int>> coded;
+    int w,h;
+    QPoint pos ;
+    EDirectPointer dp;
+    ECodelChooser cc;
+    std::vector<int> stack ;
+public :
+    static const QRgb normalColors[3][7] ;
+    static const QString normalOrders[3][7];
+    static const EOrder normalEOrders[3][7];
+    static bool isNormalColor(QRgb rgb){REP(i,3)REP(j,7)if(rgb == normalColors[i][j])return true;return false;}
+    static int getVividGrayScale(const QColor & c){ return (128 + qGray(c.red() , c.blue() , c.green())) % 256;}
+public :
+    PietCore();
+    void init();
+    void init(const QImage & image){init();setImage(image);}
+    QPoint getPos() {return pos;}
+    EDirectPointer getDP() {return dp;}
+    ECodelChooser getCC() {return cc;}
+    QString exec();
+    void setImage(const QImage & image);
 };
 
 #endif // PIETCORE_H

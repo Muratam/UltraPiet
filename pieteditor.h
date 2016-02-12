@@ -4,6 +4,8 @@
 #include <QImage>
 #include <QWidget>
 #include <QStack>
+#include <QPlainTextEdit>
+#include "pietcore.h"
 
 class PietEditor : public QWidget {
     Q_OBJECT
@@ -24,6 +26,7 @@ public slots :
     void setPenColor(const QColor &newColor);
     void undo();
     void openImage(const QString& filePath);
+    void execPiet(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow);
 signals :
     void changedPenColor(const QColor &color);
 protected :
@@ -39,6 +42,7 @@ private:
     QColor curColor;
     QImage image;
     QStack<QImage> imageStack;
+    PietCore core;
     int zoom;
 };
 

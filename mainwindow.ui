@@ -187,6 +187,7 @@
     <property name="title">
      <string>&amp;Debug</string>
     </property>
+    <addaction name="actionExec"/>
    </widget>
    <addaction name="menuPiet_png"/>
    <addaction name="menuHi"/>
@@ -237,7 +238,7 @@
       <number>3</number>
      </property>
      <item>
-      <widget class="QPlainTextEdit" name="plainTextEdit_3">
+      <widget class="QPlainTextEdit" name="stackTextEdit">
        <property name="font">
         <font>
          <family>Migu 1M</family>
@@ -247,6 +248,9 @@
         </font>
        </property>
        <property name="tabChangesFocus">
+        <bool>true</bool>
+       </property>
+       <property name="readOnly">
         <bool>true</bool>
        </property>
        <property name="plainText">
@@ -292,7 +296,7 @@
       <number>3</number>
      </property>
      <item>
-      <widget class="QPlainTextEdit" name="plainTextEdit">
+      <widget class="QPlainTextEdit" name="inputTextEdit">
        <property name="font">
         <font>
          <pointsize>9</pointsize>
@@ -343,7 +347,7 @@
       <number>3</number>
      </property>
      <item>
-      <widget class="QPlainTextEdit" name="plainTextEdit_2">
+      <widget class="QPlainTextEdit" name="outputTextEdit">
        <property name="enabled">
         <bool>true</bool>
        </property>
@@ -1374,6 +1378,14 @@ selection-background-color: rgb(192, 0, 192);</string>
     <string>Ctrl+-</string>
    </property>
   </action>
+  <action name="actionExec">
+   <property name="text">
+    <string>Exec</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -1386,9 +1398,9 @@ selection-background-color: rgb(192, 0, 192);</string>
  </customwidgets>
  <tabstops>
   <tabstop>tabWidget</tabstop>
-  <tabstop>plainTextEdit_3</tabstop>
-  <tabstop>plainTextEdit</tabstop>
-  <tabstop>plainTextEdit_2</tabstop>
+  <tabstop>stackTextEdit</tabstop>
+  <tabstop>inputTextEdit</tabstop>
+  <tabstop>outputTextEdit</tabstop>
   <tabstop>treeWidget</tabstop>
   <tabstop>B00</tabstop>
   <tabstop>B10</tabstop>
