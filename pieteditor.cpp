@@ -126,6 +126,8 @@ void PietEditor::openImage(const QString& FilePath){
     image = loadedimage;
     imageStack.clear();
     imageStack.push_back(image.copy());
+    update();
+    updateGeometry();
 }
 
 void PietEditor::execPiet(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow){

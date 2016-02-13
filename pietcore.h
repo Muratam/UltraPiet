@@ -15,14 +15,21 @@
 enum EDirectPointer{dpR=0,dpD=1,dpL=2,dpU=3};
 enum ECodelChooser{ccL=0,ccR=1};
 enum class EOrder{Same=0,Push,Pop,Add,Sub,Mul,Div,Mod,Not,Great,Point,Switch,Dup,Roll,InN,InC,OutN,OutC,Exception};
+
+struct Point8{ QPoint RL,RR,DL,DR,LL,LR,UL,UR;bool defined; };
+const QPoint Wall = {-1,-1};
+
 class PietCore {
 private :
     std::vector<std::vector<int>> coded;
+    std::vector<std::vector<Point8>> pos8;
     int w,h;
     QPoint pos ;
     EDirectPointer dp;
     ECodelChooser cc;
     std::vector<int> stack ;
+    bool isInImage(const QPoint & p){return p.x() >= 0 && p.y() >= 0 && p.x() < w && p.y() < h;}
+    void search(QPoint me);
 public :
     static const QRgb normalColors[3][7] ;
     static const QString normalOrders[3][7];
