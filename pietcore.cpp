@@ -292,7 +292,7 @@ void PietCore::execOneAction(){
 
 //未実装(とりあえず10万Stepうちきり)
 void PietCore::exec(){
-    while (finished || step > 100000){execOneAction();}
+    while (!finished && step < 100000){execOneAction();}
 }
 
 QString PietCore::printStack(){

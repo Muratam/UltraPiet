@@ -373,7 +373,7 @@
         <bool>true</bool>
        </property>
        <property name="plainText">
-        <string>This is a test output.</string>
+        <string/>
        </property>
       </widget>
      </item>

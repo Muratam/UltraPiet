@@ -4,6 +4,8 @@
 #include <QFile>
 #include <QTextStream>
 #include "pietcore.h"
+#include <iostream>
+using namespace std;
 void ApplyDarkStyleSheet(QApplication& a ){
     QFile f(":qdarkstyle/style.qss");
     if (f.exists()) {
@@ -14,6 +16,7 @@ void ApplyDarkStyleSheet(QApplication& a ){
 }
 
 int main(int argc, char *argv[]){
+    cout << "Welcome to UltraPiet !" << endl;
     QApplication a(argc, argv);
     ApplyDarkStyleSheet(a);
     MainWindow w;
