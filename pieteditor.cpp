@@ -1,5 +1,5 @@
 #include "pieteditor.h"
-#include <QtGui>
+#include <QtWidgets>
 #include <stdio.h>
 #include "defines.h"
 
@@ -58,9 +58,13 @@ void PietEditor::paintEvent(QPaintEvent *event){
             if(!event->region().intersected(rect).isEmpty()){
                 auto color = QColor::fromRgba(image.pixel(i,j));
                 painter.fillRect(rect,color);
-                //if(zoom > 6)painter.drawText(rect.x()+zoom/6,rect.y()+rect.width()-zoom/6,QString("あ")); //文字が描けます
             }
         }
+    }
+    if(zoom > 6){
+        painter.setPen(QColor(0,0,0));
+        auto arrow = PietCore::arrowFromDP(core.getDP());
+        painter.drawText(pixelRect(core.getPos().x(),core.getPos().y()),arrow);
     }
 }
 void PietEditor::dragEnterEvent(QDragEnterEvent *event){
@@ -130,8 +134,29 @@ void PietEditor::openImage(const QString& FilePath){
     updateGeometry();
 }
 
-void PietEditor::execPiet(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow){
+//画面無視で速度的なあれ
+void PietEditor::execPiet(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel){
+    if(!isExecuting) execInit();
+    core.exec();
+    outputWindow->setPlainText(core.Output);
+    stackWindow->setPlainText(core.printStack());
+    statusLabel->setText(core.printStatus());
+    if(core.getFinished())isExecuting = false;
+}
+void PietEditor::execInit(){
     core.init(image);
-    QString str = core.exec();
-    outputWindow->setPlainText(str);
+    isExecuting = true;
+    update();
+}
+
+void PietEditor::exec1Step (QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel){
+    if(!isExecuting) execInit();
+    QPoint prepos = core.getPos();
+    core.execOneAction();
+    update(pixelRect(prepos.x(),prepos.y()));
+    update(pixelRect(core.getPos().x(),core.getPos().y()));
+    outputWindow->setPlainText(core.Output);
+    stackWindow->setPlainText(core.printStack());
+    statusLabel->setText(core.printStatus());
+    if(core.getFinished())isExecuting = false;
 }

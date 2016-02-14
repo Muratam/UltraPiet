@@ -188,6 +188,8 @@
      <string>&amp;Debug</string>
     </property>
     <addaction name="actionExec"/>
+    <addaction name="actionExec_1_Step"/>
+    <addaction name="actionRestart"/>
    </widget>
    <addaction name="menuPiet_png"/>
    <addaction name="menuHi"/>
@@ -490,7 +492,7 @@
       <number>0</number>
      </property>
      <item>
-      <widget class="QLabel" name="label">
+      <widget class="QLabel" name="StatusLabel">
        <property name="font">
         <font>
          <weight>50</weight>
@@ -501,7 +503,7 @@
         <number>0</number>
        </property>
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;200*200&lt;/p&gt;&lt;p&gt;POP&lt;/p&gt;&lt;p&gt;DP:→(0)&lt;/p&gt;&lt;p&gt;CC:L(0)&lt;/p&gt;&lt;p&gt;Step:1&lt;/p&gt;&lt;p&gt;CS:1&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -1384,6 +1386,22 @@ selection-background-color: rgb(192, 0, 192);</string>
    </property>
    <property name="shortcut">
     <string>F5</string>
+   </property>
+  </action>
+  <action name="actionExec_1_Step">
+   <property name="text">
+    <string>Exec 1 Step</string>
+   </property>
+   <property name="shortcut">
+    <string>F10</string>
+   </property>
+  </action>
+  <action name="actionRestart">
+   <property name="text">
+    <string>Restart</string>
+   </property>
+   <property name="shortcut">
+    <string>F6</string>
    </property>
   </action>
  </widget>

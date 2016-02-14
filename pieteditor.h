@@ -26,7 +26,9 @@ public slots :
     void setPenColor(const QColor &newColor);
     void undo();
     void openImage(const QString& filePath);
-    void execPiet(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow);
+    void execPiet(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel);
+    void exec1Step(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel);
+    void execInit();
 signals :
     void changedPenColor(const QColor &color);
 protected :
@@ -40,10 +42,11 @@ private:
     QRgb getImagePixel(const QPoint &pos);
     QRect pixelRect(int i,int j)const;
     QColor curColor;
-    QImage image;
-    QStack<QImage> imageStack;
     PietCore core;
+    QImage image;
+    QStack<QImage> imageStack; // For Undo
     int zoom;
+    bool isExecuting = false;
 };
 
 #endif // PIETEDITOR_H
