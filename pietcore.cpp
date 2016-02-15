@@ -185,12 +185,12 @@ void PietCore::execOneAction(){
     EOrder order = fromRelativeColor(PIXEL(pos),PIXEL(nextpos));
     int WhiteColor = 18;
     int BlackColor = 19;
-
+    #define STACK_TOP stack[stack.size()-1]
     #define PROCESARITHMETICORDER(OPERATE) \
         if(stack.size() >= 2){ \
-            int v1 = stack[stack.size()-1]; \
-            int v2 = stack[stack.size()-2]; \
+            int v1 = STACK_TOP; \
             stack.pop_back(); \
+            int v2 = STACK_TOP; \
             stack.pop_back(); \
             stack.push_back(OPERATE); \
             currentOrder = QString(#OPERATE);\
@@ -216,16 +216,16 @@ void PietCore::execOneAction(){
         PROCESARITHMETICORDER(v2 * v1);
         break;
     case EOrder::Div:
-        if(stack.size()>= 2 && stack[stack.size()-1] == 0) {break;} // Div 0
+        if(stack.size()>= 2 && STACK_TOP == 0) {break;} // Div 0
         PROCESARITHMETICORDER(v2 / v1);
         break;
     case EOrder::Mod:
-        if(stack.size()>= 2 && stack[stack.size()-1] == 0) {break;} // Mod 0
+        if(stack.size()>= 2 && STACK_TOP == 0) {break;} // Mod 0
         PROCESARITHMETICORDER(v2 % v1);
         break;
     case EOrder::Not:
         if(stack.size() > 0 ){
-             stack[stack.size()-1] = stack[stack.size()-1] == 0 ? 1 : 0;
+             STACK_TOP = STACK_TOP == 0 ? 1 : 0;
              currentOrder = QString("Not");
         }
         break;
@@ -234,7 +234,7 @@ void PietCore::execOneAction(){
         break;
     case EOrder::Point:// 時計回り
         if(stack.size() > 0 ){ //-1 % 4 => -1
-             dp = (EDirectionPointer)((int)dp + (stack[stack.size()-1] % 4));
+             dp = (EDirectionPointer)((int)dp + (STACK_TOP % 4));
              stack.pop_back();
              while (dp >= 4) { dp =(EDirectionPointer)((int)dp - 4); }
              currentOrder = QString("Point");
@@ -242,7 +242,7 @@ void PietCore::execOneAction(){
         break;
     case EOrder::Switch:
         if(stack.size() > 0 ){ //-1 % 4 => -1
-             switch(stack[stack.size()-1] % 2){
+             switch(STACK_TOP % 2){
                 case -1:case 1: cc = (cc == ccR ? ccL : ccR);
              }
              stack.pop_back();
@@ -251,24 +251,43 @@ void PietCore::execOneAction(){
         break;
     case EOrder::Dup:
         if(stack.size() > 0 ){
-             stack.push_back( stack[stack.size()-1]);
+             stack.push_back( STACK_TOP);
              currentOrder = QString("Duplicate");
         }
         break;
-    case EOrder::Roll:break; // 未実装
-    case EOrder::InN:break; // 未実装
-    case EOrder::InC:break; // 未実装
+    case EOrder::Roll:
+        if(stack.size() > 2){
+            // [2,3,4,3,2,1] => 2,3とPopして,深さ3まで2回転 : [4,3,2,1] => [3,2,4,1] => [2,4,3,1]
+            //PidetのRollはO(depth*roll)だった
+            int roll = stack[stack.size()-1];
+            int depth = stack[stack.size()-2];
+            int forCurrentOrderRoll = roll;
+            if(depth < 0) break;//負Rollは無視
+            if(stack.size() - 2 < depth) break;//depthの方が大きい場合も無視
+            stack.pop_back();
+            stack.pop_back();
+            if(stack.size()==0) break;
+            roll = roll % depth ;      // Pidetはここ微妙に何故か違った
+            vector<int> copy;
+            REP(i,depth) copy.push_back( stack[stack.size() - depth + i ]);
+            REP(i,depth) stack[stack.size() - depth + i] =
+                            i - roll < 0 ? copy[i - roll + depth ] : copy[i - roll] ;
+            currentOrder = QString("Roll d %1,r %2").arg(depth).arg(forCurrentOrderRoll);
+        }
+        break;
+    case EOrder::InN:break; // 未実装Pidetでは12,13,14のようにセパレータを出来ないので、/[0-9]+/を取る
+    case EOrder::InC:break; // 未実装(一文字(QChar)を処理)
     case EOrder::OutN:
         if(stack.size() > 0){
-            Output += QString("%1").arg(stack[stack.size()-1]);
-            currentOrder = QString("Out %1").arg(stack[stack.size()-1]);
+            doOutput( QString("%1").arg(STACK_TOP));
+            currentOrder = QString("Out %1").arg(STACK_TOP);
             stack.pop_back();
         }
         break;
     case EOrder::OutC:
         if(stack.size() > 0){
-            Output += QString(stack[stack.size()-1]);
-            currentOrder = QString("Out ")+ QString (stack[stack.size()-1]);
+            doOutput( QString(STACK_TOP));
+            currentOrder = QString("Out ")+ QString (STACK_TOP);
             stack.pop_back();
         }
         break;
@@ -314,4 +333,8 @@ QString PietCore::printStatus(){
     res += currentOrder + QString("\n");
     //res += QString("CS:1\n");//codelsize
     return res;
+}
+
+void PietCore::doOutput(const QString & outstr){
+    Output += outstr;
 }

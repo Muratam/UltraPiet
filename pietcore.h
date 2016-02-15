@@ -44,6 +44,7 @@ private :
     void search(QPoint me);
     EOrder fromRelativeColor(int codedFrom,int codedTo);
     void processWall();
+    void doOutput(const QString & outstr);
 public :
     static const QRgb normalColors[3][7] ;
     static const QString normalOrders[3][7];
@@ -63,8 +64,8 @@ public :
     void execOneAction();
     void exec();
     void setImage(const QImage & image);
-    QString Input = QString("this is a test");
-    QString Output = QString("");
+    QString Input = QString("this is a test"); //For Editor
+    QString Output = QString(""); //For Editor
     QString printStack();
     QString printStatus();
 };
