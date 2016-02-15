@@ -123,10 +123,13 @@ QRgb PietEditor::getImagePixel(const QPoint &pos){
     }else return qRgb(0,0,0);
 }
 
-void PietEditor::openImage(const QString& FilePath){
-    if(FilePath.isEmpty())return;
+void PietEditor::openImage(QString FilePath ){
+    if(FilePath.isEmpty() || FilePath.isNull())
+        FilePath = QFileDialog::getOpenFileName(this,tr("Open Image"), "", tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
+    if(FilePath.isEmpty() || FilePath.isNull())return;
     auto loadedimage = QImage(FilePath);
-    if(loadedimage.isNull()){MSGBOX("Invalid Image");return;}
+    if(loadedimage.isNull() ){MSGBOX("Invalid Image");return;}
+    loadedFilePath = FilePath;
     image = loadedimage;
     imageStack.clear();
     imageStack.push_back(image.copy());
@@ -134,9 +137,16 @@ void PietEditor::openImage(const QString& FilePath){
     updateGeometry();
 }
 
-void PietEditor::saveImage(const QString& filePath){
-    if(filePath.isEmpty())return;
-    if(!image.save(filePath)){MSGBOX("Cannot Save...");}
+void PietEditor::saveImage(bool asNew){
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QString filePath =
+        (!asNew && !loadedFilePath.isEmpty() && !loadedFilePath.isNull()) ? loadedFilePath :
+        QFileDialog::getSaveFileName(this,tr("Save Image"), "", tr("Image Files (*.png *.bmp)"));
+    if(filePath.isEmpty() || filePath.isNull()){ QApplication::setOverrideCursor(Qt::ArrowCursor); return;}
+    if(!image.save(filePath)){QApplication::setOverrideCursor(Qt::ArrowCursor);MSGBOX("Cannot Save...");return;}
+    loadedFilePath = filePath;
+    Sleep(100);
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
 //画面無視で速度的なあれ

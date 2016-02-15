@@ -160,8 +160,7 @@
     <addaction name="action_Open"/>
     <addaction name="separator"/>
     <addaction name="action_Save"/>
-    <addaction name="separator"/>
-    <addaction name="action_Quit"/>
+    <addaction name="actionSave_as_New"/>
    </widget>
    <widget class="QMenu" name="menuHi">
     <property name="title">
@@ -1402,6 +1401,14 @@ selection-background-color: rgb(192, 0, 192);</string>
    </property>
    <property name="shortcut">
     <string>F6</string>
+   </property>
+  </action>
+  <action name="actionSave_as_New">
+   <property name="text">
+    <string>Save as New</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
    </property>
   </action>
  </widget>

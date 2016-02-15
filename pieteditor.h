@@ -25,8 +25,8 @@ public slots :
     void setIconImage (const QImage &newImage);
     void setPenColor(const QColor &newColor);
     void undo();
-    void openImage(const QString& filePath);
-    void saveImage(const QString& filePath);
+    void openImage(QString FilePath = QString (""));
+    void saveImage(bool asNew);
     void execPiet(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel);
     void exec1Step(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel);
     void execInit();
@@ -45,6 +45,7 @@ private:
     QColor curColor;
     PietCore core;
     QImage image;
+    QString loadedFilePath = QString("");
     QStack<QImage> imageStack; // For Undo
     int zoom;
     bool isExecuting = false;

@@ -19,11 +19,12 @@ void PietTree::MakeStackByMod0(int n,std::vector<PietTree> & pts){
 QString PietTree::showStack() const {
     //return QString("%1 ( ").arg(val) + QString(val) + QString(" )");
     if( isleaf )return QString::number(val);
-    QString res("[ ");
-    for(auto& n : nodes ){
-        res += n.showStack() + ( QString(" , "));
+    QString res("[");
+    REP(i,nodes.size()){
+        res += nodes[i].showStack() ;
+        if(i != nodes.size()-1)res +=  QString(",");
     }
-    res += QString(" ]");
+    res += QString("]");
     return res;
 }
 
