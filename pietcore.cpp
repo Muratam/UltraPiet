@@ -12,9 +12,9 @@ const QRgb PietCore::normalColors[3][7] =  {
     { qRgb(192,  0,  0),qRgb(192,192,  0),qRgb(  0,192,  0),qRgb(  0,192,192),qRgb(  0,  0,192),qRgb(192,  0,192),qRgb(255,255,255)}
 };
 const QString PietCore::normalOrders[3][7] = {
-    {QString("*"),   QString("add"),QString("div"),QString("great"), QString("dup"),  QString("in(c)") ,QString("")},
-    {QString("push"),QString("sub"),QString("mod"),QString("point"), QString("roll"), QString("out(n)"),QString("")},
-    {QString("pop"), QString("mul"),QString("not"),QString("switch"),QString("in(n)"),QString("out(c)"),QString("")}
+    {QString("*"),   QString("add\nappend") ,QString("div\nmatch"),QString("greater\nfile")  , QString("dup")      , QString("in(c)")       ,QString("")},
+    {QString("push"),QString("sub\nsplit")  ,QString("mod\nzip")  ,QString("point\nhead")    , QString("roll\ndll"), QString("out(n)\nsize"),QString("")},
+    {QString("pop"), QString("mul\nproduct"),QString("not")       ,QString("switch\nflatten"), QString("in(n)")    , QString("out(c)")      ,QString("")}
 };
 const EOrder PietCore::normalEOrders[3][7] = {
     {EOrder::Same,EOrder::Add,EOrder::Div,EOrder::Great,EOrder::Dup,EOrder::InC,EOrder::Exception},
@@ -215,11 +215,18 @@ void PietCore::execOneAction(){
         PROCESARITHMETICORDER(v2.product(v1));
         break;
     case EOrder::Div:
-        //if(stack.size()>= 2 && STACK_TOP == 0) {break;} // Div 0
+        if(stack.size()< 2) break;
+        if(STACK_TOP .isLeaf() && STACK_TOP.Val() == 0){
+            break;
+        } // Div 0 => Read Module
         PROCESARITHMETICORDER(v2.match (v1));
         break;
     case EOrder::Mod:
-        //if(stack.size()>= 2 && STACK_TOP == 0) {break;} // Mod 0
+        if(stack.size() < 2) break;
+        if(STACK_TOP .isLeaf() && STACK_TOP.Val() == 0){
+
+            break;
+        } // Mod 0 => MakeStack
         PROCESARITHMETICORDER(v2.zip (v1));
         break;
     case EOrder::Not:
@@ -228,27 +235,34 @@ void PietCore::execOneAction(){
              currentOrder = QString("Not");
         }
         break;
-    case EOrder::Great: //未実装になる //v1 < v2 ? 0 : 1
-        //PROCESARITHMETICORDER(v1 < v2 ? 0 : 1);
+    case EOrder::Great: //v1 < v2 ? 0 : 1
+        PROCESARITHMETICORDER(v2.loadFile(v1));
         break;
-    case EOrder::Point:// 時計回り
-        /* //未実装になる
-        if(stack.size() > 0 ){ //-1 % 4 => -1
-             dp = (EDirectionPointer)((int)dp + (STACK_TOP % 4));
-             stack.pop_back();
-             while (dp >= 4) { dp =(EDirectionPointer)((int)dp - 4); }
-             currentOrder = QString("Point");
-        }*/
+    case EOrder::Point:
+        if(stack.size() > 0 ){
+            if(! STACK_TOP.isLeaf()){
+                stack.push_back(STACK_TOP.popHead());
+                currentOrder = QString("head");
+            }else{// 時計回り -1 % 4 => -1
+                dp = (EDirectionPointer)((int)dp + (STACK_TOP.Val() % 4));
+                stack.pop_back();
+                while (dp >= 4) { dp =(EDirectionPointer)((int)dp - 4); }
+                currentOrder = QString("Point");
+            }
+        }
         break;
     case EOrder::Switch:
-        /* //未実装になる
         if(stack.size() > 0 ){ //-1 % 4 => -1
-             switch(STACK_TOP % 2){
-                case -1:case 1: cc = (cc == ccR ? ccL : ccR);
-             }
-             stack.pop_back();
-             currentOrder = QString("Switch");
-        } */
+            if(! STACK_TOP.isLeaf()){
+                STACK_TOP.flatten();
+                currentOrder = QString("flatten");
+            }else{
+                if(STACK_TOP.Val() % 2 != 0)
+                    cc = (cc == ccR ? ccL : ccR);
+                stack.pop_back();
+                currentOrder = QString("Switch");
+            }
+        }
         break;
     case EOrder::Dup:
         if(stack.size() > 0 ){
@@ -256,12 +270,16 @@ void PietCore::execOneAction(){
              currentOrder = QString("Duplicate");
         }
         break;
-    case EOrder::Roll: /*未実装になる
+    case EOrder::Roll:
         if(stack.size() > 2){
+            if(!stack[stack.size()-1].isLeaf() || !stack[stack.size()-2].isLeaf()){
+                //未実装ーーーーーー
+                break;
+            }
             // [2,3,4,3,2,1] => 2,3とPopして,深さ3まで2回転 : [4,3,2,1] => [3,2,4,1] => [2,4,3,1]
             //PidetのRollはO(depth*roll)だった
-            int roll = stack[stack.size()-1];
-            int depth = stack[stack.size()-2];
+            int roll = stack[stack.size()-1].Val();
+            int depth = stack[stack.size()-2].Val();
             int forCurrentOrderRoll = roll;
             if(depth < 0) break;//負Rollは無視
             if(stack.size() - 2 < depth) break;//depthの方が大きい場合も無視
@@ -269,28 +287,37 @@ void PietCore::execOneAction(){
             stack.pop_back();
             if(stack.size()==0) break;
             roll = roll % depth ;      // Pidetはここ微妙に何故か違った
-            vector<int> copy;
+            vector<PietTree> copy;
             REP(i,depth) copy.push_back( stack[stack.size() - depth + i ]);
             REP(i,depth) stack[stack.size() - depth + i] =
                             i - roll < 0 ? copy[i - roll + depth ] : copy[i - roll] ;
             currentOrder = QString("Roll d %1,r %2").arg(depth).arg(forCurrentOrderRoll);
-        }*/
+        }
         break;
     case EOrder::InN:break; // 未実装Pidetでは12,13,14のようにセパレータを出来ないので、/[0-9]+/を取る
     case EOrder::InC:break; // 未実装(一文字(QChar)を処理)
-    case EOrder::OutN: /* 一旦未実装に
+    case EOrder::OutN: //size
         if(stack.size() > 0){
-            doOutput( QString("%1").arg(STACK_TOP));
-            currentOrder = QString("Out %1").arg(STACK_TOP);
-            stack.pop_back();
-        }*/
+            if(! STACK_TOP.isLeaf()){
+                PietTree top = STACK_TOP;
+                int size = top.Nodes().size();
+                stack.pop_back();
+                for(auto t : top.Nodes()) stack.push_back(t);
+                stack.push_back(PietTree(size));
+            }else{
+                doOutput( QString("%1").arg(STACK_TOP.Val()));
+                currentOrder = QString("Out %1").arg(STACK_TOP.Val());
+                stack.pop_back();
+            }
+        }
         break;
-    case EOrder::OutC: /*一旦未実装に
+    case EOrder::OutC:
         if(stack.size() > 0){
-            doOutput( QString(STACK_TOP));
-            currentOrder = QString("Out ")+ QString (STACK_TOP);
+            QString str = STACK_TOP.toString();
+            doOutput( str );
+            currentOrder = QString("Out(C) ") + (STACK_TOP.isLeaf() ? str : QString(""));
             stack.pop_back();
-        } */
+        }
         break;
     case EOrder::White:{
             QPoint searchpos = nextpos;

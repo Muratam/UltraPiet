@@ -106,6 +106,11 @@ void PietTree::append(const PietTree& pt){ //@Add
 
 //未実装
 void PietTree::split(const PietTree & pt){ //@Sub
+    if(isleaf){
+        if(pt.isLeaf()){
+            val -= pt.Val(); return;
+        }
+    }
 }
 
 //@Mul          : OK
@@ -141,7 +146,11 @@ void PietTree::product(const PietTree & pt){
 
 //未実装
 void PietTree::match(const PietTree &pt){
-
+    if(isleaf){
+        if(pt.isLeaf()){
+            val /= pt.Val(); return;
+        }
+    }
 }
 
 //@Mod          : OK
@@ -172,4 +181,14 @@ void PietTree::zip(const PietTree &pt){
         newNodes.push_back( PietTree(New));
     }
     nodes = newNodes;
+}
+
+//未実装 @Greater
+void PietTree::loadFile(const PietTree &pt){
+    if(isleaf){
+        if(pt.isLeaf()){
+            val = val < pt.Val() ? 0 : 1 ; return;
+        }
+    }
+     return;
 }

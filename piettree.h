@@ -38,8 +38,8 @@ public :
     void product(const PietTree & pt);//@Mul : OK
     void match(const PietTree & pt);  //@Div  : ?? 未実装
     void zip(const PietTree &pt);     //@Mod : OK
-    //Greater (ReadFile) //未実装
-    //Roll (ImportDll)   //未実装
+    void loadFile(const PietTree &pt); //@Greater : 未実装
+    //void loadDll(4 args); //@Roll : 未実装
     //Div 0 //未実装
 
 };
