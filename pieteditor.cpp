@@ -137,6 +137,7 @@ void PietEditor::openImage(const QString& FilePath){
 //画面無視で速度的なあれ
 void PietEditor::execPiet(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel){
     if(!isExecuting) execInit();
+    //core.Input = inputWindow->toPlainText();
     core.exec();
     outputWindow->setPlainText(core.Output);
     stackWindow->setPlainText(core.printStack());
@@ -151,6 +152,7 @@ void PietEditor::execInit(){
 
 void PietEditor::exec1Step (QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel){
     if(!isExecuting) execInit();
+    //core.Input = inputWindow->toPlainText();
     QPoint prepos = core.getPos();
     core.execOneAction();
     update(pixelRect(prepos.x(),prepos.y()));

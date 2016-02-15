@@ -353,18 +353,3 @@ int PietCore::getInputNumber()throw (bool){
     Input.remove(0,Match.length());
     return m;
 }
-/*
-string[] tmp = inputStr.Split((string[])null, System.StringSplitOptions.RemoveEmptyEntries);
-if (tmp.Length == 0){
-    paused = true;
-    inputRequired = true;
-    break;
-}
-int innum;
-if(int.TryParse(tmp[0], out innum)){
-    stack.Add(innum);
-    inputStr = inputStr.Remove(0, inputStr.IndexOf(tmp[0]) + tmp[0].Length);
-}
-
-
-*/

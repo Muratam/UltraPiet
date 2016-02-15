@@ -1,6 +1,6 @@
 # Todo
 京都バスの予約,Droneの予約,Blender持ってくる
-①普通の Piet(In(N),In(C),Roll) の完成
+①普通の Pietの(In(N),In(C)) の完成
 IDE無し(コマンドライン・例えばサーバーでの実行用)の実行の対応
 
 ## UltraPiet

@@ -31,6 +31,7 @@ class PietCore {
 private :
     std::vector<std::vector<int>> coded;
     std::vector<std::vector<Point8>> pos8;
+    bool isCommandLineMode = false;//未実装
     int w,h;
     int step=0;
     int processWallCount=0 ;
@@ -45,6 +46,8 @@ private :
     EOrder fromRelativeColor(int codedFrom,int codedTo);
     void processWall();
     void doOutput(const QString & outstr);
+    QChar getInputQChar() throw (bool);
+    int getInputNumber() throw (bool);
 public :
     static const QRgb normalColors[3][7] ;
     static const QString normalOrders[3][7];
