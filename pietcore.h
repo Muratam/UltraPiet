@@ -6,6 +6,7 @@
 #include <vector>
 #include <stack>
 #include "defines.h"
+#include "piettree.h"
 //UltraPietの実際の命令処理をするクラス (なのでGUIには依存しません)
 
 enum EDirectionPointer{dpR=0,dpD=1,dpL=2,dpU=3};
@@ -27,6 +28,7 @@ struct Point8{
 };
 const QPoint Wall = {-1,-1};
 
+
 class PietCore {
 private :
     std::vector<std::vector<int>> coded;
@@ -40,7 +42,7 @@ private :
     QPoint pos ;
     EDirectionPointer dp;
     ECodelChooser cc;
-    std::vector<int> stack ;
+    std::vector<PietTree> stack ;
     bool isInImage(const QPoint & p){return p.x() >= 0 && p.y() >= 0 && p.x() < w && p.y() < h;}
     void search(QPoint me);
     EOrder fromRelativeColor(int codedFrom,int codedTo);

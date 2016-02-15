@@ -17,13 +17,15 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     widgettest.cpp \
     pieteditor.cpp \
-    pietcore.cpp
+    pietcore.cpp \
+    piettree.cpp
 
 HEADERS  += mainwindow.h \
     widgettest.h \
     pietcore.h \
     defines.h \
-    pieteditor.h
+    pieteditor.h \
+    piettree.h
 
 FORMS    += mainwindow.ui \
     widgettest.ui

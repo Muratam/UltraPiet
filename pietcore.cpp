@@ -22,9 +22,8 @@ const EOrder PietCore::normalEOrders[3][7] = {
     {EOrder::Pop,EOrder::Mul,EOrder::Not,EOrder::Switch,EOrder::InN,EOrder::OutC,EOrder::Exception},
 };
 
-
 PietCore::PietCore() {
-    stack = vector<int>();
+    stack = vector<PietTree>();
     coded = vector<vector<int>>();
     pos8 = vector<vector<Point8>>();
     init();
@@ -187,18 +186,19 @@ void PietCore::execOneAction(){
     #define STACK_TOP stack[stack.size()-1]
     #define PROCESARITHMETICORDER(OPERATE) \
         if(stack.size() >= 2){ \
-            int v1 = STACK_TOP; \
+            auto v1 = STACK_TOP; \
             stack.pop_back(); \
-            int v2 = STACK_TOP; \
+            auto v2 = STACK_TOP; \
             stack.pop_back(); \
-            stack.push_back(OPERATE); \
+            OPERATE;\
+            stack.push_back(v2); \
             currentOrder = QString(#OPERATE);\
         } \
 
     switch(order){
     case EOrder::Same: break; // 普通はないはず
     case EOrder::Push:
-        stack.push_back(p8.BlockSize);
+        stack.push_back(PietTree(p8.BlockSize));
         currentOrder = QString("Push %1").arg(p8.BlockSize);
         break;
     case EOrder::Pop:
@@ -206,47 +206,49 @@ void PietCore::execOneAction(){
         currentOrder = QString("Pop");
         break;
     case EOrder::Add:
-        PROCESARITHMETICORDER(v2 + v1);
+        PROCESARITHMETICORDER(v2.append(v1));
         break;
     case EOrder::Sub:
-        PROCESARITHMETICORDER(v2 - v1);
+        PROCESARITHMETICORDER(v2.split (v1));
         break;
     case EOrder::Mul:
-        PROCESARITHMETICORDER(v2 * v1);
+        PROCESARITHMETICORDER(v2.product(v1));
         break;
     case EOrder::Div:
-        if(stack.size()>= 2 && STACK_TOP == 0) {break;} // Div 0
-        PROCESARITHMETICORDER(v2 / v1);
+        //if(stack.size()>= 2 && STACK_TOP == 0) {break;} // Div 0
+        PROCESARITHMETICORDER(v2.match (v1));
         break;
     case EOrder::Mod:
-        if(stack.size()>= 2 && STACK_TOP == 0) {break;} // Mod 0
-        PROCESARITHMETICORDER(v2 % v1);
+        //if(stack.size()>= 2 && STACK_TOP == 0) {break;} // Mod 0
+        PROCESARITHMETICORDER(v2.zip (v1));
         break;
     case EOrder::Not:
         if(stack.size() > 0 ){
-             STACK_TOP = STACK_TOP == 0 ? 1 : 0;
+             STACK_TOP = PietTree( STACK_TOP .Not()) ;
              currentOrder = QString("Not");
         }
         break;
-    case EOrder::Great:
-        PROCESARITHMETICORDER(v1 < v2 ? 0 : 1);
+    case EOrder::Great: //未実装になる //v1 < v2 ? 0 : 1
+        //PROCESARITHMETICORDER(v1 < v2 ? 0 : 1);
         break;
     case EOrder::Point:// 時計回り
+        /* //未実装になる
         if(stack.size() > 0 ){ //-1 % 4 => -1
              dp = (EDirectionPointer)((int)dp + (STACK_TOP % 4));
              stack.pop_back();
              while (dp >= 4) { dp =(EDirectionPointer)((int)dp - 4); }
              currentOrder = QString("Point");
-        }
+        }*/
         break;
     case EOrder::Switch:
+        /* //未実装になる
         if(stack.size() > 0 ){ //-1 % 4 => -1
              switch(STACK_TOP % 2){
                 case -1:case 1: cc = (cc == ccR ? ccL : ccR);
              }
              stack.pop_back();
              currentOrder = QString("Switch");
-        }
+        } */
         break;
     case EOrder::Dup:
         if(stack.size() > 0 ){
@@ -254,7 +256,7 @@ void PietCore::execOneAction(){
              currentOrder = QString("Duplicate");
         }
         break;
-    case EOrder::Roll:
+    case EOrder::Roll: /*未実装になる
         if(stack.size() > 2){
             // [2,3,4,3,2,1] => 2,3とPopして,深さ3まで2回転 : [4,3,2,1] => [3,2,4,1] => [2,4,3,1]
             //PidetのRollはO(depth*roll)だった
@@ -272,23 +274,23 @@ void PietCore::execOneAction(){
             REP(i,depth) stack[stack.size() - depth + i] =
                             i - roll < 0 ? copy[i - roll + depth ] : copy[i - roll] ;
             currentOrder = QString("Roll d %1,r %2").arg(depth).arg(forCurrentOrderRoll);
-        }
+        }*/
         break;
     case EOrder::InN:break; // 未実装Pidetでは12,13,14のようにセパレータを出来ないので、/[0-9]+/を取る
     case EOrder::InC:break; // 未実装(一文字(QChar)を処理)
-    case EOrder::OutN:
+    case EOrder::OutN: /* 一旦未実装に
         if(stack.size() > 0){
             doOutput( QString("%1").arg(STACK_TOP));
             currentOrder = QString("Out %1").arg(STACK_TOP);
             stack.pop_back();
-        }
+        }*/
         break;
-    case EOrder::OutC:
+    case EOrder::OutC: /*一旦未実装に
         if(stack.size() > 0){
             doOutput( QString(STACK_TOP));
             currentOrder = QString("Out ")+ QString (STACK_TOP);
             stack.pop_back();
-        }
+        } */
         break;
     case EOrder::White:{
             QPoint searchpos = nextpos;
@@ -317,7 +319,8 @@ void PietCore::exec(){
 QString PietCore::printStack(){
     auto res = QString ("");
     for(auto& s : stack){
-        res += QString("%1 (").arg(s) + QString(s) + QString(")\n");
+        //res += QString("%1 (").arg(s) + QString(s) + QString(")\n");
+        res += s.showStack() +QString("\n");
     }
     return res;
 }
@@ -353,18 +356,3 @@ int PietCore::getInputNumber()throw (bool){
     Input.remove(0,Match.length());
     return m;
 }
-/*
-string[] tmp = inputStr.Split((string[])null, System.StringSplitOptions.RemoveEmptyEntries);
-if (tmp.Length == 0){
-    paused = true;
-    inputRequired = true;
-    break;
-}
-int innum;
-if(int.TryParse(tmp[0], out innum)){
-    stack.Add(innum);
-    inputStr = inputStr.Remove(0, inputStr.IndexOf(tmp[0]) + tmp[0].Length);
-}
-
-
-*/
