@@ -193,7 +193,7 @@ void PietCore::execOneAction(){
             OPERATE;\
             stack.push_back(v2); \
             currentOrder = QString(#OPERATE);\
-        } \
+        }else{currentOrder = QString("Miss");} \
 
     switch(order){
     case EOrder::Same: break; // 普通はないはず
@@ -215,16 +215,20 @@ void PietCore::execOneAction(){
         PROCESARITHMETICORDER(v2.product(v1));
         break;
     case EOrder::Div:
-        if(stack.size()< 2) break;
+        if(stack.size()< 2){ currentOrder = QString("Miss");break;}
         if(STACK_TOP .isLeaf() && STACK_TOP.Val() == 0){
             break;
         } // Div 0 => Read Module
         PROCESARITHMETICORDER(v2.match (v1));
         break;
     case EOrder::Mod:
-        if(stack.size() < 2) break;
+        if(stack.size() < 2){currentOrder = QString("Miss"); break;}
         if(STACK_TOP .isLeaf() && STACK_TOP.Val() == 0){
-
+            stack.pop_back();
+            int n = (STACK_TOP.isLeaf() ? STACK_TOP.Val(): INT_MAX - 1 );
+            stack.pop_back();
+            PietTree::MakeStackByMod0(n,stack);
+            currentOrder = QString("ToStack");
             break;
         } // Mod 0 => MakeStack
         PROCESARITHMETICORDER(v2.zip (v1));
@@ -233,7 +237,7 @@ void PietCore::execOneAction(){
         if(stack.size() > 0 ){
              STACK_TOP = PietTree( STACK_TOP .Not()) ;
              currentOrder = QString("Not");
-        }
+        }else{currentOrder = QString("Miss");}
         break;
     case EOrder::Great: //v1 < v2 ? 0 : 1
         PROCESARITHMETICORDER(v2.loadFile(v1));
@@ -249,7 +253,7 @@ void PietCore::execOneAction(){
                 while (dp >= 4) { dp =(EDirectionPointer)((int)dp - 4); }
                 currentOrder = QString("Point");
             }
-        }
+        }else {currentOrder = QString("Miss");}
         break;
     case EOrder::Switch:
         if(stack.size() > 0 ){ //-1 % 4 => -1
@@ -262,13 +266,13 @@ void PietCore::execOneAction(){
                 stack.pop_back();
                 currentOrder = QString("Switch");
             }
-        }
+        }else {currentOrder = QString("Miss");}
         break;
     case EOrder::Dup:
         if(stack.size() > 0 ){
              stack.push_back( STACK_TOP);
              currentOrder = QString("Duplicate");
-        }
+        }else {currentOrder = QString("Miss");}
         break;
     case EOrder::Roll:
         if(stack.size() > 2){
@@ -292,7 +296,7 @@ void PietCore::execOneAction(){
             REP(i,depth) stack[stack.size() - depth + i] =
                             i - roll < 0 ? copy[i - roll + depth ] : copy[i - roll] ;
             currentOrder = QString("Roll d %1,r %2").arg(depth).arg(forCurrentOrderRoll);
-        }
+        }else{currentOrder = QString("Miss");}
         break;
     case EOrder::InN:break; // 未実装Pidetでは12,13,14のようにセパレータを出来ないので、/[0-9]+/を取る
     case EOrder::InC:break; // 未実装(一文字(QChar)を処理)
@@ -309,7 +313,7 @@ void PietCore::execOneAction(){
                 currentOrder = QString("Out %1").arg(STACK_TOP.Val());
                 stack.pop_back();
             }
-        }
+        }else{currentOrder = QString("Miss");}
         break;
     case EOrder::OutC:
         if(stack.size() > 0){
@@ -317,7 +321,7 @@ void PietCore::execOneAction(){
             doOutput( str );
             currentOrder = QString("Out(C) ") + (STACK_TOP.isLeaf() ? str : QString(""));
             stack.pop_back();
-        }
+        }else{currentOrder = QString("Miss");}
         break;
     case EOrder::White:{
             QPoint searchpos = nextpos;

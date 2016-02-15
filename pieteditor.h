@@ -26,6 +26,7 @@ public slots :
     void setPenColor(const QColor &newColor);
     void undo();
     void openImage(const QString& filePath);
+    void saveImage(const QString& filePath);
     void execPiet(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel);
     void exec1Step(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel);
     void execInit();

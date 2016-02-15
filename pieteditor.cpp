@@ -134,6 +134,11 @@ void PietEditor::openImage(const QString& FilePath){
     updateGeometry();
 }
 
+void PietEditor::saveImage(const QString& filePath){
+    if(filePath.isEmpty())return;
+    if(!image.save(filePath)){MSGBOX("Cannot Save...");}
+}
+
 //画面無視で速度的なあれ
 void PietEditor::execPiet(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel){
     if(!isExecuting) execInit();

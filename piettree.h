@@ -22,7 +22,7 @@ public :
 
     PietTree(int val){ this->val = val; isleaf = true; }
     PietTree(std::vector<PietTree> nodes){ this->nodes = nodes; isleaf = false;}
-    static PietTree MakeStackByMod0(int n,std::vector<PietTree> & pts);
+    static void MakeStackByMod0(int n,std::vector<PietTree> & pts);
 
     //Push InC,InNは定義されない
     //Popはそのまま捨てればよい

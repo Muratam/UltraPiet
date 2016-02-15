@@ -1,8 +1,8 @@
 #include "piettree.h"
 
-PietTree PietTree::MakeStackByMod0(int n,std::vector<PietTree> & pts){
+void PietTree::MakeStackByMod0(int n,std::vector<PietTree> & pts){
     //nは既にPopされているとして
-    if(n <= 0) return PietTree(std::vector<PietTree>()); //EmptyTree
+    if(n <= 0) return ;
     int size = pts.size();
     int min = n < size ? n : size ;
     std::vector<PietTree> NewNode;

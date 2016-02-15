@@ -15,6 +15,7 @@ private:
     Ui::MainWindow *ui;
 public slots:
     void openImage();
+    void saveImage();
     void setEditColor(const QColor &color);
 };
 

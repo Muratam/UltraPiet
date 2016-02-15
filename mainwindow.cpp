@@ -31,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionZoom_Out,SIGNAL(triggered(bool)),ui->pietEditor,SLOT(decrementZoomFactor()));
     connect(ui->actionUndo,SIGNAL(triggered(bool)),ui->pietEditor,SLOT(undo()));
     connect(ui->action_Open,SIGNAL(triggered(bool)),this,SLOT(openImage()));
+    connect(ui->action_Save,SIGNAL(triggered(bool)),this,SLOT(saveImage()));
     connect(ui->actionExec_1_Step,QAction::triggered,[=](){
         ui->pietEditor->exec1Step(ui->outputTextEdit,ui->inputTextEdit,ui->stackTextEdit,ui->StatusLabel);
     });
@@ -49,9 +50,15 @@ MainWindow::~MainWindow(){
 }
 
 void MainWindow::openImage(){
-    auto fileName = QFileDialog::getOpenFileName(this,tr("Open Image"), "", tr("Image Files (*.png *.jpg *.jpeg )"));
+    auto fileName = QFileDialog::getOpenFileName(this,tr("Open Image"), "", tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
     ui->pietEditor->openImage(fileName);
 }
+
+void MainWindow::saveImage(){
+    auto fileName = QFileDialog::getSaveFileName(this,tr("Save Image"), "", tr("Image Files (*.png *.bmp)"));
+    ui->pietEditor->saveImage(fileName);
+}
+
 void MainWindow::setEditColor(const QColor &c){
     QString strrgb = QString("background-color : rgb(%1,%2,%3);\n").arg(c.red()).arg(c.green()).arg(c.blue());
     QString strrgbfontcolor = QString ("color : rgb(%1,%1,%1);\n").arg(PietCore::getVividGrayScale(c));
