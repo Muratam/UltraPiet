@@ -50,6 +50,7 @@ private :
     void doOutput(const QString & outstr);
     QChar getInputQChar() throw (bool);
     int getInputNumber() throw (bool);
+    void exec(){while (!finished){execOneAction();}} //Not For Editor
 public :
     static const QRgb normalColors[3][7] ;
     static const QString normalOrders[3][7];
@@ -59,6 +60,7 @@ public :
     static QPoint directionFromDP(EDirectionPointer dp ){ return dp == dpR ? QPoint(1,0) :dp == dpD ? QPoint(0,1) : dp == dpL ? QPoint(-1,0) :QPoint(0,-1); }
     static QString arrowFromDP(EDirectionPointer dp ){ return QString(dp == dpR ? "→" :dp == dpD ? "↓" : dp == dpL ? "←" : "↑"); }
 public :
+    bool showStackAsNumber = true;
     PietCore();
     void init();
     void init(const QImage & image){init();setImage(image);}
@@ -66,8 +68,8 @@ public :
     EDirectionPointer getDP() {return dp;}
     ECodelChooser getCC() {return cc;}
     bool getFinished(){return finished;}
+    int getStep(){return step;}
     void execOneAction();
-    void exec();
     void setImage(const QImage & image);
     QString Input = QString("this is a test"); //For Editor
     QString Output = QString(""); //For Editor

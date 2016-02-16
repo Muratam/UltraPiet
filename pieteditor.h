@@ -18,6 +18,7 @@ public:
     QImage iconImage()const{return image;}
     QColor penColor() const {return curColor;}
     QSize sizeHint() const;
+    bool showStackAsNumber() const{return core.showStackAsNumber;}
 public slots :
     void setZoomFactor(int newZoom);
     void incrementZoomFactor(){setZoomFactor(zoom+1);}
@@ -29,7 +30,8 @@ public slots :
     void saveImage(bool asNew);
     void execPiet(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel);
     void exec1Step(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel);
-    void execInit();
+    void execCancel();
+    void ChangeShowStackAsNumber(QPlainTextEdit * stackWindow){core.showStackAsNumber = !core.showStackAsNumber ;stackWindow->setPlainText(core.printStack());}
 signals :
     void changedPenColor(const QColor &color);
 protected :
@@ -38,9 +40,9 @@ protected :
     void paintEvent(QPaintEvent *event);
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
-private:
     void setImagePixel(const QPoint &pos,const QRgb &rgb);
     QRgb getImagePixel(const QPoint &pos);
+    void execInit();
     QRect pixelRect(int i,int j)const;
     QColor curColor;
     PietCore core;

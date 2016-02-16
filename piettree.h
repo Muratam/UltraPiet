@@ -22,19 +22,20 @@ public :
 
     PietTree(int val){ this->val = val; isleaf = true; }
     PietTree(std::vector<PietTree> nodes){ this->nodes = nodes; isleaf = false;}
+    PietTree(const QString &str);
     static void MakeStackByMod0(int n,std::vector<PietTree> & pts);
 
     //Push InC,InNは定義されない
-    //Popはそのまま捨てればよい
-    //@Dup は普通にコピー(ポインタとか参照とか使ってないし)
-    //@Out(N) は Nodes + Nodes.size()だから処理側で頑張れ
-    QString showStack() const ; //@Show : OK
+    //Popはそのまま捨てた
+    //@Dup は普通にコピーした(ポインタとか参照とか使ってないし)
+    //@Out(N) は Nodes + Nodes.size()だから処理側で頑張った
+    QString showStack(bool asNumber) const ; //@Show : OK
     int Not() const;    //@Not  : OK
     void flatten();     //@Switch:×
     PietTree popHead(); //@Point:×
     QString toString(); //@Out(C): OK //副作用:flatten
     void append(const PietTree& pt);  //@Add : OK
-    void split(const PietTree & pt);  //@Sub : ?? 未実装
+    void split(PietTree & pt);  //@Sub : OK
     void product(const PietTree & pt);//@Mul : OK
     void match(const PietTree & pt);  //@Div  : ?? 未実装
     void zip(const PietTree &pt);     //@Mod : OK

@@ -7,22 +7,32 @@ void PietTree::MakeStackByMod0(int n,std::vector<PietTree> & pts){
     int min = n < size ? n : size ;
     std::vector<PietTree> NewNode;
     REP(i,min){
-        NewNode.push_back(pts[size - 1 - i ]);
+        NewNode.push_back(pts[size - min + i ]);
         pts.pop_back();
     }
     pts.push_back(PietTree(NewNode));
 }
 
+PietTree::PietTree(const QString &str){
+    isleaf = false;
+    for(QChar c : str) nodes.push_back(PietTree(c));
+}
+
+
 //@show :OK
 //isleaf:OK
 //isEmptyTree:OK
-QString PietTree::showStack() const {
-    //return QString("%1 ( ").arg(val) + QString(val) + QString(" )");
-    if( isleaf )return QString::number(val);
+QString PietTree::showStack(bool asNumber) const {
+    if( isleaf ) { //ただし、[0 ~ 31(001F)], [127(007F) ~ 160(00A0)] はどちらも数字で表示
+        if(asNumber) return QString::number(val);
+        else if ((0 <= val  && val < 32) || (127 <= val  && val <= 160 ) || (val < 0))
+            return QString("%(") + QString::number(val) + QString(")");
+        else return QString(val);
+    }
     QString res("[");
     REP(i,nodes.size()){
-        res += nodes[i].showStack() ;
-        if(i != nodes.size()-1)res +=  QString(",");
+        res += nodes[i].showStack(asNumber) ;
+        if((i != nodes.size()-1) && asNumber)res +=  QString(",");
     }
     res += QString("]");
     return res;
@@ -105,13 +115,21 @@ void PietTree::append(const PietTree& pt){ //@Add
     for(auto n : an )  nodes.push_back(n);
 }
 
-//未実装
-void PietTree::split(const PietTree & pt){ //@Sub
-    if(isleaf){
-        if(pt.isLeaf()){
-            val -= pt.Val(); return;
-        }
+//@Sub          : OK
+//isLeaf*isleaf : @Sub
+//isLeaf*______ : OK
+//______*isleaf : OK
+//______*______ : OK
+void PietTree::split(PietTree & pt){
+    if(isleaf && pt.isLeaf()){
+        val -= pt.Val(); return;
     }
+    auto base = this->toString();
+    auto rx = QRegExp(this->toString());
+    auto spilited = base.split(rx);
+    isleaf = false;
+    this->nodes.clear();
+    for(auto str : spilited) nodes.push_back(PietTree(str));
 }
 
 //@Mul          : OK
@@ -145,13 +163,25 @@ void PietTree::product(const PietTree & pt){
     nodes = newNodes;
 }
 
-//未実装
+//@Div          : OK
+//isLeaf*isleaf : @Div
+//isLeaf*______ : OK
+//______*isleaf : OK
+//______*______ : OK
 void PietTree::match(const PietTree &pt){
-    if(isleaf){
-        if(pt.isLeaf()){
-            val /= pt.Val(); return;
-        }
+    if(isleaf && pt.isLeaf()){
+        val /= pt.Val(); return;
     }
+    QString base = this->toString();
+    QRegExp rx = QRegExp(this->toString());
+    QStringList matched;
+    for(int pos = 0; pos = rx.indexIn(base, pos) != -1;) {
+        matched << rx.cap(1);
+        pos += rx.matchedLength();
+    }
+    isleaf = false;
+    this->nodes.clear();
+    for(auto str : matched) nodes.push_back(PietTree(str));
 }
 
 //@Mod          : OK

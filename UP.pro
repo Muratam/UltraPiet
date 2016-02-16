@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = UP
+TARGET = ultrapiet
 TEMPLATE = app
 
 QMAKE_CXXFLAGS += -std=c++11

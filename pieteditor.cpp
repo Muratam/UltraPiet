@@ -25,6 +25,7 @@ void PietEditor::setPenColor(const QColor &newColor){
 }
 
 void PietEditor::setIconImage(const QImage &newImage){
+    if(isExecuting) return;
     if(newImage != image){
         image = newImage.convertToFormat(QImage::Format_ARGB32);
         update();
@@ -68,10 +69,12 @@ void PietEditor::paintEvent(QPaintEvent *event){
     }
 }
 void PietEditor::dragEnterEvent(QDragEnterEvent *event){
+    if(isExecuting) return;
     if(event->mimeData()->hasFormat("text/uri-list")) event->acceptProposedAction();
 }
 
 void PietEditor::dropEvent(QDropEvent *event){
+    if(isExecuting) return;
     if(!event->mimeData()->hasFormat("text/uri-list"))return;
     openImage(event->mimeData()->urls().first().toLocalFile() );
 }
@@ -83,6 +86,7 @@ QRect PietEditor::pixelRect(int i, int j) const{
 }
 
 void PietEditor::undo(){
+    if(isExecuting) return;
     if(imageStack.count()<= 0) return;
     image = imageStack.top();
     imageStack.pop_back();
@@ -91,6 +95,7 @@ void PietEditor::undo(){
 }
 
 void PietEditor::mousePressEvent(QMouseEvent *event){
+    if(isExecuting) return;
     imageStack.push_back(image.copy());
     if(imageStack.count() > 32) imageStack.pop_front();
     if(event->button() == Qt::LeftButton){
@@ -100,6 +105,7 @@ void PietEditor::mousePressEvent(QMouseEvent *event){
     }
 }
 void PietEditor::mouseMoveEvent(QMouseEvent *event){
+    if(isExecuting) return;
     if(event->buttons() & Qt::LeftButton){
         setImagePixel(event->pos(),penColor().rgba());
     }else if(event->buttons() & Qt::RightButton){
@@ -124,6 +130,7 @@ QRgb PietEditor::getImagePixel(const QPoint &pos){
 }
 
 void PietEditor::openImage(QString FilePath ){
+    if(isExecuting) return;
     if(FilePath.isEmpty() || FilePath.isNull())
         FilePath = QFileDialog::getOpenFileName(this,tr("Open Image"), "", tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
     if(FilePath.isEmpty() || FilePath.isNull())return;
@@ -153,17 +160,35 @@ void PietEditor::saveImage(bool asNew){
 void PietEditor::execPiet(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel){
     if(!isExecuting) execInit();
     //core.Input = inputWindow->toPlainText();
-    core.exec();
-    outputWindow->setPlainText(core.Output);
-    stackWindow->setPlainText(core.printStack());
-    statusLabel->setText(core.printStatus());
-    if(core.getFinished())isExecuting = false;
+    while(! core.getFinished() && isExecuting){
+        core.execOneAction();
+        if(core.getStep() % 10000 == 0 ){ //一万回に一回GUIに戻って処理する
+            outputWindow->setPlainText(core.Output);
+            stackWindow->setPlainText(core.printStack());
+            statusLabel->setText(core.printStatus());
+            QApplication::processEvents();
+        }
+    }
+    if(isExecuting){ //Escなどで妨害されず終わった場合
+        outputWindow->setPlainText(core.Output);
+        stackWindow->setPlainText(core.printStack());
+        statusLabel->setText(core.printStatus());
+        isExecuting = false;
+    }
 }
 void PietEditor::execInit(){
     core.init(image);
     isExecuting = true;
     update();
 }
+void PietEditor::execCancel(){
+    if(!isExecuting) return;
+    isExecuting = false;
+    core.init(image);
+    MSGBOX("Debug Canceled");
+    update();
+}
+
 
 void PietEditor::exec1Step (QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel){
     if(!isExecuting) execInit();

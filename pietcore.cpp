@@ -342,16 +342,11 @@ void PietCore::execOneAction(){
     processWallCount = 0;
 }
 
-//未実装(とりあえず10万Stepうちきり)
-void PietCore::exec(){
-    while (!finished && step < 100000){execOneAction();}
-}
-
 QString PietCore::printStack(){
     auto res = QString ("");
     for(auto& s : stack){
         //res += QString("%1 (").arg(s) + QString(s) + QString(")\n");
-        res += s.showStack() +QString("\n");
+        res += s.showStack(showStackAsNumber) +QString("\n");
     }
     return res;
 }
