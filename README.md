@@ -1,5 +1,12 @@
 # 音ゲーもBotもなんでも出来る最強のPiet「UltraPiet」
 
+##遊び方
+1. git clone https://github.com/Muratam/UltraPiet.git
+   (もしくはZipをダウンロード)
+2. ./bin/windows/ultrapiet.exe を実行
+3. 同梱のtestimageフォルダの画像でテスト出来ますよ
+4. 大きな画像も無限ループも無理なく扱えるし、追跡機能も命令履歴機能もあるよ！
+
 ## UltraPietの新機能
 - DLLのインポート
 - 他のPietのコードの呼び出し

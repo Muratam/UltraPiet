@@ -41,6 +41,7 @@ private :
     int processWallCount=0 ;
     bool finished =false;
     std::function<void(QString)>outPutFunction;
+    std::function<QChar(void)>inPutCharFunction;
     QString currentOrder = QString("");
     QString LightcurrentOrder = QString("");
     QPoint pos ;
@@ -51,8 +52,6 @@ private :
     void search(QPoint me);
     EOrder fromRelativeColor(int codedFrom,int codedTo);
     void processWall();
-    QChar getInputQChar() throw (bool);
-    int getInputNumber() throw (bool);
     void exec(){while (!finished){execOneAction();}} //Not For Editor
 public :
     static const QRgb normalColors[3][7] ;
@@ -67,8 +66,8 @@ public :
 public :
     bool showStackAsNumber = true;
     PietCore();
-    void init(std::function<void(QString)>outPutFunction);
-    void init(std::function<void(QString)>outPutFunction,const QImage & image){init(outPutFunction);setImage(image);}
+    void init(std::function<void(QString)>outPutFunction,std::function<QChar(void)>inPutCharFunction);
+    void init(std::function<void(QString)>outPutFunction,std::function<QChar(void)>inPutCharFunction,const QImage & image){init(outPutFunction,inPutCharFunction);setImage(image);}
     QPoint getPos() {return pos;}
     EDirectionPointer getDP() {return dp;}
     ECodelChooser getCC() {return cc;}
@@ -78,7 +77,6 @@ public :
     QString getLightCurrentOrder() {return LightcurrentOrder;}
     void execOneAction();
     void setImage(const QImage & image);
-    QString Input = QString("this is a test"); //For Editor
     QString printStack();
     QString printStatus();
 };

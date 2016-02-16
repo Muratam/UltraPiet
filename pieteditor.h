@@ -31,7 +31,7 @@ public slots :
     void saveImage(bool asNew);
     void execPiet(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel,bool processExentSequential);
     void exec1Step(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel);
-    void execCancel();
+    void execCancel(QPlainTextEdit *inputWindow);
     void ChangeShowStackAsNumber(QPlainTextEdit * stackWindow){core.showStackAsNumber = !core.showStackAsNumber ;stackWindow->setPlainText(core.printStack());}
 signals :
     void changedPenColor(const QColor &color);
@@ -44,7 +44,7 @@ protected :
     void dropEvent(QDropEvent *event);
     void setImagePixel(const QPoint &pos,const QRgb &rgb);
     QRgb getImagePixel(const QPoint &pos);
-    void execInit(std::function<void(QString)>outPutFunction);
+    void execInit(QPlainTextEdit *outputWindow, QPlainTextEdit *inputWindow);
     QRect pixelRect(int i,int j)const;
     QColor curColor;
     PietCore core;
@@ -55,6 +55,9 @@ protected :
     QString loadedFilePath = QString("");
     QStack<QImage> imageStack; // For Undo
     int zoom;
+    QString InitialInput;
+    bool isWaitingInput = false;
+    bool isWaintingInputThenExecCancelSignal = false;
     bool isExecuting = false;
 };
 

@@ -26,9 +26,9 @@ PietCore::PietCore() {
     stack = vector<PietTree>();
     coded = vector<vector<int>>();
     pos8 = vector<vector<Point8>>();
-    init([](QString qs){});
+    init([](QString qs){},[](){return QChar(72);});
 }
-void PietCore::init(function<void(QString)> outPutFunction){
+void PietCore::init(function<void(QString)> outPutFunction,function<QChar(void)>inPutCharFunction){
     dp=dpR;cc = ccL;processWallCount= step = w = h = 0;
     pos = QPoint(0,0);
     finished = false;
@@ -36,6 +36,7 @@ void PietCore::init(function<void(QString)> outPutFunction){
     stack.clear();
     coded.clear();pos8.clear();
     this->outPutFunction = outPutFunction;
+    this->inPutCharFunction = inPutCharFunction;
 }
 
 namespace std{
@@ -296,8 +297,7 @@ void PietCore::execOneAction(){
                 //未実装ーーーーーー
                 break;
             }
-            // [2,3,4,3,2,1] => 2,3とPopして,深さ3まで2回転 : [4,3,2,1] => [3,2,4,1] => [2,4,3,1]
-            //PidetのRollはO(depth*roll)だった
+            // [2,3,4,3,2,1] => 2,3とPopして,深さ3まで2回転 : [4,3,2,1] => [3,2,4,1] => [2,4,3,1]//PidetのRollはO(depth*roll)だった
             int roll = stack[stack.size()-1].Val();
             int depth = stack[stack.size()-2].Val();
             int forCurrentOrderRoll = roll;
@@ -316,7 +316,12 @@ void PietCore::execOneAction(){
         }else{SET_CURRENT_ORDER_LESS_ARGS}
         break;
     case EOrder::InN:break; // 未実装Pidetでは12,13,14のようにセパレータを出来ないので、/[0-9]+/を取る
-    case EOrder::InC:break; // 未実装(一文字(QChar)を処理)
+    case EOrder::InC:{
+        QChar gotChar = inPutCharFunction();
+        stack.push_back(PietTree(gotChar));
+        currentOrder = QString("In ") + QString(gotChar);
+        LightcurrentOrder =  QString(gotChar);
+        } break;
     case EOrder::OutN: //size
         if(stack.size() > 0){
             if(! STACK_TOP.isLeaf()){
@@ -337,7 +342,7 @@ void PietCore::execOneAction(){
         if(stack.size() > 0){
             QString str = STACK_TOP.toString();
             outPutFunction(str);
-            currentOrder = QString("Out(C) ") + (STACK_TOP.isLeaf() ? str : QString(""));
+            currentOrder = QString("Out ") + (STACK_TOP.isLeaf() ? str : QString("(C)"));
             LightcurrentOrder = (STACK_TOP.isLeaf() ? str : QString("OC"));
             stack.pop_back();
         }else{SET_CURRENT_ORDER_LESS_ARGS}
@@ -383,8 +388,8 @@ QString PietCore::printStatus(){
     //res += QString("CS:1\n");//codelsize
     return res;
 }
-
-QChar PietCore::getInputQChar() throw (bool){
+/*
+QChar PietCore::getInputQChar(){
     if(Input.isEmpty() || Input.isNull()) throw false;
     QChar res = Input.at(0);
     Input.remove(0,1);
@@ -399,3 +404,4 @@ int PietCore::getInputNumber()throw (bool){
     Input.remove(0,Match.length());
     return m;
 }
+*/

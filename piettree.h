@@ -21,6 +21,7 @@ public :
     } //std::vector<PietTree> cp;std::copy(nodes.begin(), nodes.end(), back_inserter(cp) );
 
     PietTree(int val){ this->val = val; isleaf = true; }
+    PietTree(QChar val){ this->val = val.unicode();isleaf = true; }
     PietTree(std::vector<PietTree> nodes){ this->nodes = nodes; isleaf = false;}
     PietTree(const QString &str);
     static void MakeStackByMod0(int n,std::vector<PietTree> & pts);

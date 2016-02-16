@@ -190,22 +190,41 @@ void PietEditor::saveImage(bool asNew){
     QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
-void PietEditor::execInit(std::function<void(QString)> outPutFunction){
-    core.init(outPutFunction,image);
+void PietEditor::execInit(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow){
+    core.init(
+        [outputWindow,this](QString outstr){
+            outputWindow->moveCursor (QTextCursor::End);
+            outputWindow->insertPlainText (outstr);
+            outputWindow->moveCursor (QTextCursor::End);
+        },[inputWindow,this](){
+            if(inputWindow->toPlainText().isEmpty())MSGBOX("NO INPUT CHARS")
+            while(inputWindow->toPlainText().isEmpty()){
+                this->isWaitingInput = true;
+                QApplication::processEvents();
+                if(isWaintingInputThenExecCancelSignal){
+                    isWaitingInput = false;
+                    return QChar(0);
+                }
+            }
+            QString Input = inputWindow->toPlainText();
+            QChar res = Input.at(0);
+            Input.remove(0,1);
+            inputWindow->setPlainText(Input);
+            isWaitingInput = false;
+            return res;
+        },image);
     ArrowQueue.clear();
     isExecuting = true;
+    InitialInput = inputWindow->toPlainText();
+    isWaintingInputThenExecCancelSignal = isWaitingInput = false;
     update();
 }
 
 void PietEditor::exec1Step (QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel){
     if(!isExecuting){
         outputWindow->setPlainText(QString(""));
-        execInit([outputWindow,this](QString outstr){
-            outputWindow->moveCursor (QTextCursor::End);
-            outputWindow->insertPlainText (outstr);
-            outputWindow->moveCursor (QTextCursor::End);
-        });
-    }
+        execInit(outputWindow,inputWindow);
+    }else if(isWaitingInput)return;
     core.execOneAction();
     ArrowQueue.push_back(QPointAndQString( core.getPos().x(),core.getPos().y(),core.getLightCurrentOrder()));
     while(ArrowQueue.size() > ArrowQueueMaxSize)  ArrowQueue.pop_front();
@@ -216,7 +235,9 @@ void PietEditor::exec1Step (QPlainTextEdit * outputWindow,QPlainTextEdit * input
     if(core.getFinished()){
         isExecuting = false;
         MSGBOX("Debug Finished !!");
+        inputWindow->setPlainText(InitialInput);
     }
+    if(isWaintingInputThenExecCancelSignal) execCancel(inputWindow);
 }
 
 
@@ -224,14 +245,11 @@ void PietEditor::exec1Step (QPlainTextEdit * outputWindow,QPlainTextEdit * input
 void PietEditor::execPiet(QPlainTextEdit * outputWindow, QPlainTextEdit * inputWindow, QPlainTextEdit * stackWindow, QLabel* statusLabel, bool processExentSequential){
     if(!isExecuting){
         outputWindow->setPlainText(QString(""));
-        execInit([outputWindow,this,processExentSequential](QString outstr){
-            outputWindow->moveCursor (QTextCursor::End);
-            outputWindow->insertPlainText (outstr);
-            outputWindow->moveCursor (QTextCursor::End);
-        });
+        execInit(outputWindow,inputWindow);
     }else return; //既に実行中の場合は二重起動しない
     while(! core.getFinished() && isExecuting){
         core.execOneAction();
+        if(isWaintingInputThenExecCancelSignal) break;
         if(processExentSequential || core.getStep() % 1000 == 0 ){//
             stackWindow->setPlainText(core.getCurrentOrder() + QString("\n") + core.printStack());
             statusLabel->setText(core.printStatus());
@@ -249,13 +267,16 @@ void PietEditor::execPiet(QPlainTextEdit * outputWindow, QPlainTextEdit * inputW
         statusLabel->setText(core.printStatus());
         isExecuting = false;
         if(processExentSequential) MSGBOX("Debug Finished !!");
+        inputWindow->setPlainText(InitialInput);
     }
 }
 
-void PietEditor::execCancel(){
+void PietEditor::execCancel( QPlainTextEdit * inputWindow){
     if(!isExecuting) return;
+    if(isWaitingInput){ isWaintingInputThenExecCancelSignal = true; return;}
     isExecuting = false;
-    core.init([](QString s){},image);
+    core.init([](QString s){},[](){return QChar(72);},image);
     MSGBOX("Debug Canceled");
+    inputWindow->setPlainText(InitialInput);
     update();
 }
