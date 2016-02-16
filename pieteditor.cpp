@@ -15,7 +15,7 @@ PietEditor::PietEditor(QWidget *parent) : QWidget (parent){
     core.setImage(image);
 }
 QSize PietEditor::sizeHint()const{
-    auto size = zoom * image.size();
+    auto size = zoom * image.size() + QSize(zoom,zoom);
     if (zoom >= 3) size += QSize(1,1);
     return size;
 }
@@ -51,21 +51,54 @@ void PietEditor::paintEvent(QPaintEvent *event){
         REP(i,image.width()+1)  painter.drawLine(zoom*i,0,zoom*i,zoom*image.height());
         REP(i,image.height()+1) painter.drawLine(0,zoom*i,zoom*image.width(),zoom*i);    
     }
-    painter.setFont(QFont("Arial",zoom / 1.5 ));
-
-    REP(i,image.width()){
-        REP(j,image.height()){
-            auto rect = pixelRect(i,j);
+    QFont monofont =  QFontDatabase::systemFont(QFontDatabase::FixedFont);
+    monofont.setPointSize(zoom / 1.8 );
+    painter.setFont(monofont);
+    REP(x,image.width()){
+        REP(y,image.height()){
+            auto rect = pixelRect(x,y);
             if(!event->region().intersected(rect).isEmpty()){
-                auto color = QColor::fromRgba(image.pixel(i,j));
+                auto color = QColor::fromRgba(image.pixel(x,y));
                 painter.fillRect(rect,color);
+                //painter.setPen(PietCore::getVividColor(color));
+                //painter.drawText(TextRect(x,y) ,"あ");
             }
         }
     }
+    painter.fillRect(zoom * image.width() , 0 ,zoom,zoom * image.height(), palette().background().color());
+    painter.fillRect(0 , zoom * image.height() ,zoom * image.width(),zoom, palette().background().color());
+    //painter.fillRect(zoom * core.getPos().x() , zoom * core.getPos().y() ,zoom ,zoom, QColor(255,255,255));
+    painter.setPen( QPen(palette().foreground(),zoom /2 , Qt::DotLine, Qt::RoundCap));
+    painter.drawPoint(zoom * core.getPos().x() + zoom /2, zoom * image.height() + zoom /2);
+    painter.drawPoint(zoom * image.width()  + zoom /2, zoom * core.getPos().y()+ zoom /2);
+
     if(zoom > 6){
-        painter.setPen(QColor(0,0,0));
-        auto arrow = PietCore::arrowFromDP(core.getDP());
-        painter.drawText(pixelRect(core.getPos().x(),core.getPos().y()),arrow);
+        int zm = this->zoom ;
+        auto PaintText = [this,&painter,zm] (int x,int y,QString str) {
+            const int Margin = 6;
+            QRect TextRect ( zm * x + zm / Margin, zm * y+ zm / Margin ,zm ,zm);
+            auto basecolor = QColor::fromRgba(image.pixel(x,y));
+            painter.setPen(PietCore::getVividColor(basecolor));
+            auto backcolor = QColor::fromRgba(image.pixel(x,y));
+            painter.fillRect( this->pixelRect(x,y),backcolor);
+            painter.drawText(TextRect,str);
+        };
+        QPoint PreAr(-1,-1);
+        QPen linePen(Qt::black,1.0 + zm / 20.0 , Qt::DotLine, Qt::RoundCap);
+        for(auto ar: ArrowQueue) {
+            PaintText(ar.x(),ar.y(),ar.c);
+            if(PreAr.x() != -1 && PreAr.y() != -1){
+                if(abs(PreAr.x()- ar.x()) + abs(PreAr.y() -ar.y()) > 3 ){
+                    QColor lc = PietCore::getVividColor(QColor::fromRgba(image.pixel(PreAr.x(),PreAr.y())));
+                    lc.setAlpha(128);
+                    linePen.setColor(lc);
+                    painter.setPen(linePen);
+                    painter.drawLine(zm * PreAr.x() + zm/2,zm * PreAr.y() + zm/2,zm * ar.x() + zm/2,zm * ar.y() + zm/2);
+                }
+            }
+            PreAr = QPoint(ar.x(),ar.y());
+        }
+        PaintText(core.getPos().x(),core.getPos().y(),PietCore::arrowFromDP(core.getDP()));
     }
 }
 void PietEditor::dragEnterEvent(QDragEnterEvent *event){
@@ -158,6 +191,7 @@ void PietEditor::saveImage(bool asNew){
 
 void PietEditor::execInit(std::function<void(QString)> outPutFunction){
     core.init(outPutFunction,image);
+    ArrowQueue.clear();
     isExecuting = true;
     update();
 }
@@ -171,11 +205,10 @@ void PietEditor::exec1Step (QPlainTextEdit * outputWindow,QPlainTextEdit * input
             outputWindow->moveCursor (QTextCursor::End);
         });
     }
-    QPoint prepos = core.getPos();
     core.execOneAction();
-    //矢印処理
-    update(pixelRect(prepos.x(),prepos.y()));
-    update(pixelRect(core.getPos().x(),core.getPos().y()));
+    ArrowQueue.push_back(QPointAndQString( core.getPos().x(),core.getPos().y(),core.getLightCurrentOrder()));
+    while(ArrowQueue.size() > ArrowQueueMaxSize)  ArrowQueue.pop_front();
+    update();
     stackWindow->setPlainText(core.printStack());
     statusLabel->setText(core.printStatus());
     if(core.getFinished())isExecuting = false;
@@ -197,6 +230,11 @@ void PietEditor::execPiet(QPlainTextEdit * outputWindow, QPlainTextEdit * inputW
         if(processExentSequential || core.getStep() % 1000 == 0 ){//
             stackWindow->setPlainText(core.printStack());
             statusLabel->setText(core.printStatus());
+            if(processExentSequential){
+                ArrowQueue.push_back(QPointAndQString( core.getPos().x(),core.getPos().y(),core.getLightCurrentOrder()));
+                while(ArrowQueue.size() > ArrowQueueMaxSize)  ArrowQueue.pop_front();
+                update();
+            }
             QApplication::processEvents();
         }
     }
@@ -210,6 +248,7 @@ void PietEditor::execPiet(QPlainTextEdit * outputWindow, QPlainTextEdit * inputW
 void PietEditor::execCancel(){
     if(!isExecuting) return;
     isExecuting = false;
+    ArrowQueue.clear();
     core.init([](QString s){},image);
     MSGBOX("Debug Canceled");
     update();

@@ -4,6 +4,7 @@
 #include <QImage>
 #include <QWidget>
 #include <QStack>
+#include <deque>
 #include <functional>
 #include <QPlainTextEdit>
 #include "pietcore.h"
@@ -47,6 +48,9 @@ protected :
     QColor curColor;
     PietCore core;
     QImage image;
+    class QPointAndQString :public QPoint{public :QString c; QPointAndQString(int x,int y,QString cc):QPoint(x,y){c =cc;}};
+    std::deque<QPointAndQString> ArrowQueue;
+    const int ArrowQueueMaxSize = 256;
     QString loadedFilePath = QString("");
     QStack<QImage> imageStack; // For Undo
     int zoom;

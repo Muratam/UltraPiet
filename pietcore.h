@@ -42,6 +42,7 @@ private :
     bool finished =false;
     std::function<void(QString)>outPutFunction;
     QString currentOrder = QString("");
+    QString LightcurrentOrder = QString("");
     QPoint pos ;
     EDirectionPointer dp;
     ECodelChooser cc;
@@ -58,9 +59,9 @@ public :
     static const QString normalOrders[3][7];
     static const EOrder normalEOrders[3][7];
     static bool isNormalColor(QRgb rgb){REP(i,3)REP(j,7)if(rgb == normalColors[i][j])return true;return false;}
-    //static int getVividGrayScale(const QColor & c){ return (128 + qGray(c.red() , c.blue() , c.green())) % 256;}
-    static int DiffMax255(int c) {return c < 128 ? 255 : 0;}
-    static QColor getVividColor(const QColor & c){return QColor(DiffMax255(c.red()),DiffMax255(c.blue()),DiffMax255(c.green()));}
+    static QColor getVividColor(const QColor & c){int g = DiffMax255( qGray(c.red(),c.green(),c.blue()));return QColor(g,g,g); }//int g = qGray(DiffMax255(c.red()) ,DiffMax255(c.blue()) ,DiffMax255( c.green())); return QColor(g,g,g);}
+    static int DiffMax255(int c) {return c < 100 ? 255 : 0;}
+    //static QColor getVividColor(const QColor & c){return QColor(DiffMax255(c.red()),DiffMax255(c.blue()),DiffMax255(c.green()));}
     static QPoint directionFromDP(EDirectionPointer dp ){ return dp == dpR ? QPoint(1,0) :dp == dpD ? QPoint(0,1) : dp == dpL ? QPoint(-1,0) :QPoint(0,-1); }
     static QString arrowFromDP(EDirectionPointer dp ){ return QString(dp == dpR ? "→" :dp == dpD ? "↓" : dp == dpL ? "←" : "↑"); }
 public :
@@ -73,6 +74,7 @@ public :
     ECodelChooser getCC() {return cc;}
     bool getFinished(){return finished;}
     int getStep(){return step;}
+    QString getLightCurrentOrder() {return LightcurrentOrder;}
     void execOneAction();
     void setImage(const QImage & image);
     QString Input = QString("this is a test"); //For Editor
