@@ -1,6 +1,5 @@
 # Todo
 京都バスの予約,Droneの予約,Blender持ってくる
-①普通の Pietの(In(N),In(C)) の完成
 IDE無し(コマンドライン・例えばサーバーでの実行用)の実行の対応
 
 ## UltraPiet
@@ -8,11 +7,11 @@ IDE無し(コマンドライン・例えばサーバーでの実行用)の実行
 Tab,ProjectTree
 フォーク
 Pasxx の対応
-Input
 KeyBoard Editing
+命令表示（全部の色ボタン）
 NonNormalColor(入る時に対応する数字を取る)その他の動作は処理系にまかせよう
 
-
+123	123
 ## Editor
 可視化(BlockSizeを見えるようにしたり,Unicode文字を表示したり)
 キーボードタイピング対応
@@ -42,3 +41,9 @@ Piet# : 概要
       例えばライフゲームやゲームAIのシュミレーションが書けると楽しい
 
 nonamae774 (hogejs)
+
+#include<stdio.h>
+int main (void){
+    printf("hello world");
+    return 0;
+}

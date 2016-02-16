@@ -212,6 +212,26 @@ void PietEditor::execInit(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWi
             inputWindow->setPlainText(Input);
             isWaitingInput = false;
             return res;
+        },[inputWindow,this](bool &Miss){
+            if(inputWindow->toPlainText().isEmpty())MSGBOX("NO INPUT CHARS")
+            while(inputWindow->toPlainText().isEmpty()){
+                this->isWaitingInput = true;
+                QApplication::processEvents();
+                if(isWaintingInputThenExecCancelSignal){
+                    isWaitingInput = false;
+                    Miss = true;
+                    return 0;
+                }
+            }//空ではなければ処理
+            QString Input = inputWindow->toPlainText();
+            QRegExp rx("^\\s*-?\\d+");
+            if(-1 == rx.indexIn(Input)) { Miss = true; return 0;}
+            QString Match = rx.cap();
+            int m = Match.toInt();
+            Input.remove(0,Match.length());
+            inputWindow->setPlainText(Input);
+            isWaitingInput = false;
+            return m;
         },image);
     ArrowQueue.clear();
     isExecuting = true;
@@ -275,7 +295,7 @@ void PietEditor::execCancel( QPlainTextEdit * inputWindow){
     if(!isExecuting) return;
     if(isWaitingInput){ isWaintingInputThenExecCancelSignal = true; return;}
     isExecuting = false;
-    core.init([](QString s){},[](){return QChar(72);},image);
+    core.init([](QString s){},[](){return QChar(72);},[](bool & b){return 0;},image);
     MSGBOX("Debug Canceled");
     inputWindow->setPlainText(InitialInput);
     update();

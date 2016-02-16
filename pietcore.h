@@ -42,6 +42,7 @@ private :
     bool finished =false;
     std::function<void(QString)>outPutFunction;
     std::function<QChar(void)>inPutCharFunction;
+    std::function<int(bool&)>inPutNumFunction;
     QString currentOrder = QString("");
     QString LightcurrentOrder = QString("");
     QPoint pos ;
@@ -66,8 +67,8 @@ public :
 public :
     bool showStackAsNumber = true;
     PietCore();
-    void init(std::function<void(QString)>outPutFunction,std::function<QChar(void)>inPutCharFunction);
-    void init(std::function<void(QString)>outPutFunction,std::function<QChar(void)>inPutCharFunction,const QImage & image){init(outPutFunction,inPutCharFunction);setImage(image);}
+    void init(std::function<void(QString)>outPutFunction,std::function<QChar(void)>inPutCharFunction, std::function<int(bool&)>inPutNumFunction);
+    void init(std::function<void(QString)>outPutFunction,std::function<QChar(void)>inPutCharFunction,std::function<int(bool&)>inPutNumFunction,const QImage & image){init(outPutFunction,inPutCharFunction,inPutNumFunction);setImage(image);}
     QPoint getPos() {return pos;}
     EDirectionPointer getDP() {return dp;}
     ECodelChooser getCC() {return cc;}

@@ -26,9 +26,9 @@ PietCore::PietCore() {
     stack = vector<PietTree>();
     coded = vector<vector<int>>();
     pos8 = vector<vector<Point8>>();
-    init([](QString qs){},[](){return QChar(72);});
+    init([](QString qs){},[](){return QChar(72);},[](bool&b){return 0;});
 }
-void PietCore::init(function<void(QString)> outPutFunction,function<QChar(void)>inPutCharFunction){
+void PietCore::init(function<void(QString)> outPutFunction, function<QChar(void)>inPutCharFunction , function<int(bool &)> inPutNumFunction){
     dp=dpR;cc = ccL;processWallCount= step = w = h = 0;
     pos = QPoint(0,0);
     finished = false;
@@ -37,6 +37,7 @@ void PietCore::init(function<void(QString)> outPutFunction,function<QChar(void)>
     coded.clear();pos8.clear();
     this->outPutFunction = outPutFunction;
     this->inPutCharFunction = inPutCharFunction;
+    this->inPutNumFunction = inPutNumFunction;
 }
 
 namespace std{
@@ -315,7 +316,17 @@ void PietCore::execOneAction(){
             LightcurrentOrder = QString("Rl");
         }else{SET_CURRENT_ORDER_LESS_ARGS}
         break;
-    case EOrder::InN:break; // 未実装Pidetでは12,13,14のようにセパレータを出来ないので、/[0-9]+/を取る
+    case EOrder::InN:{
+        bool Missed = false;
+        int gotNum = inPutNumFunction(Missed);
+        if(Missed){
+            currentOrder = QString("In(Num) Miss !");
+            LightcurrentOrder = QString ("！");
+        }else{
+        stack.push_back(PietTree(gotNum));
+        currentOrder = QString("In ") + QString::number(gotNum);
+        LightcurrentOrder =(-10 < gotNum && gotNum <100)?  QString::number(gotNum):QString(gotNum);
+        }}break;
     case EOrder::InC:{
         QChar gotChar = inPutCharFunction();
         stack.push_back(PietTree(gotChar));
@@ -380,7 +391,6 @@ QString PietCore::printStatus(){
     QString res("");
     res += QString("w:%1 * h:%2\n").arg(w).arg(h);
     res += QString("x:%1 , y:%2\n").arg(pos.x()).arg(pos.y());
-    //res += normalOrders[][];
     res += QString("DP:%1(%2)\n").arg(arrowFromDP(dp)).arg((int)dp);
     res += QString("CC:%1(%2)\n").arg(cc == ccR ? "R" : "L").arg((int)cc);
     res += QString("Step:%1\n").arg(step);
@@ -388,20 +398,3 @@ QString PietCore::printStatus(){
     //res += QString("CS:1\n");//codelsize
     return res;
 }
-/*
-QChar PietCore::getInputQChar(){
-    if(Input.isEmpty() || Input.isNull()) throw false;
-    QChar res = Input.at(0);
-    Input.remove(0,1);
-    return res;
-}
-int PietCore::getInputNumber()throw (bool){
-    if(Input.isEmpty() || Input.isNull()) throw false;
-    QRegExp rx("^-?\\d+");
-    if(-1 == rx.indexIn(Input)) throw true ;
-    QString Match = rx.cap();
-    int m = Match.toInt();
-    Input.remove(0,Match.length());
-    return m;
-}
-*/
