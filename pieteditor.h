@@ -35,6 +35,7 @@ public slots :
     void ChangeShowStackAsNumber(QPlainTextEdit * stackWindow){core.showStackAsNumber = !core.showStackAsNumber ;stackWindow->setPlainText(core.printStack());}
 signals :
     void changedPenColor(const QColor &color);
+    void MovedPos(int x,int y);
 protected :
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);

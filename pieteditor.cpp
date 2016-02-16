@@ -86,13 +86,11 @@ void PietEditor::paintEvent(QPaintEvent *event){
         QPoint PreAr(-1,-1);
         QPen linePen(Qt::black,1.0 + zm / 20.0 , Qt::DotLine, Qt::RoundCap);
         for(auto ar: ArrowQueue) {
-            PaintText(ar.x(),ar.y(),ar.c);
-            if(PreAr.x() != -1 && PreAr.y() != -1){
+            if(! ar.c.isEmpty())PaintText(ar.x(),ar.y(),ar.c);
+            if(PreAr.x() != -1 && PreAr.y() != -1){//DrawLine
                 if(abs(PreAr.x()- ar.x()) + abs(PreAr.y() -ar.y()) > 3 ){
                     QColor lc = PietCore::getVividColor(QColor::fromRgba(image.pixel(PreAr.x(),PreAr.y())));
-                    lc.setAlpha(128);
-                    linePen.setColor(lc);
-                    painter.setPen(linePen);
+                    lc.setAlpha(128); linePen.setColor(lc); painter.setPen(linePen);
                     painter.drawLine(zm * PreAr.x() + zm/2,zm * PreAr.y() + zm/2,zm * ar.x() + zm/2,zm * ar.y() + zm/2);
                 }
             }
@@ -120,6 +118,7 @@ QRect PietEditor::pixelRect(int i, int j) const{
 
 void PietEditor::undo(){
     if(isExecuting) return;
+    ArrowQueue.clear();
     if(imageStack.count()<= 0) return;
     image = imageStack.top();
     imageStack.pop_back();
@@ -129,6 +128,7 @@ void PietEditor::undo(){
 
 void PietEditor::mousePressEvent(QMouseEvent *event){
     if(isExecuting) return;
+    ArrowQueue.clear();
     imageStack.push_back(image.copy());
     if(imageStack.count() > 32) imageStack.pop_front();
     if(event->button() == Qt::LeftButton){
@@ -164,6 +164,7 @@ QRgb PietEditor::getImagePixel(const QPoint &pos){
 
 void PietEditor::openImage(QString FilePath ){
     if(isExecuting) return;
+    ArrowQueue.clear();
     if(FilePath.isEmpty() || FilePath.isNull())
         FilePath = QFileDialog::getOpenFileName(this,tr("Open Image"), "", tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
     if(FilePath.isEmpty() || FilePath.isNull())return;
@@ -209,9 +210,13 @@ void PietEditor::exec1Step (QPlainTextEdit * outputWindow,QPlainTextEdit * input
     ArrowQueue.push_back(QPointAndQString( core.getPos().x(),core.getPos().y(),core.getLightCurrentOrder()));
     while(ArrowQueue.size() > ArrowQueueMaxSize)  ArrowQueue.pop_front();
     update();
+    emit MovedPos (zoom * core.getPos().x(),zoom * core.getPos().y());
     stackWindow->setPlainText(core.printStack());
     statusLabel->setText(core.printStatus());
-    if(core.getFinished())isExecuting = false;
+    if(core.getFinished()){
+        isExecuting = false;
+        MSGBOX("Debug Finished !!");
+    }
 }
 
 
@@ -233,6 +238,7 @@ void PietEditor::execPiet(QPlainTextEdit * outputWindow, QPlainTextEdit * inputW
             if(processExentSequential){
                 ArrowQueue.push_back(QPointAndQString( core.getPos().x(),core.getPos().y(),core.getLightCurrentOrder()));
                 while(ArrowQueue.size() > ArrowQueueMaxSize)  ArrowQueue.pop_front();
+                emit MovedPos (zoom * core.getPos().x(),zoom * core.getPos().y());
                 update();
             }
             QApplication::processEvents();
@@ -242,13 +248,13 @@ void PietEditor::execPiet(QPlainTextEdit * outputWindow, QPlainTextEdit * inputW
         stackWindow->setPlainText(core.printStack());
         statusLabel->setText(core.printStatus());
         isExecuting = false;
+        if(processExentSequential) MSGBOX("Debug Finished !!");
     }
 }
 
 void PietEditor::execCancel(){
     if(!isExecuting) return;
     isExecuting = false;
-    ArrowQueue.clear();
     core.init([](QString s){},image);
     MSGBOX("Debug Canceled");
     update();

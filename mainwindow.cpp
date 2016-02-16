@@ -4,6 +4,7 @@
 #include "pietcore.h"
 #include "defines.h"
 #include <QFileDialog>
+#include <QScrollBar>
 #include <QString>
 #include <QDebug>
 
@@ -45,8 +46,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionShow_As_Number,QAction::triggered,[=](){ui->pietEditor->ChangeShowStackAsNumber(ui->stackTextEdit);});
     connect(ui->actionCancel,QAction::triggered,[=](){ui->pietEditor->execCancel();});
     connect(ui->pietEditor,SIGNAL(changedPenColor(const QColor &)),this,SLOT(setEditColor(const QColor &)));
-
-    //QFont f ;f.setStyle(Style());
+    connect(ui->pietEditor,PietEditor::MovedPos,[=](int x,int y){
+        ui->scrollArea->horizontalScrollBar()->setValue(x - ui->scrollArea->viewport()->width()  / 2);
+        ui->scrollArea->verticalScrollBar()->setValue(y - ui->scrollArea->viewport()->height() / 2);
+    });
     CB(0,0);CB(0,1);CB(0,2);CB(0,3);CB(0,4);CB(0,5);CB(0,6);
     CB(1,0);CB(1,1);CB(1,2);CB(1,3);CB(1,4);CB(1,5);CB(1,6);
     CB(2,0);CB(2,1);CB(2,2);CB(2,3);CB(2,4);CB(2,5);
