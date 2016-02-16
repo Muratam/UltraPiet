@@ -74,6 +74,7 @@ public :
     ECodelChooser getCC() {return cc;}
     bool getFinished(){return finished;}
     int getStep(){return step;}
+    QString getCurrentOrder() {return currentOrder;}
     QString getLightCurrentOrder() {return LightcurrentOrder;}
     void execOneAction();
     void setImage(const QImage & image);

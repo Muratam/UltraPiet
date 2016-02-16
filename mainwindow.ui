@@ -207,7 +207,7 @@
     </font>
    </property>
    <property name="features">
-    <set>QDockWidget::DockWidgetMovable</set>
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
    <property name="windowTitle">
     <string>Stack</string>
@@ -262,6 +262,13 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="changeAsNumber">
+       <property name="text">
+        <string>123 ⇔ ABC</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
   </widget>
@@ -274,7 +281,7 @@
     </font>
    </property>
    <property name="features">
-    <set>QDockWidget::DockWidgetMovable</set>
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
    <property name="windowTitle">
     <string>Input</string>
@@ -325,7 +332,7 @@
     </font>
    </property>
    <property name="features">
-    <set>QDockWidget::DockWidgetMovable</set>
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
    <property name="windowTitle">
     <string>Output</string>
@@ -391,7 +398,7 @@
     </font>
    </property>
    <property name="features">
-    <set>QDockWidget::DockWidgetMovable</set>
+    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
    <property name="windowTitle">
     <string>Project File Tree</string>
@@ -1284,13 +1291,6 @@ selection-background-color: rgb(0, 0, 192,);</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="changeAsNumber">
-           <property name="text">
-            <string>65 ⇔ A</string>
            </property>
           </widget>
          </item>

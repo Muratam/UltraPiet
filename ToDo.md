@@ -8,13 +8,16 @@ IDE無し(コマンドライン・例えばサーバーでの実行用)の実行
 Tab,ProjectTree
 フォーク
 Pasxx の対応
+Input
+KeyBoard Editing
+NonNormalColor(入る時に対応する数字を取る)その他の動作は処理系にまかせよう
 
 
 ## Editor
-可視化(矢印を追いやすくしたり、BlockSizeを見えるようにしたり,Unicode文字を表示したり)
+可視化(BlockSizeを見えるようにしたり,Unicode文字を表示したり)
 キーボードタイピング対応
 CUI化
-Redo,Save
+Redo
 キャンバスサイズ変更
 3D化,copy paste
 Fontを変更できるように
@@ -38,8 +41,4 @@ Piet# : 概要
       同期式にしよう)
       例えばライフゲームやゲームAIのシュミレーションが書けると楽しい
 
-stack<PietStack> MainPS;
-MainPS.push ({true,3,nullptr});
-MainPS.push ({true,10,nullptr});
-MainPS.push ({false,1,new stack<NewPietStack>{
 nonamae774 (hogejs)

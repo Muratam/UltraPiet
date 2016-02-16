@@ -211,7 +211,7 @@ void PietEditor::exec1Step (QPlainTextEdit * outputWindow,QPlainTextEdit * input
     while(ArrowQueue.size() > ArrowQueueMaxSize)  ArrowQueue.pop_front();
     update();
     emit MovedPos (zoom * core.getPos().x(),zoom * core.getPos().y());
-    stackWindow->setPlainText(core.printStack());
+    stackWindow->setPlainText(core.getCurrentOrder() + QString("\n") + core.printStack());
     statusLabel->setText(core.printStatus());
     if(core.getFinished()){
         isExecuting = false;
@@ -233,7 +233,7 @@ void PietEditor::execPiet(QPlainTextEdit * outputWindow, QPlainTextEdit * inputW
     while(! core.getFinished() && isExecuting){
         core.execOneAction();
         if(processExentSequential || core.getStep() % 1000 == 0 ){//
-            stackWindow->setPlainText(core.printStack());
+            stackWindow->setPlainText(core.getCurrentOrder() + QString("\n") + core.printStack());
             statusLabel->setText(core.printStatus());
             if(processExentSequential){
                 ArrowQueue.push_back(QPointAndQString( core.getPos().x(),core.getPos().y(),core.getLightCurrentOrder()));
