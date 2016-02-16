@@ -186,9 +186,11 @@
     <property name="title">
      <string>&amp;Debug</string>
     </property>
-    <addaction name="actionExec"/>
-    <addaction name="actionExec_1_Step"/>
+    <addaction name="actionDebug"/>
+    <addaction name="actionDebug_1_Step"/>
+    <addaction name="actionRelease"/>
     <addaction name="actionCancel"/>
+    <addaction name="separator"/>
     <addaction name="actionShow_As_Number"/>
    </widget>
    <addaction name="menuPiet_png"/>
@@ -370,7 +372,7 @@
         <bool>true</bool>
        </property>
        <property name="readOnly">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <property name="plainText">
         <string/>
@@ -477,10 +479,10 @@
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <property name="spacing">
-      <number>15</number>
+      <number>0</number>
      </property>
      <property name="leftMargin">
-      <number>15</number>
+      <number>6</number>
      </property>
      <property name="topMargin">
       <number>0</number>
@@ -1263,6 +1265,9 @@ selection-background-color: rgb(0, 0, 192,);</string>
        </item>
        <item row="1" column="1" rowspan="3">
         <layout class="QVBoxLayout" name="verticalLayout_4">
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <item>
           <widget class="QLabel" name="StatusLabel">
            <property name="font">
@@ -1391,17 +1396,17 @@ selection-background-color: rgb(0, 0, 192,);</string>
     <string>Ctrl+-</string>
    </property>
   </action>
-  <action name="actionExec">
+  <action name="actionDebug">
    <property name="text">
-    <string>Exec</string>
+    <string>Debug</string>
    </property>
    <property name="shortcut">
     <string>F5</string>
    </property>
   </action>
-  <action name="actionExec_1_Step">
+  <action name="actionDebug_1_Step">
    <property name="text">
-    <string>Exec 1 Step</string>
+    <string>Debug 1 Step</string>
    </property>
    <property name="shortcut">
     <string>F10</string>
@@ -1428,7 +1433,15 @@ selection-background-color: rgb(0, 0, 192,);</string>
     <string>Show Stack As Number</string>
    </property>
    <property name="shortcut">
-    <string>F7</string>
+    <string>F4</string>
+   </property>
+  </action>
+  <action name="actionRelease">
+   <property name="text">
+    <string>Release</string>
+   </property>
+   <property name="shortcut">
+    <string>F6</string>
    </property>
   </action>
  </widget>

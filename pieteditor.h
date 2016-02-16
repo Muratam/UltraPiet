@@ -4,9 +4,9 @@
 #include <QImage>
 #include <QWidget>
 #include <QStack>
+#include <functional>
 #include <QPlainTextEdit>
 #include "pietcore.h"
-
 class PietEditor : public QWidget {
     Q_OBJECT
     Q_PROPERTY(QColor penColor READ penColor WRITE setPenColor)
@@ -28,7 +28,7 @@ public slots :
     void undo();
     void openImage(QString FilePath = QString (""));
     void saveImage(bool asNew);
-    void execPiet(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel);
+    void execPiet(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel,bool processExentSequential);
     void exec1Step(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel);
     void execCancel();
     void ChangeShowStackAsNumber(QPlainTextEdit * stackWindow){core.showStackAsNumber = !core.showStackAsNumber ;stackWindow->setPlainText(core.printStack());}
@@ -42,7 +42,7 @@ protected :
     void dropEvent(QDropEvent *event);
     void setImagePixel(const QPoint &pos,const QRgb &rgb);
     QRgb getImagePixel(const QPoint &pos);
-    void execInit();
+    void execInit(std::function<void(QString)>outPutFunction);
     QRect pixelRect(int i,int j)const;
     QColor curColor;
     PietCore core;

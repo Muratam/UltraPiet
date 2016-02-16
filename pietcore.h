@@ -5,8 +5,10 @@
 #include <QString>
 #include <vector>
 #include <stack>
+#include <functional>
 #include "defines.h"
 #include "piettree.h"
+#include <functional>
 //UltraPietの実際の命令処理をするクラス (なのでGUIには依存しません)
 
 enum EDirectionPointer{dpR=0,dpD=1,dpL=2,dpU=3};
@@ -38,6 +40,7 @@ private :
     int step=0;
     int processWallCount=0 ;
     bool finished =false;
+    std::function<void(QString)>outPutFunction;
     QString currentOrder = QString("");
     QPoint pos ;
     EDirectionPointer dp;
@@ -47,7 +50,6 @@ private :
     void search(QPoint me);
     EOrder fromRelativeColor(int codedFrom,int codedTo);
     void processWall();
-    void doOutput(const QString & outstr);
     QChar getInputQChar() throw (bool);
     int getInputNumber() throw (bool);
     void exec(){while (!finished){execOneAction();}} //Not For Editor
@@ -56,14 +58,16 @@ public :
     static const QString normalOrders[3][7];
     static const EOrder normalEOrders[3][7];
     static bool isNormalColor(QRgb rgb){REP(i,3)REP(j,7)if(rgb == normalColors[i][j])return true;return false;}
-    static int getVividGrayScale(const QColor & c){ return (128 + qGray(c.red() , c.blue() , c.green())) % 256;}
+    //static int getVividGrayScale(const QColor & c){ return (128 + qGray(c.red() , c.blue() , c.green())) % 256;}
+    static int DiffMax255(int c) {return c < 128 ? 255 : 0;}
+    static QColor getVividColor(const QColor & c){return QColor(DiffMax255(c.red()),DiffMax255(c.blue()),DiffMax255(c.green()));}
     static QPoint directionFromDP(EDirectionPointer dp ){ return dp == dpR ? QPoint(1,0) :dp == dpD ? QPoint(0,1) : dp == dpL ? QPoint(-1,0) :QPoint(0,-1); }
     static QString arrowFromDP(EDirectionPointer dp ){ return QString(dp == dpR ? "→" :dp == dpD ? "↓" : dp == dpL ? "←" : "↑"); }
 public :
     bool showStackAsNumber = true;
     PietCore();
-    void init();
-    void init(const QImage & image){init();setImage(image);}
+    void init(std::function<void(QString)>outPutFunction);
+    void init(std::function<void(QString)>outPutFunction,const QImage & image){init(outPutFunction);setImage(image);}
     QPoint getPos() {return pos;}
     EDirectionPointer getDP() {return dp;}
     ECodelChooser getCC() {return cc;}
@@ -72,7 +76,6 @@ public :
     void execOneAction();
     void setImage(const QImage & image);
     QString Input = QString("this is a test"); //For Editor
-    QString Output = QString(""); //For Editor
     QString printStack();
     QString printStatus();
 };

@@ -26,15 +26,16 @@ PietCore::PietCore() {
     stack = vector<PietTree>();
     coded = vector<vector<int>>();
     pos8 = vector<vector<Point8>>();
-    init();
+    init([](QString qs){});
 }
-void PietCore::init(){
+void PietCore::init(function<void(QString)> outPutFunction){
     dp=dpR;cc = ccL;processWallCount= step = w = h = 0;
     pos = QPoint(0,0);
     finished = false;
-    Output = currentOrder = QString("");
+    currentOrder = QString("");
     stack.clear();
     coded.clear();pos8.clear();
+    this->outPutFunction = outPutFunction;
 }
 
 namespace std{
@@ -309,7 +310,7 @@ void PietCore::execOneAction(){
                 for(auto t : top.Nodes()) stack.push_back(t);
                 stack.push_back(PietTree(size));
             }else{
-                doOutput( QString("%1").arg(STACK_TOP.Val()));
+                outPutFunction( QString("%1").arg(STACK_TOP.Val()));
                 currentOrder = QString("Out %1").arg(STACK_TOP.Val());
                 stack.pop_back();
             }
@@ -318,7 +319,7 @@ void PietCore::execOneAction(){
     case EOrder::OutC:
         if(stack.size() > 0){
             QString str = STACK_TOP.toString();
-            doOutput( str );
+            outPutFunction(str);
             currentOrder = QString("Out(C) ") + (STACK_TOP.isLeaf() ? str : QString(""));
             stack.pop_back();
         }else{currentOrder = QString("Miss");}
@@ -364,9 +365,6 @@ QString PietCore::printStatus(){
     return res;
 }
 
-void PietCore::doOutput(const QString & outstr){
-    Output += outstr;
-}
 QChar PietCore::getInputQChar() throw (bool){
     if(Input.isEmpty() || Input.isNull()) throw false;
     QChar res = Input.at(0);

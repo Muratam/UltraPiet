@@ -182,7 +182,7 @@ void PietEditor::exec1Step (QPlainTextEdit * outputWindow,QPlainTextEdit * input
 }
 
 
-//毎Step全状態を示すDebugと1000回に一回示すRelease
+//Releaseなら一万回に一回GUIに戻って処理する他は普通に実行する
 void PietEditor::execPiet(QPlainTextEdit * outputWindow, QPlainTextEdit * inputWindow, QPlainTextEdit * stackWindow, QLabel* statusLabel, bool processExentSequential){
     if(!isExecuting){
         outputWindow->setPlainText(QString(""));
@@ -191,7 +191,7 @@ void PietEditor::execPiet(QPlainTextEdit * outputWindow, QPlainTextEdit * inputW
             outputWindow->insertPlainText (outstr);
             outputWindow->moveCursor (QTextCursor::End);
         });
-    }else return; //既に実行中の場合は二重起動しない
+    }
     while(! core.getFinished() && isExecuting){
         core.execOneAction();
         if(processExentSequential || core.getStep() % 1000 == 0 ){//
@@ -200,7 +200,7 @@ void PietEditor::execPiet(QPlainTextEdit * outputWindow, QPlainTextEdit * inputW
             QApplication::processEvents();
         }
     }
-    if(isExecuting){ //Escなどで妨害されず終わった場合
+    if(isExecuting){ //Escなどで妨害されず終わった場合(StackとStatusを表示する)
         stackWindow->setPlainText(core.printStack());
         statusLabel->setText(core.printStatus());
         isExecuting = false;
