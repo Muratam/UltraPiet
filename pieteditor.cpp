@@ -6,7 +6,7 @@
 PietEditor::PietEditor(QWidget *parent) : QWidget (parent){
     setAttribute(Qt::WA_StaticContents);
     setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
-    curColor = Qt::black;
+    curColor = QColor(PietCore::normalColors[0][0]);
     zoom = 16;
     image = QImage(16,16,QImage::Format_ARGB32);
     image.fill(qRgba(255,255,255,255));
@@ -46,6 +46,16 @@ void PietEditor::setZoomFactor(int newZoom){
 
 void PietEditor::paintEvent(QPaintEvent *event){
     QPainter painter (this);
+    int zm = this->zoom ;
+    auto PaintText = [this,&painter,zm] (int x,int y,QString str) {
+        const int Margin = 6;
+        QRect TextRect ( zm * x + zm / Margin, zm * y+ zm / Margin ,zm ,zm);
+        auto basecolor = QColor::fromRgba(image.pixel(x,y));
+        painter.setPen(PietCore::getVividColor(basecolor));
+        auto backcolor = QColor::fromRgba(image.pixel(x,y));
+        painter.fillRect( this->pixelRect(x,y),backcolor);
+        painter.drawText(TextRect,str);
+    };
     if(zoom >= 3){ //grid line
         painter.setPen(palette().foreground().color());
         REP(i,image.width()+1)  painter.drawLine(zoom*i,0,zoom*i,zoom*image.height());
@@ -60,8 +70,11 @@ void PietEditor::paintEvent(QPaintEvent *event){
             if(!event->region().intersected(rect).isEmpty()){
                 auto color = QColor::fromRgba(image.pixel(x,y));
                 painter.fillRect(rect,color);
-                //painter.setPen(PietCore::getVividColor(color));
-                //painter.drawText(TextRect(x,y) ,"あ");
+                if(zoom > 6 && !PietCore::isNormalColor(image.pixel(x,y))){
+                    painter.setPen(PietCore::getVividColor(color));
+                    int rgb = image.pixel(x,y);
+                    PaintText(x,y ,QString(rgb));
+                }
             }
         }
     }
@@ -73,16 +86,6 @@ void PietEditor::paintEvent(QPaintEvent *event){
     painter.drawPoint(zoom * image.width()  + zoom /2, zoom * core.getPos().y()+ zoom /2);
 
     if(zoom > 6){
-        int zm = this->zoom ;
-        auto PaintText = [this,&painter,zm] (int x,int y,QString str) {
-            const int Margin = 6;
-            QRect TextRect ( zm * x + zm / Margin, zm * y+ zm / Margin ,zm ,zm);
-            auto basecolor = QColor::fromRgba(image.pixel(x,y));
-            painter.setPen(PietCore::getVividColor(basecolor));
-            auto backcolor = QColor::fromRgba(image.pixel(x,y));
-            painter.fillRect( this->pixelRect(x,y),backcolor);
-            painter.drawText(TextRect,str);
-        };
         QPoint PreAr(-1,-1);
         QPen linePen(Qt::black,1.0 + zm / 20.0 , Qt::DotLine, Qt::RoundCap);
         for(auto& ar: ArrowQueue) {
@@ -118,6 +121,7 @@ void PietEditor::dropEvent(QDropEvent *event){
 }
 
 void PietEditor::keyPressEvent( QKeyEvent *event ){
+    if(isExecuting )return;
     QRgb nowRGB = image.pixel(core.getPos().x(),core.getPos().y());
     int nowcode = -1;
     REP(i,3) REP(j,7) if(nowRGB == PietCore::normalColors[i][j]){nowcode = 3*j+i; goto MATCHED;}
@@ -194,12 +198,38 @@ void PietEditor::keyPressEvent( QKeyEvent *event ){
             imageStack.push_back(ImageOperateLog( image.copy(),core.getPos(),core.getDP()));
             if(imageStack.size() > StackMaxSize()) imageStack.pop_front();
             setImagePixel(zoom *core.getPos(),image.pixel(prepos.x(),prepos.y()));
-            emit MovedPos (zoom * core.getPos().x(),zoom * core.getPos().y());
-        }}break; //Arrow
+        } emit MovedPos (zoom * core.getPos().x(),zoom * core.getPos().y());
+
+        }break; //Arrow
     case Qt::Key_Delete:{
         imageStack.push_back(ImageOperateLog( image.copy(),core.getPos(),core.getDP(),QString("　")));
             setImagePixel(zoom * core.getPos(),PietCore::getNormalColor(0,EOrder::White));
         }break;
+    case Qt::Key_U: { //insert unicode
+            bool ok = false;
+            QString unicodes = QInputDialog::getText(this, tr("QInputDialog::getText()"), tr("Insert Unicode"), QLineEdit::Normal, QString("あ"), &ok);
+            if (!ok || unicodes.isEmpty()) break ;
+            QChar pre(0);
+            for(QChar c : unicodes){
+                QPoint prepos = core.getPos();
+                core.setPos(prepos + PietCore::directionFromDP(core.getDP()));
+                if(prepos != core.getPos()){
+                    if(c == pre){
+                        imageStack.push_back(ImageOperateLog( image.copy(),core.getPos(),core.getDP(),QString("")));
+                        setImagePixel(zoom * core.getPos(), PietCore::normalColors[0][0] );
+                        if(imageStack.size() > StackMaxSize()) imageStack.pop_front();
+                        emit MovedPos (zoom * core.getPos().x(),zoom * core.getPos().y());
+                        prepos = core.getPos();
+                        core.setPos(prepos + PietCore::directionFromDP(core.getDP()));
+                    }
+                    imageStack.push_back(ImageOperateLog( image.copy(),core.getPos(),core.getDP(),c));
+                    setImagePixel(zoom * core.getPos(), c.unicode() );
+                    if(imageStack.size() > StackMaxSize()) imageStack.pop_front();
+                    emit MovedPos (zoom * core.getPos().x(),zoom * core.getPos().y());
+                }
+                pre = c;
+            }
+        }  break;
     case Qt::Key_Backspace: undo();break;
     }
     /*
@@ -278,6 +308,13 @@ QRgb PietEditor::getImagePixel(const QPoint &pos){
 
 void PietEditor::openImage(QString FilePath ){
     if(isExecuting) return;
+    if(imageStack.size() > 1) {
+        QMessageBox msgBox(this);
+        msgBox.setText(tr("Open Image ? \n (Existing Image Will Be Discarded.)"));
+        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::No);
+        int res = msgBox.exec();
+        if (res == QMessageBox::No) return;
+    }
     ArrowQueue.clear();
     if(FilePath.isEmpty() || FilePath.isNull())
         FilePath = QFileDialog::getOpenFileName(this,tr("Open Image"), "", tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
@@ -289,9 +326,44 @@ void PietEditor::openImage(QString FilePath ){
     imageStack.clear();
     imageStack.push_back(ImageOperateLog( image.copy(),core.getPos(),core.getDP()));
     if(imageStack.size() > StackMaxSize()) imageStack.pop_front();
+    core.setPos(QPoint(0,0));
+    core.setDP(dpR);
+    core.setImage(image);
     update();
     updateGeometry();
 }
+void PietEditor::newImage(){
+    if(isExecuting) return;
+    if(imageStack.size() > 1) {
+        QMessageBox msgBox(this);
+        msgBox.setText(tr("Create New Image ? \n (Existing Image Will Be Discarded.)"));
+        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::No);
+        int res = msgBox.exec();
+        if (res == QMessageBox::No) return;
+    }
+    int gotw = 16, goth = 16;
+    bool ok = false;
+    QString text = QInputDialog::getText(this, tr("QInputDialog::getInt()"), tr("Input Width:"), QLineEdit::Normal, "16", &ok);
+    if (ok && !text.isEmpty())  gotw = text.toInt();
+    else return;
+    text = QInputDialog::getText(this, tr("QInputDialog::getInt()"), tr("Input Height:"), QLineEdit::Normal, "16", &ok);
+    if (ok && !text.isEmpty())  goth = text.toInt();
+    else return;
+    if(gotw <= 0 || goth <= 0) {MSGBOX("INVALID SIZE"); return;}
+    zoom = 16;
+    image = QImage(gotw,goth,QImage::Format_ARGB32);
+    image.fill(qRgba(255,255,255,255));
+    imageStack.clear();
+    imageStack.push_back(ImageOperateLog( image.copy(),QPoint(0,0),dpR));
+    loadedFilePath = QString("");
+    core.setPos(QPoint(0,0));
+    core.setDP(dpR);
+    core.setImage(image);
+    ArrowQueue.clear();
+    update();
+    updateGeometry();
+}
+
 
 void PietEditor::saveImage(bool asNew){
     QApplication::setOverrideCursor(Qt::WaitCursor);

@@ -34,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->actionZoom_Out,SIGNAL(triggered(bool)),ui->pietEditor,SLOT(decrementZoomFactor()));
     connect(ui->actionUndo,SIGNAL(triggered(bool)),ui->pietEditor,SLOT(undo()));
     connect(ui->action_Open,SIGNAL(triggered(bool)),ui->pietEditor,SLOT(openImage()));
+    connect(ui->action_New,SIGNAL(triggered(bool)),ui->pietEditor,SLOT(newImage()));
     connect(ui->action_Save,QAction::triggered,[=](){ui->pietEditor->saveImage(false);});
     connect(ui->actionSave_as_New,QAction::triggered,[=](){ui->pietEditor->saveImage(true);});
     connect(ui->actionDebug_1_Step,QAction::triggered,[=](){

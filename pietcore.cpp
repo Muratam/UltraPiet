@@ -12,9 +12,9 @@ const QRgb PietCore::normalColors[3][7] =  {
     { qRgb(192,  0,  0),qRgb(192,192,  0),qRgb(  0,192,  0),qRgb(  0,192,192),qRgb(  0,  0,192),qRgb(192,  0,192),qRgb(255,255,255)}
 };
 const QString PietCore::normalOrders[3][7] = {
-    {QString("*"),   QString("add\nappend") ,QString("div\nmatch"),QString("great\nfile")    , QString("dup")      , QString("in(c)")       ,QString("")},
-    {QString("push"),QString("sub\nsplit")  ,QString("mod\nzip")  ,QString("point\nhead")    , QString("roll\ndll"), QString("out(n)\nsize"),QString("")},
-    {QString("pop"), QString("mul\nprod")   ,QString("not")       ,QString("switch\nflat")   , QString("in(n)")    , QString("out(c)")      ,QString("")}
+    {QString("* \nU tf-8"),   QString("+ add\nappend") ,QString("/ div\nmatch"),QString("<great\nfile")    , QString("Ｄ up")      , QString("ｉ n(c)")       ,QString("SPACE")},
+    {QString("p ush"),QString("- sub\nsplit")  ,QString("% mod\nzip")  ,QString("@point\nhead") , QString("Ｒ oll\ndll"), QString("Ｏ ut(n)\nsize"),QString("Ｂ lack")},
+    {QString("P op♪"), QString("* mul\nprod")   ,QString("! not")   ,QString("^switch\nflat")   , QString("Ｉ n(n)")    , QString("ｏ ut(c)")      ,QString("Ｕ ser\n insert")}
 };
 const EOrder PietCore::normalEOrders[3][7] = {
     {EOrder::Same,EOrder::Add,EOrder::Div,EOrder::Great,EOrder::Dup,EOrder::InC,EOrder::Exception},
@@ -197,7 +197,9 @@ void PietCore::execOneAction(){
     Point8 p8 = POINT8(pos);
     QPoint nextpos = p8.getbyDPCC(dp,cc);
     if(nextpos == Wall){processWall(); return ;}
-    EOrder order = fromRelativeColor(PIXEL(pos),PIXEL(nextpos));
+    int currentcode = PIXEL(pos);
+    if(currentcode < 0 || currentcode > 19) currentcode = 0;
+    EOrder order = fromRelativeColor(currentcode,PIXEL(nextpos));
     int WhiteColor = 18;
     int BlackColor = 19;
     #define STACK_TOP stack[stack.size()-1]
@@ -383,7 +385,16 @@ void PietCore::execOneAction(){
             }
         }break;
     case EOrder::Black: processWall();return;
-    default: case EOrder::Exception:break;
+    default: case EOrder::Exception:{
+        if(PIXEL (nextpos) >= 0 && PIXEL (nextpos) < 20) {
+            currentOrder = QString("Nop") ;
+            LightcurrentOrder = QString("");
+        }else{
+            QString str = QString(-1 * (PIXEL (nextpos)));
+            stack.push_back(PietTree(str));
+            currentOrder = QString("Push ") + str;
+            LightcurrentOrder = str;
+        }}break;
     }
     step++;
     pos = nextpos;
