@@ -22,11 +22,11 @@ const EOrder PietCore::normalEOrders[3][7] = {
     {EOrder::Pop,EOrder::Mul,EOrder::Not,EOrder::Switch,EOrder::InN,EOrder::OutC,EOrder::Exception},
 };
 
-PietCore::PietCore() {
+PietCore::PietCore(function<void(QString)> outPutFunction, function<QChar(void)>inPutCharFunction , function<int(bool &)> inPutNumFunction) {
     stack = vector<PietTree>();
     coded = vector<vector<int>>();
     pos8 = vector<vector<Point8>>();
-    init([](QString qs){},[](){return QChar(72);},[](bool&b){return 0;});
+    init(outPutFunction,inPutCharFunction,inPutNumFunction);
 }
 void PietCore::init(function<void(QString)> outPutFunction, function<QChar(void)>inPutCharFunction , function<int(bool &)> inPutNumFunction){
     dp=dpR;cc = ccL;processWallCount= step = w = h = 0;

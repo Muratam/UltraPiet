@@ -1,5 +1,6 @@
 #include "piettree.h"
 
+//PietTree型全てOK
 void PietTree::MakeStackByMod0(int n,std::vector<PietTree> & pts){
     //nは既にPopされているとして
     if(n <= 0) return ;

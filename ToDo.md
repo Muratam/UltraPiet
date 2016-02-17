@@ -1,6 +1,6 @@
 # Todo
 京都バスの予約,Droneの予約,Blender持ってくる
-IDE無し(コマンドライン・例えばサーバーでの実行用)の実行の対応
+Linuxでの実行の対応
 
 ## UltraPiet
 ②UltraPiet拡張の実装
@@ -13,9 +13,6 @@ NonNormalColor(入る時に対応する数字を取る)その他の動作は処�
 
 123	123
 ## Editor
-可視化(BlockSizeを見えるようにしたり,Unicode文字を表示したり)
-キーボードタイピング対応
-CUI化
 Redo
 キャンバスサイズ変更
 3D化,copy paste
@@ -39,11 +36,3 @@ Piet# : 概要
       親は0を次のはid!=0かid=1を積むことにしよう、
       同期式にしよう)
       例えばライフゲームやゲームAIのシュミレーションが書けると楽しい
-
-nonamae774 (hogejs)
-
-#include<stdio.h>
-int main (void){
-    printf("hello world");
-    return 0;
-}

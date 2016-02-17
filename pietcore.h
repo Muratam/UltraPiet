@@ -53,7 +53,6 @@ private :
     void search(QPoint me);
     EOrder fromRelativeColor(int codedFrom,int codedTo);
     void processWall();
-    void exec(){while (!finished){execOneAction();}} //Not For Editor
 public :
     static const QRgb normalColors[3][7] ;
     static const QString normalOrders[3][7];
@@ -66,7 +65,8 @@ public :
     static QString arrowFromDP(EDirectionPointer dp ){ return QString(dp == dpR ? "→" :dp == dpD ? "↓" : dp == dpL ? "←" : "↑"); }
 public :
     bool showStackAsNumber = true;
-    PietCore();
+    //実行前には必ずSetImageを忘れないで下さい
+    PietCore (std::function<void(QString)>outPutFunction = [](QString qs){}, std::function<QChar(void)> inPutCharFunction = [](){return QChar(72);}, std::function<int(bool&)> inPutNumFunction = [](bool&b){return 0;});
     void init(std::function<void(QString)>outPutFunction,std::function<QChar(void)>inPutCharFunction, std::function<int(bool&)>inPutNumFunction);
     void init(std::function<void(QString)>outPutFunction,std::function<QChar(void)>inPutCharFunction,std::function<int(bool&)>inPutNumFunction,const QImage & image){init(outPutFunction,inPutCharFunction,inPutNumFunction);setImage(image);}
     QPoint getPos() {return pos;}
@@ -77,6 +77,7 @@ public :
     QString getCurrentOrder() {return currentOrder;}
     QString getLightCurrentOrder() {return LightcurrentOrder;}
     void execOneAction();
+    void exec(){while (!finished){execOneAction();}} //Not For Editor
     void setImage(const QImage & image);
     QString printStack();
     QString printStatus();

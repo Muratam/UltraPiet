@@ -16,15 +16,12 @@ public :
     bool isLeaf() const {return isleaf;}
     bool isEmptyTree() const {return !isleaf && (nodes.size() == 0); }
     const std::vector<PietTree> & Nodes() const {return nodes;}
-    const std::vector<PietTree> copyNodes() const {
-        return nodes;
-    } //std::vector<PietTree> cp;std::copy(nodes.begin(), nodes.end(), back_inserter(cp) );
-
+    const std::vector<PietTree> copyNodes() const {return nodes;} 
     PietTree(int val){ this->val = val; isleaf = true; }
     PietTree(QChar val){ this->val = val.unicode();isleaf = true; }
     PietTree(std::vector<PietTree> nodes){ this->nodes = nodes; isleaf = false;}
     PietTree(const QString &str);
-    static void MakeStackByMod0(int n,std::vector<PietTree> & pts);
+    static void MakeStackByMod0(int n,std::vector<PietTree> & pts); //Mod 0 : OK
 
     //Push InC,InNは定義されない
     //Popはそのまま捨てた

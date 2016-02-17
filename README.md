@@ -1,11 +1,23 @@
 # 音ゲーもBotもなんでも出来る最強のPiet「UltraPiet」
 
-##遊び方
+## 遊び方
 1. git clone https://github.com/Muratam/UltraPiet.git
    (もしくはZipをダウンロード)
 2. ./bin/windows/ultrapiet.exe を実行
 3. 同梱のtestimageフォルダの画像でテスト出来ますよ
 4. 大きな画像も無限ループも無理なく扱えるし、追跡機能も命令履歴機能もあるよ！
+
+## CUIで使う方法(Windows)
+../bin/windows/ultrapiet testimage/HelloWorld.png でコマンドラインで実行できます。
+Windowsの場合はMinttyなどのターミナルを使って下さい。
+コマンドプロンプト及びパワーシェルでは標準入出力が上手く行われません。
+### MinGWがよく分からない場合
+Pietをやろうとしているということは、あなたはGitをインストールしているはずです。
+「Win + R 」で「C:\Program Files\Git\usr\bin\mintty」を入力し、minttyを起動できます。
+cd ~ ののち、cd とpwd を駆使してultrapietのあるディレクトリに行き
+./ultrapiet HelloWorld.png のようにして実行出来ます。
+ultrapietのあるディレクトリにパスを通せばperlやpythonと同じように利用できます
+
 
 ## UltraPietの新機能
 - DLLのインポート
