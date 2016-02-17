@@ -137,16 +137,13 @@ void PietCore::setImage(const QImage & image){
             COLORMATCHED:;
         }
     }
+    //if(coded[0][0] < 0 || coded[0][0] >= 18 ) coded[0][0] = normalColors[0][0]; //普通のPietでは無い場合
 
     pos8.clear();
     pos8 =  vector<vector<Point8>>(image.width(), vector<Point8>(image.height()));
     REP(x,image.width()) REP(y,image.height()) search(QPoint(x,y));
 }
 EOrder PietCore::fromRelativeColor(int from,int to){
-    // 0 3 6 9  12 15   18
-    // 1 4 7 10 13 16   19
-    // 2 5 8 11 14 17   20(将来のための)
-    // 他は*=-1;
     if (from < 0 || to < 0) return EOrder::Exception; // 未実装
     if (from >= 18 || to >= 20 )return EOrder::Exception; //未実装
     if (to == 18) return EOrder::White;
@@ -155,11 +152,26 @@ EOrder PietCore::fromRelativeColor(int from,int to){
     if(from % 3 == 2 && to % 3 == 1) to += 3;
     to -= (from % 3);
     from -= (from % 3);
-    if (from > to) to += 18; // 上記の表に直す
-    //enum class EOrder{Same=0,Push,Pop,Add,Sub,Mul,Div,Mod,Not,Great,Point,
-    //                  Switch,Dup,Roll,InN,InC,OutN,OutC,White,Black,Exception};
+    if (from > to) to += 18; // 下記の表に直す
     return (EOrder)(to -from);
 }
+//enum class EOrder{Same=0,Push,Pop,Add,Sub,Mul,Div,Mod,Not,Great,Point,
+//                  Switch,Dup,Roll,InN,InC,OutN,OutC,White,Black,Exception};
+// 0 3 6 9  12 15   18
+// 1 4 7 10 13 16   19
+// 2 5 8 11 14 17   20(将来のための)// 他は*=-1;
+
+QRgb PietCore::getNormalColor(int nowCode,EOrder nextOrder){
+    if     (nextOrder == EOrder::White) return normalColors[0][6];
+    else if(nextOrder == EOrder::Black) return normalColors[1][6];
+    if (nowCode < 0 || nowCode >= 20) return normalColors[0][0]; //Error
+    if (nowCode == 18 || nowCode == 19) return normalColors[0][0]; //とりあえず基準のあの色を返しておく
+    int nextOrderCode = (int)nextOrder;
+    QPoint nextOrderPos = QPoint (nowCode / 3,nowCode % 3) + QPoint (nextOrderCode / 3  ,nextOrderCode % 3);;
+    return normalColors[nextOrderPos.y() % 3][nextOrderPos.x() % 6];
+}
+
+
 void PietCore::processWall(){
     //Change CC,Change DP(時計回り)...
     if(processWallCount == 8) {
@@ -201,9 +213,9 @@ void PietCore::execOneAction(){
             LightcurrentOrder = QString(LIGHTOPERATE);\
         }else { \
             currentOrder = QString("Less Arg");\
-            LightcurrentOrder = QString ("！");\
+            LightcurrentOrder = QString ("??");\
         }
-    #define SET_CURRENT_ORDER_LESS_ARGS {currentOrder = QString("Less Arg");LightcurrentOrder = QString("！");}
+    #define SET_CURRENT_ORDER_LESS_ARGS {currentOrder = QString("Less Arg");LightcurrentOrder = QString("??");}
     switch(order){
     case EOrder::Same: break; // 普通はないはず
     case EOrder::Push:
@@ -249,7 +261,7 @@ void PietCore::execOneAction(){
         if(stack.size() > 0 ){
              STACK_TOP = PietTree( STACK_TOP .Not()) ;
              currentOrder = QString("Not");
-             LightcurrentOrder = QString("0?");
+             LightcurrentOrder = QString("!");
         }else{SET_CURRENT_ORDER_LESS_ARGS}
         break;
     case EOrder::Great: //v1 < v2 ? 0 : 1
@@ -289,7 +301,7 @@ void PietCore::execOneAction(){
         if(stack.size() > 0 ){
              stack.push_back( STACK_TOP);
              currentOrder = QString("Duplicate");
-             LightcurrentOrder = QString("x2");
+             LightcurrentOrder = QString("Ｄ");
         }else {SET_CURRENT_ORDER_LESS_ARGS}
         break;
     case EOrder::Roll:
@@ -313,7 +325,7 @@ void PietCore::execOneAction(){
             REP(i,depth) stack[stack.size() - depth + i] =
                             i - roll < 0 ? copy[i - roll + depth ] : copy[i - roll] ;
             currentOrder = QString("Roll d %1,r %2").arg(depth).arg(forCurrentOrderRoll);
-            LightcurrentOrder = QString("Rl");
+            LightcurrentOrder = QString("Ｒ");
         }else{SET_CURRENT_ORDER_LESS_ARGS}
         break;
     case EOrder::InN:{
@@ -321,7 +333,7 @@ void PietCore::execOneAction(){
         int gotNum = inPutNumFunction(Missed);
         if(Missed){
             currentOrder = QString("In(Num) Miss !");
-            LightcurrentOrder = QString ("！");
+            LightcurrentOrder = QString ("??");
         }else{
             stack.push_back(PietTree(gotNum));
             currentOrder = QString("In ") + QString::number(gotNum);

@@ -1,19 +1,24 @@
 # Todo
 京都バスの予約,Droneの予約,Blender持ってくる
 Linuxでの実行の対応
-CUIIN
+
 ## UltraPiet
 ②UltraPiet拡張の実装
 Tab,ProjectTree
 フォーク
 Pasxx の対応
 KeyBoard Editing
+普通の移動 : ←↓↑→
+push,pop,+,-,*,/,%,!,>,point,switch,dup,roll,inN,inC,oN,oC,White,Black,NonNormal,Same,DP
+p,P,+,-,*,/,%,!,>,@,^,d,r,I,i,O,o,Space,b,ほげ,Shift+←↓↑→,Return,
+(シフト必要？)(Switch == XOR ,point @ )
 命令表示（全部の色ボタン）
 NonNormalColor(入る時に対応する数字を取る)その他の動作は処理系にまかせよう
 
-123	123
 ## Editor
 Redo
+C-N
+Not save Waring
 キャンバスサイズ変更
 3D化,copy paste
 Fontを変更できるように

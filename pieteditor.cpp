@@ -10,7 +10,7 @@ PietEditor::PietEditor(QWidget *parent) : QWidget (parent){
     zoom = 16;
     image = QImage(16,16,QImage::Format_ARGB32);
     image.fill(qRgba(255,255,255,255));
-    imageStack.push_back(image.copy());
+    imageStack.push_back(ImageOperateLog( image.copy(),QPoint(0,0),dpR));
     setAcceptDrops(true);
     core.setImage(image);
 }
@@ -85,7 +85,7 @@ void PietEditor::paintEvent(QPaintEvent *event){
         };
         QPoint PreAr(-1,-1);
         QPen linePen(Qt::black,1.0 + zm / 20.0 , Qt::DotLine, Qt::RoundCap);
-        for(auto ar: ArrowQueue) {
+        for(auto& ar: ArrowQueue) {
             if(! ar.c.isEmpty())PaintText(ar.x(),ar.y(),ar.c);
             if(PreAr.x() != -1 && PreAr.y() != -1){//DrawLine
                 if(abs(PreAr.x()- ar.x()) + abs(PreAr.y() -ar.y()) > 3 ){
@@ -95,6 +95,13 @@ void PietEditor::paintEvent(QPaintEvent *event){
                 }
             }
             PreAr = QPoint(ar.x(),ar.y());
+        }
+        if(!this->isExecuting){
+            for(auto& state : imageStack){
+                if(!state.order.isEmpty()){
+                    PaintText(state.pos.x(),state.pos.y(),state.order);
+                }
+            }
         }
         PaintText(core.getPos().x(),core.getPos().y(),PietCore::arrowFromDP(core.getDP()));
     }
@@ -110,6 +117,101 @@ void PietEditor::dropEvent(QDropEvent *event){
     openImage(event->mimeData()->urls().first().toLocalFile() );
 }
 
+void PietEditor::keyPressEvent( QKeyEvent *event ){
+    QRgb nowRGB = image.pixel(core.getPos().x(),core.getPos().y());
+    int nowcode = -1;
+    REP(i,3) REP(j,7) if(nowRGB == PietCore::normalColors[i][j]){nowcode = 3*j+i; goto MATCHED;}
+    ;MATCHED:;
+    if(nowcode == -1 ){nowcode = 0;}
+    auto CommandCore = [nowcode,this](EOrder nextOrder,QString strorder){
+        QPoint prepos = core.getPos();
+        core.setPos(prepos + PietCore::directionFromDP(core.getDP()));
+        if(prepos != core.getPos()){
+            imageStack.push_back(ImageOperateLog( image.copy(),core.getPos(),core.getDP(),strorder));
+            if(imageStack.size() > StackMaxSize()) imageStack.pop_front();
+            setImagePixel(zoom * core.getPos(),PietCore::getNormalColor(nowcode,nextOrder));
+            emit MovedPos (zoom * core.getPos().x(),zoom * core.getPos().y());
+        }
+    };
+    switch( event->key() ){
+    case Qt::Key_P:{
+        if (event->modifiers()!=Qt::ShiftModifier)
+            CommandCore(EOrder::Push,QString("Ｐ"));
+        else CommandCore(EOrder::Pop,QString("♪"));
+        }break;
+    case Qt::Key_Plus:case Qt::Key_Semicolon:
+        CommandCore(EOrder::Add,QString("＋")); break;
+    case Qt::Key_Minus:
+        CommandCore(EOrder::Sub,QString("-")); break;
+    case Qt::Key_Colon: case Qt::Key_Asterisk:
+        CommandCore(EOrder::Mul,QString("×")); break;
+    case Qt::Key_Slash:
+        CommandCore(EOrder::Div,QString("÷")); break;
+    case Qt::Key_Percent:case Qt::Key_5:
+        CommandCore(EOrder::Mod,QString("％")); break;
+    case Qt::Key_Exclam: case Qt::Key_1:
+        CommandCore(EOrder::Not,QString("！")); break;
+    case Qt::Key_Greater: case Qt::Key_Period:
+        CommandCore(EOrder::Great,QString("＜")); break;
+    case Qt::Key_At:
+        CommandCore(EOrder::Point,QString("＠")); break;
+    case Qt::Key_AsciiCircum :
+        CommandCore(EOrder::Switch,QString("＾")); break;
+    case Qt::Key_D :
+        CommandCore(EOrder::Dup,QString("Ｄ")); break;
+    case Qt::Key_R :
+        CommandCore(EOrder::Roll,QString("Ｒ")); break;
+    case Qt::Key_I :{
+        if (event->modifiers()==Qt::ShiftModifier)
+             CommandCore(EOrder::InN,QString("IN"));
+        else CommandCore(EOrder::InC,QString("ic"));
+        }break;
+    case Qt::Key_O :{
+        if (event->modifiers()==Qt::ShiftModifier)
+            CommandCore(EOrder::OutN,QString("ON"));
+        else CommandCore(EOrder::OutC,QString("oc"));
+        }break;
+    case Qt::Key_Space :
+        CommandCore(EOrder::White,QString("　")); break;
+    case Qt::Key_B :
+        CommandCore(EOrder::Black,QString("　")); break;
+    case Qt::Key_Return:{
+        if (event->modifiers()==Qt::ShiftModifier){
+            core.incrementDP();core.incrementDP();core.incrementDP();
+        }else {core.incrementDP();
+        }}break; //Change DP
+    case Qt::Key_Down : case Qt::Key_Up :case Qt::Key_Right: case Qt::Key_Left:{
+        QPoint Direction(0,0) ;
+        switch( event->key() ){
+            case Qt::Key_Down : Direction = QPoint(0,1) ;break;
+            case Qt::Key_Up   : Direction = QPoint(0,-1);break;
+            case Qt::Key_Right: Direction = QPoint(1,0) ;break;
+            case Qt::Key_Left : Direction = QPoint(-1,0);break;
+        }
+        QPoint prepos = core.getPos();
+        core.setPos (core.getPos() + Direction);
+        if (event->modifiers()==Qt::ShiftModifier){
+            imageStack.push_back(ImageOperateLog( image.copy(),core.getPos(),core.getDP()));
+            if(imageStack.size() > StackMaxSize()) imageStack.pop_front();
+            setImagePixel(zoom *core.getPos(),image.pixel(prepos.x(),prepos.y()));
+            emit MovedPos (zoom * core.getPos().x(),zoom * core.getPos().y());
+        }}break; //Arrow
+    case Qt::Key_Delete:{
+        imageStack.push_back(ImageOperateLog( image.copy(),core.getPos(),core.getDP(),QString("　")));
+            setImagePixel(zoom * core.getPos(),PietCore::getNormalColor(0,EOrder::White));
+        }break;
+    case Qt::Key_Backspace: undo();break;
+    }
+    /*
+    普通の移動 : ←↓↑→
+    push,pop,+,-,*,/,%,!,>,point,switch,dup,roll,inN,inC,oN,oC,White,Black,NonNormal,Same,DP
+    p,P,+,-,*,/,%,!,>,@,^,d,r,I,i,O,o,Space,b,ほげ,Shift+←↓↑→,Return,
+    数学的演算記号はShiftはどっちでもいい
+    */
+    update();
+}
+
+
 QRect PietEditor::pixelRect(int i, int j) const{
     return zoom >= 3 ?
         QRect(zoom*i+1,zoom*j+1,zoom-1,zoom-1):
@@ -119,9 +221,17 @@ QRect PietEditor::pixelRect(int i, int j) const{
 void PietEditor::undo(){
     if(isExecuting) return;
     ArrowQueue.clear();
-    if(imageStack.count()<= 0) return;
-    image = imageStack.top();
+    if(imageStack.size()<= 0) return;
+    ImageOperateLog Ope = imageStack.back();
+    image = Ope.image;
+    core.setPos(Ope.pos);
+    core.setDP(Ope.dp);
     imageStack.pop_back();
+    if(imageStack.size() > 0){
+        ImageOperateLog Ope2 = imageStack.back();
+        core.setPos(Ope2.pos);
+        core.setDP(Ope2.dp);
+    }
     update();
     updateGeometry();
 }
@@ -129,16 +239,20 @@ void PietEditor::undo(){
 void PietEditor::mousePressEvent(QMouseEvent *event){
     if(isExecuting) return;
     ArrowQueue.clear();
-    imageStack.push_back(image.copy());
-    if(imageStack.count() > 32) imageStack.pop_front();
+    setFocus();
+    if(zoom >= 1)core.setPos(QPoint(event->pos().x() / zoom,event->pos().y()/zoom));
+    imageStack.push_back(ImageOperateLog( image.copy(),core.getPos(),core.getDP()));
+    if(imageStack.size() > StackMaxSize()) imageStack.pop_front();
     if(event->button() == Qt::LeftButton){
         setImagePixel(event->pos(),penColor().rgba());
     }else if(event->button() == Qt::RightButton){
         setPenColor( getImagePixel(event->pos()));
     }
+    update();
 }
 void PietEditor::mouseMoveEvent(QMouseEvent *event){
     if(isExecuting) return;
+    //if(hadnotFocused) return;
     if(event->buttons() & Qt::LeftButton){
         setImagePixel(event->pos(),penColor().rgba());
     }else if(event->buttons() & Qt::RightButton){
@@ -173,7 +287,8 @@ void PietEditor::openImage(QString FilePath ){
     loadedFilePath = FilePath;
     image = loadedimage;
     imageStack.clear();
-    imageStack.push_back(image.copy());
+    imageStack.push_back(ImageOperateLog( image.copy(),core.getPos(),core.getDP()));
+    if(imageStack.size() > StackMaxSize()) imageStack.pop_front();
     update();
     updateGeometry();
 }

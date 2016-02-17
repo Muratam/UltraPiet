@@ -42,6 +42,7 @@ protected :
     void paintEvent(QPaintEvent *event);
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
+    void keyPressEvent( QKeyEvent *event );
     void setImagePixel(const QPoint &pos,const QRgb &rgb);
     QRgb getImagePixel(const QPoint &pos);
     void execInit(QPlainTextEdit *outputWindow, QPlainTextEdit *inputWindow);
@@ -49,11 +50,20 @@ protected :
     QColor curColor;
     PietCore core;
     QImage image;
+    //bool hadnotFocused = true;
     class QPointAndQString :public QPoint{public :QString c; QPointAndQString(int x,int y,QString cc):QPoint(x,y){c =cc;}};
     std::deque<QPointAndQString> ArrowQueue;
     const int ArrowQueueMaxSize = 256;
     QString loadedFilePath = QString("");
-    QStack<QImage> imageStack; // For Undo
+    class ImageOperateLog {
+        public :QPoint pos = QPoint(0,0);EDirectionPointer dp = dpR;QImage image ;QString order;
+        ImageOperateLog(QImage image, QPoint pos = QPoint(0,0),EDirectionPointer dp = dpR,QString order = QString("")){
+            this->image = image; this->pos = pos;this->dp = dp;this->order = order;
+        }
+    };
+    std::deque<ImageOperateLog> imageStack; // For Undo
+    //16 * 16 なら実質無限回, 500 * 500 なら 20回, 1000 * 500 なら 10回,サイズは同じになる
+    int StackMaxSize (){if(image.width() <= 0 || image.height() <= 0)return 32;else return 1000000 / (image.width() * image.height());}
     int zoom;
     QString InitialInput;
     bool isWaitingInput = false;

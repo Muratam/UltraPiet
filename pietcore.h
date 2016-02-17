@@ -51,18 +51,18 @@ private :
     std::vector<PietTree> stack ;
     bool isInImage(const QPoint & p){return p.x() >= 0 && p.y() >= 0 && p.x() < w && p.y() < h;}
     void search(QPoint me);
-    EOrder fromRelativeColor(int codedFrom,int codedTo);
     void processWall();
 public :
     static const QRgb normalColors[3][7] ;
     static const QString normalOrders[3][7];
     static const EOrder normalEOrders[3][7];
+    static QRgb getNormalColor(int nowCode,EOrder nextOrder);
     static bool isNormalColor(QRgb rgb){REP(i,3)REP(j,7)if(rgb == normalColors[i][j])return true;return false;}
     static QColor getVividColor(const QColor & c){int g = DiffMax255( qGray(c.red(),c.green(),c.blue()));return QColor(g,g,g); }//int g = qGray(DiffMax255(c.red()) ,DiffMax255(c.blue()) ,DiffMax255( c.green())); return QColor(g,g,g);}
     static int DiffMax255(int c) {return c < 100 ? 255 : 0;}
-    //static QColor getVividColor(const QColor & c){return QColor(DiffMax255(c.red()),DiffMax255(c.blue()),DiffMax255(c.green()));}
     static QPoint directionFromDP(EDirectionPointer dp ){ return dp == dpR ? QPoint(1,0) :dp == dpD ? QPoint(0,1) : dp == dpL ? QPoint(-1,0) :QPoint(0,-1); }
     static QString arrowFromDP(EDirectionPointer dp ){ return QString(dp == dpR ? "→" :dp == dpD ? "↓" : dp == dpL ? "←" : "↑"); }
+    static EOrder fromRelativeColor(int codedFrom,int codedTo);
 public :
     bool showStackAsNumber = true;
     //実行前には必ずSetImageを忘れないで下さい
@@ -70,6 +70,9 @@ public :
     void init(std::function<void(QString)>outPutFunction,std::function<QChar(void)>inPutCharFunction, std::function<int(bool&)>inPutNumFunction);
     void init(std::function<void(QString)>outPutFunction,std::function<QChar(void)>inPutCharFunction,std::function<int(bool&)>inPutNumFunction,const QImage & image){init(outPutFunction,inPutCharFunction,inPutNumFunction);setImage(image);}
     QPoint getPos() {return pos;}
+    void setPos(QPoint npos){if(npos.x() < 0 || npos.y() < 0 || npos.x() >= w || npos.y() >= h) return ;else  pos = npos;}
+    void incrementDP(){dp = (EDirectionPointer)((int)dp + 1);if((int)dp >=4)dp = (EDirectionPointer)0;}
+    void setDP(EDirectionPointer dp){this->dp = dp;}
     EDirectionPointer getDP() {return dp;}
     ECodelChooser getCC() {return cc;}
     bool getFinished(){return finished;}
