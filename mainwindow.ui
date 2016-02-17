@@ -530,7 +530,7 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -541,9 +541,9 @@ alternate-background-color: rgb(192, 0, 192);
 selection-background-color: rgb(192, 0, 192);</string>
          </property>
          <property name="text">
-          <string>TMP
- 
-</string>
+          <string>Append
+
+ </string>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -566,7 +566,7 @@ selection-background-color: rgb(192, 0, 192);</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -577,9 +577,9 @@ alternate-background-color: rgb(192, 192, 255);
 selection-background-color: rgb(192, 192, 255);</string>
          </property>
          <property name="text">
-          <string>TMP
- 
-</string>
+          <string>Append
+
+ </string>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -602,7 +602,7 @@ selection-background-color: rgb(192, 192, 255);</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -613,7 +613,7 @@ alternate-background-color: rgb(255, 255, 192);
 selection-background-color: rgb(255, 255, 192);</string>
          </property>
          <property name="text">
-          <string>Add
+          <string>Append
 
  </string>
          </property>
@@ -644,7 +644,7 @@ selection-background-color: rgb(255, 255, 192);</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -655,9 +655,9 @@ alternate-background-color: rgb(192, 0, 0);
 selection-background-color: rgb(192, 0, 0);</string>
          </property>
          <property name="text">
-          <string>Pop
- 
-</string>
+          <string>Append
+
+ </string>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -680,7 +680,7 @@ selection-background-color: rgb(192, 0, 0);</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -691,7 +691,7 @@ alternate-background-color: rgb(255, 0, 0);
 selection-background-color: rgb(255, 0, 0);</string>
          </property>
          <property name="text">
-          <string>Push
+          <string>Append
 
  </string>
          </property>
@@ -716,7 +716,7 @@ selection-background-color: rgb(255, 0, 0);</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -727,9 +727,9 @@ alternate-background-color: rgb(192, 192, 0);
 selection-background-color: rgb(192, 192, 0);</string>
          </property>
          <property name="text">
-          <string>Multi
- 
-</string>
+          <string>Append
+
+ </string>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -752,7 +752,7 @@ selection-background-color: rgb(192, 192, 0);</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -763,9 +763,9 @@ alternate-background-color: rgb(255, 0, 255);
 selection-background-color: rgb(255, 0, 255);</string>
          </property>
          <property name="text">
-          <string>TMP
- 
-</string>
+          <string>Append
+
+ </string>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -788,7 +788,7 @@ selection-background-color: rgb(255, 0, 255);</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -799,9 +799,9 @@ color: rgb(255, 255, 255);
 selection-color: rgb(85, 255, 127);</string>
          </property>
          <property name="text">
-          <string>*
+          <string>Append
 
-</string>
+ </string>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -824,7 +824,7 @@ selection-color: rgb(85, 255, 127);</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -835,9 +835,9 @@ alternate-background-color: rgb(192, 255, 255);
 selection-background-color: rgb(192, 255, 255);</string>
          </property>
          <property name="text">
-          <string>TMP
- 
-</string>
+          <string>Append
+
+ </string>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -860,7 +860,7 @@ selection-background-color: rgb(192, 255, 255);</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -871,9 +871,9 @@ alternate-background-color: rgb(255, 255, 0);
 selection-background-color: rgb(255, 255, 0);</string>
          </property>
          <property name="text">
-          <string>Sub
- 
-</string>
+          <string>Append
+
+ </string>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -896,7 +896,7 @@ selection-background-color: rgb(255, 255, 0);</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -907,9 +907,9 @@ alternate-background-color: rgb(192, 255, 192);
 selection-background-color: rgb(192, 255, 192);</string>
          </property>
          <property name="text">
-          <string>TMP
- 
-</string>
+          <string>Append
+
+ </string>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -932,7 +932,7 @@ selection-background-color: rgb(192, 255, 192);</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -943,9 +943,9 @@ alternate-background-color: rgb(0, 255, 0);
 selection-background-color: rgb(0, 255, 0);</string>
          </property>
          <property name="text">
-          <string>TMP
- 
-</string>
+          <string>Append
+
+ </string>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -968,7 +968,7 @@ selection-background-color: rgb(0, 255, 0);</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -1002,7 +1002,7 @@ selection-background-color: rgb(0, 0, 0);</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -1013,9 +1013,9 @@ alternate-background-color: rgb(0, 192, 0);
 selection-background-color: rgb(0, 192, 0);</string>
          </property>
          <property name="text">
-          <string>TMP
- 
-</string>
+          <string>Append
+
+ </string>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -1038,7 +1038,7 @@ selection-background-color: rgb(0, 192, 0);</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -1072,7 +1072,7 @@ selection-background-color: rgb(255, 255, 255);</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -1083,9 +1083,9 @@ alternate-background-color: rgb(0, 0, 255);
 selection-background-color: rgb(0, 0, 255);</string>
          </property>
          <property name="text">
-          <string>TMP
- 
-</string>
+          <string>Append
+
+ </string>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -1108,7 +1108,7 @@ selection-background-color: rgb(0, 0, 255);</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -1119,9 +1119,9 @@ alternate-background-color: rgb(0, 255, 255);
 selection-background-color: rgb(0, 255, 255);</string>
          </property>
          <property name="text">
-          <string>TMP
- 
-</string>
+          <string>Append
+
+ </string>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -1144,7 +1144,7 @@ selection-background-color: rgb(0, 255, 255);</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -1178,7 +1178,7 @@ selection-background-color: rgb(0, 0, 0);</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -1189,9 +1189,9 @@ alternate-background-color: rgb(255, 192, 255);
 selection-background-color: rgb(255, 192, 255);</string>
          </property>
          <property name="text">
-          <string>TMP
- 
-</string>
+          <string>Append
+
+ </string>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -1214,7 +1214,7 @@ selection-background-color: rgb(255, 192, 255);</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -1225,7 +1225,7 @@ alternate-background-color: rgb(0, 192, 192);
 selection-background-color: rgb(0, 192, 192);</string>
          </property>
          <property name="text">
-          <string>Switch
+          <string>Append
 
  </string>
          </property>
@@ -1250,7 +1250,7 @@ selection-background-color: rgb(0, 192, 192);</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>10</pointsize>
+           <pointsize>9</pointsize>
            <weight>75</weight>
            <bold>true</bold>
           </font>
@@ -1261,9 +1261,9 @@ alternate-background-color: rgb(0, 0, 192,);
 selection-background-color: rgb(0, 0, 192,);</string>
          </property>
          <property name="text">
-          <string>TMP
- 
-</string>
+          <string>Append
+
+ </string>
          </property>
          <property name="flat">
           <bool>false</bool>

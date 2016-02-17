@@ -12,9 +12,9 @@ const QRgb PietCore::normalColors[3][7] =  {
     { qRgb(192,  0,  0),qRgb(192,192,  0),qRgb(  0,192,  0),qRgb(  0,192,192),qRgb(  0,  0,192),qRgb(192,  0,192),qRgb(255,255,255)}
 };
 const QString PietCore::normalOrders[3][7] = {
-    {QString("*"),   QString("add\nappend") ,QString("div\nmatch"),QString("greater\nfile")  , QString("dup")      , QString("in(c)")       ,QString("")},
+    {QString("*"),   QString("add\nappend") ,QString("div\nmatch"),QString("great\nfile")    , QString("dup")      , QString("in(c)")       ,QString("")},
     {QString("push"),QString("sub\nsplit")  ,QString("mod\nzip")  ,QString("point\nhead")    , QString("roll\ndll"), QString("out(n)\nsize"),QString("")},
-    {QString("pop"), QString("mul\nproduct"),QString("not")       ,QString("switch\nflatten"), QString("in(n)")    , QString("out(c)")      ,QString("")}
+    {QString("pop"), QString("mul\nprod")   ,QString("not")       ,QString("switch\nflat")   , QString("in(n)")    , QString("out(c)")      ,QString("")}
 };
 const EOrder PietCore::normalEOrders[3][7] = {
     {EOrder::Same,EOrder::Add,EOrder::Div,EOrder::Great,EOrder::Dup,EOrder::InC,EOrder::Exception},
@@ -323,9 +323,9 @@ void PietCore::execOneAction(){
             currentOrder = QString("In(Num) Miss !");
             LightcurrentOrder = QString ("！");
         }else{
-        stack.push_back(PietTree(gotNum));
-        currentOrder = QString("In ") + QString::number(gotNum);
-        LightcurrentOrder =(-10 < gotNum && gotNum <100)?  QString::number(gotNum):QString(gotNum);
+            stack.push_back(PietTree(gotNum));
+            currentOrder = QString("In ") + QString::number(gotNum);
+            LightcurrentOrder =(-10 < gotNum && gotNum <100)?  QString::number(gotNum):QString(gotNum);
         }}break;
     case EOrder::InC:{
         QChar gotChar = inPutCharFunction();
