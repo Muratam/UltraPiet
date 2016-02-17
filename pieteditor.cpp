@@ -8,7 +8,7 @@ PietEditor::PietEditor(QWidget *parent) : QWidget (parent){
     setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
     curColor = QColor(PietCore::normalColors[0][0]);
     zoom = 16;
-    image = QImage(16,16,QImage::Format_ARGB32);
+    image = QImage(16,16,QImage::Format_RGB32);
     image.fill(qRgba(255,255,255,255));
     imageStack.push_back(ImageOperateLog( image.copy(),QPoint(0,0),dpR));
     setAcceptDrops(true);
@@ -27,7 +27,7 @@ void PietEditor::setPenColor(const QColor &newColor){
 void PietEditor::setIconImage(const QImage &newImage){
     if(isExecuting) return;
     if(newImage != image){
-        image = newImage.convertToFormat(QImage::Format_ARGB32);
+        image = newImage.convertToFormat(QImage::Format_RGB32);
         update();
         updateGeometry();
     }
@@ -332,6 +332,43 @@ void PietEditor::openImage(QString FilePath ){
     update();
     updateGeometry();
 }
+
+void PietEditor::resize(){
+    if(isExecuting) return;
+    if(imageStack.size() > 1) {
+        QMessageBox msgBox(this);
+        msgBox.setText(tr("Resize Image ? \n (Existing Edit History May Be Discarded.)"));
+        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::No);
+        int res = msgBox.exec();
+        if (res == QMessageBox::No) return;
+    }
+    int gotw = 16, goth = 16;
+    bool ok = false;
+    QString text = QInputDialog::getText(this, tr("QInputDialog::getInt()"), tr("Input Width:"), QLineEdit::Normal, "16", &ok);
+    if (ok && !text.isEmpty())  gotw = text.toInt();
+    else return;
+    text = QInputDialog::getText(this, tr("QInputDialog::getInt()"), tr("Input Height:"), QLineEdit::Normal, "16", &ok);
+    if (ok && !text.isEmpty())  goth = text.toInt();
+    else return;
+    if(gotw <= 0 || goth <= 0) {MSGBOX("INVALID SIZE"); return;}
+    QImage newImage(gotw,goth,QImage::Format_RGB32);
+    newImage.fill(qRgba(255,255,255,255));
+    int minw = std::min(gotw,image.width());
+    int minh = std::min(goth,image.height());
+    REP(x,minw)REP(y,minh){newImage.setPixel(x,y,image.pixel(x,y));}
+    image = newImage;
+    //if(image.size().width() > gotw || image.size().height > goth){
+    core.setPos(QPoint(0,0));
+    core.setDP(dpR);
+    imageStack.clear();
+    imageStack.push_back(ImageOperateLog( image.copy(),QPoint(0,0),dpR));
+    core.setImage(image);
+    ArrowQueue.clear();
+    update();
+    updateGeometry();
+
+}
+
 void PietEditor::newImage(){
     if(isExecuting) return;
     if(imageStack.size() > 1) {
@@ -351,7 +388,7 @@ void PietEditor::newImage(){
     else return;
     if(gotw <= 0 || goth <= 0) {MSGBOX("INVALID SIZE"); return;}
     zoom = 16;
-    image = QImage(gotw,goth,QImage::Format_ARGB32);
+    image = QImage(gotw,goth,QImage::Format_RGB32);
     image.fill(qRgba(255,255,255,255));
     imageStack.clear();
     imageStack.push_back(ImageOperateLog( image.copy(),QPoint(0,0),dpR));
