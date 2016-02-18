@@ -38,6 +38,7 @@ public slots :
 signals :
     void changedPenColor(const QColor &color);
     void MovedPos(int x,int y);
+    void OpenedImage(QString path);
 protected :
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);

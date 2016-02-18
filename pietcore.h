@@ -9,6 +9,7 @@
 #include "defines.h"
 #include "piettree.h"
 #include <functional>
+#include <QDir>
 //UltraPietの実際の命令処理をするクラス (なのでGUIには依存しません)
 
 enum EDirectionPointer{dpR=0,dpD=1,dpL=2,dpU=3};
@@ -66,10 +67,14 @@ public :
     static EOrder fromRelativeColor(int codedFrom,int codedTo);
 public :
     bool showStackAsNumber = true;
+    QString ImagePath = QString("");
     //実行前には必ずSetImageを忘れないで下さい
     PietCore (std::function<void(QString)>outPutFunction = [](QString qs){}, std::function<QChar(void)> inPutCharFunction = [](){return QChar(72);}, std::function<int(bool&)> inPutNumFunction = [](bool&b){return 0;});
     void init(std::function<void(QString)>outPutFunction,std::function<QChar(void)>inPutCharFunction, std::function<int(bool&)>inPutNumFunction);
-    void init(std::function<void(QString)>outPutFunction,std::function<QChar(void)>inPutCharFunction,std::function<int(bool&)>inPutNumFunction,const QImage & image){init(outPutFunction,inPutCharFunction,inPutNumFunction);setImage(image);}
+    void init(std::function<void(QString)>outPutFunction,std::function<QChar(void)>inPutCharFunction,std::function<int(bool&)>inPutNumFunction,const QImage & image,QString ImagePath){init(outPutFunction,inPutCharFunction,inPutNumFunction);setImage(image,ImagePath);}
+    void setStack(std::vector<PietTree> &nstack ){stack.clear();stack = nstack;}
+    std::vector<PietTree> getStack(){return stack;}
+    void ExecOtherPietCore(QImage CorrectImage, QString newFilePath);
     QPoint getPos() {return pos;}
     void setPos(QPoint npos){if(npos.x() < 0 || npos.y() < 0 || npos.x() >= w || npos.y() >= h) return ;else  pos = npos;}
     void incrementDP(){dp = (EDirectionPointer)((int)dp + 1);if((int)dp >=4)dp = (EDirectionPointer)0;}
@@ -81,8 +86,12 @@ public :
     QString getCurrentOrder() {return currentOrder;}
     QString getLightCurrentOrder() {return LightcurrentOrder;}
     void execOneAction();
-    void exec(){while (!finished){execOneAction();}} //Not For Editor
-    void setImage(const QImage & image);
+    void exec(){
+        QString nextDirPath = QFileInfo(ImagePath).absoluteDir().absolutePath();
+        QDir::setCurrent(nextDirPath);
+        while (!finished){execOneAction();}
+    } //For Command line or Div0
+    void setImage(const QImage & image, QString ImagePath);
     QString printStack();
     QString printStatus();
 };

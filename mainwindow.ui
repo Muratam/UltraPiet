@@ -54,24 +54,20 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_4">
       <item>
-       <widget class="QTabWidget" name="tabWidget">
-        <property name="enabled">
+       <widget class="QScrollArea" name="scrollArea">
+        <property name="widgetResizable">
          <bool>true</bool>
         </property>
-        <property name="acceptDrops">
-         <bool>false</bool>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="currentIndex">
-         <number>0</number>
-        </property>
-        <widget class="QWidget" name="tab">
-         <attribute name="title">
-          <string>Tab 1</string>
-         </attribute>
-         <layout class="QGridLayout" name="gridLayout_3">
+        <widget class="QWidget" name="scrollAreaWidgetContents">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>0</y>
+           <width>393</width>
+           <height>408</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_4">
           <property name="leftMargin">
            <number>0</number>
           </property>
@@ -82,60 +78,16 @@
            <number>0</number>
           </property>
           <property name="bottomMargin">
-           <number>3</number>
-          </property>
-          <property name="spacing">
-           <number>3</number>
+           <number>0</number>
           </property>
           <item row="0" column="0">
-           <widget class="QScrollArea" name="scrollArea">
-            <property name="widgetResizable">
+           <widget class="PietEditor" name="pietEditor" native="true">
+            <property name="acceptDrops">
              <bool>true</bool>
             </property>
-            <widget class="QWidget" name="scrollAreaWidgetContents">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>0</y>
-               <width>387</width>
-               <height>381</height>
-              </rect>
-             </property>
-             <layout class="QGridLayout" name="gridLayout_4">
-              <property name="leftMargin">
-               <number>0</number>
-              </property>
-              <property name="topMargin">
-               <number>0</number>
-              </property>
-              <property name="rightMargin">
-               <number>0</number>
-              </property>
-              <property name="bottomMargin">
-               <number>0</number>
-              </property>
-              <item row="0" column="0">
-               <widget class="PietEditor" name="pietEditor" native="true">
-                <property name="acceptDrops">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
            </widget>
           </item>
          </layout>
-        </widget>
-        <widget class="QWidget" name="tab_2">
-         <attribute name="title">
-          <string>Tab 2</string>
-         </attribute>
-        </widget>
-        <widget class="QWidget" name="tab_3">
-         <attribute name="title">
-          <string>ページ</string>
-         </attribute>
         </widget>
        </widget>
       </item>
@@ -149,7 +101,7 @@
      <x>0</x>
      <y>0</y>
      <width>666</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuPiet_png">
@@ -425,14 +377,7 @@
       <number>3</number>
      </property>
      <item>
-      <widget class="QTreeWidget" name="treeWidget">
-       <property name="font">
-        <font>
-         <pointsize>9</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
+      <widget class="QTreeWidget" name="projectTreeWidget">
        <column>
         <property name="text">
          <string notr="true">1</string>
@@ -1464,11 +1409,9 @@ selection-background-color: rgb(0, 0, 192,);</string>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>tabWidget</tabstop>
   <tabstop>stackTextEdit</tabstop>
   <tabstop>inputTextEdit</tabstop>
   <tabstop>outputTextEdit</tabstop>
-  <tabstop>treeWidget</tabstop>
   <tabstop>B00</tabstop>
   <tabstop>B10</tabstop>
   <tabstop>B20</tabstop>
@@ -1478,7 +1421,6 @@ selection-background-color: rgb(0, 0, 192,);</string>
   <tabstop>B02</tabstop>
   <tabstop>B12</tabstop>
   <tabstop>B22</tabstop>
-  <tabstop>scrollArea</tabstop>
  </tabstops>
  <resources/>
  <connections/>

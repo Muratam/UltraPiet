@@ -3,7 +3,7 @@
 #include <queue>
 #include <unordered_set>
 #include <QPoint>
-
+#include <QDir>
 using namespace std;
 
 const QRgb PietCore::normalColors[3][7] =  {
@@ -22,7 +22,7 @@ const EOrder PietCore::normalEOrders[3][7] = {
     {EOrder::Pop,EOrder::Mul,EOrder::Not,EOrder::Switch,EOrder::InN,EOrder::OutC,EOrder::Exception},
 };
 
-PietCore::PietCore(function<void(QString)> outPutFunction, function<QChar(void)>inPutCharFunction , function<int(bool &)> inPutNumFunction) {
+PietCore::PietCore( function<void(QString)> outPutFunction, function<QChar(void)>inPutCharFunction , function<int(bool &)> inPutNumFunction){
     stack = vector<PietTree>();
     coded = vector<vector<int>>();
     pos8 = vector<vector<Point8>>();
@@ -121,7 +121,8 @@ void PietCore::search(QPoint me){//実行前にメモ化しておく
     res8.BlockSize = seeked.size();
     for(const auto& s : seeked) POINT8(s) =res8;
 }
-void PietCore::setImage(const QImage & image){
+void PietCore::setImage(const QImage & image,QString ImagePath){
+    this->ImagePath =  ImagePath;
     w = image.width();
     h = image.height();
 
@@ -250,6 +251,18 @@ void PietCore::execOneAction(){
     case EOrder::Div:
         if(stack.size()< 2){ SET_CURRENT_ORDER_LESS_ARGS; break;}
         if(STACK_TOP .isLeaf() && STACK_TOP.Val() == 0){
+            PietTree cp = PietTree(stack[stack.size() - 2]);
+            QString readpath =( cp.isLeaf()?QString::number(cp.Val()) : cp.toString() )+ QString(".png");
+            QImage loadedimage = QImage(readpath);
+            if(loadedimage.isNull()){
+                currentOrder = QString("Load Miss") ;
+                LightcurrentOrder = QString("??");
+            }else{
+                stack.pop_back(); stack.pop_back();
+                currentOrder = QString("Load ") + readpath;
+                LightcurrentOrder = QString("÷0");
+                ExecOtherPietCore(loadedimage,readpath);
+            }
             break;
         } // Div 0 => Read Module
         PROCESARITHMETICORDER(v2.match (v1),"Div","÷");
@@ -424,10 +437,28 @@ QString PietCore::printStatus(){
     QString res("");
     res += QString("w:%1 * h:%2\n").arg(w).arg(h);
     res += QString("x:%1 , y:%2\n").arg(pos.x()).arg(pos.y());
-    res += QString("DP:%1(%2)\n").arg(arrowFromDP(dp)).arg((int)dp);
-    res += QString("CC:%1(%2)\n").arg(cc == ccR ? "R" : "L").arg((int)cc);
+    res += QString("DP : %1\n").arg(arrowFromDP(dp));
+    res += QString("CC : %1\n").arg(cc == ccR ? "R" : "L");
     res += QString("Step:%1\n").arg(step);
     res += currentOrder + QString("\n");
-    //res += QString("CS:1\n");//codelsize
+    //res += QString("CS:1\n");//codelsize == 1
     return res;
 }
+
+void PietCore::ExecOtherPietCore(QImage CorrectImage,QString newFilePath){
+    if(CorrectImage.isNull() ){return ;}
+    PietCore othercore = PietCore(outPutFunction,inPutCharFunction,inPutNumFunction);
+    othercore.setStack(stack);
+    QString currentDirPath = QDir::currentPath();
+    othercore.setImage(CorrectImage,newFilePath);
+    othercore.exec();
+    stack = othercore.getStack();
+    QDir::setCurrent(currentDirPath);
+}
+
+/*
+QString filepath = QDir(str).absolutePath();
+QString currentDir = QFileInfo(str).absoluteDir().absolutePath();
+this->setWindowTitle(filepath);
+QDir::setCurrent(currentDir);
+*/

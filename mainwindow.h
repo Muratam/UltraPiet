@@ -15,6 +15,8 @@ private:
     Ui::MainWindow *ui;
 public slots:
     void setEditColor(const QColor &color);
+    void UpdateTree();
+    void MoveCurrentDirectrory(QString str);
 };
 
 #endif // MAINWINDOW_H

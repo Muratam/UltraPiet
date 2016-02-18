@@ -41,7 +41,7 @@ int main(int argc, char *argv[]){
             buffer.remove(0,Match.length());
             return m;
         } );
-        core.setImage(loadedimage);
+        core.setImage(loadedimage,argv[1]);
         core.exec();
         cout << endl;
         return 0;

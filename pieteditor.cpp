@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include "defines.h"
 
-PietEditor::PietEditor(QWidget *parent) : QWidget (parent){
+PietEditor::PietEditor(QWidget *parent) : QWidget (parent) {
     setAttribute(Qt::WA_StaticContents);
     setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
     curColor = QColor(PietCore::normalColors[0][0]);
@@ -12,7 +12,8 @@ PietEditor::PietEditor(QWidget *parent) : QWidget (parent){
     image.fill(qRgba(255,255,255,255));
     imageStack.push_back(ImageOperateLog( image.copy(),QPoint(0,0),dpR));
     setAcceptDrops(true);
-    core.setImage(image);
+    core.setImage(image,QString(""));
+    loadedFilePath = QString("");
 }
 QSize PietEditor::sizeHint()const{
     auto size = zoom * image.size() + QSize(zoom,zoom);
@@ -332,9 +333,10 @@ void PietEditor::openImage(QString FilePath ){
     if(imageStack.size() > StackMaxSize()) imageStack.pop_front();
     core.setPos(QPoint(0,0));
     core.setDP(dpR);
-    core.setImage(image);
+    core.setImage(image,loadedFilePath);
     update();
     updateGeometry();
+    emit OpenedImage(loadedFilePath);
 }
 
 void PietEditor::resize(){
@@ -366,11 +368,10 @@ void PietEditor::resize(){
     core.setDP(dpR);
     imageStack.clear();
     imageStack.push_back(ImageOperateLog( image.copy(),QPoint(0,0),dpR));
-    core.setImage(image);
+    core.setImage(image,loadedFilePath);
     ArrowQueue.clear();
     update();
     updateGeometry();
-
 }
 
 void PietEditor::newImage(){
@@ -399,10 +400,11 @@ void PietEditor::newImage(){
     loadedFilePath = QString("");
     core.setPos(QPoint(0,0));
     core.setDP(dpR);
-    core.setImage(image);
+    core.setImage(image,QString(""));
     ArrowQueue.clear();
     update();
     updateGeometry();
+    //emit OpenedImage(loadedFilePath);
 }
 
 
@@ -415,6 +417,7 @@ void PietEditor::saveImage(bool asNew){
     if(!image.save(filePath)){QApplication::setOverrideCursor(Qt::ArrowCursor);MSGBOX("Cannot Save...");return;}
     loadedFilePath = filePath;
     Sleep(100);
+    emit OpenedImage(loadedFilePath);
     QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
@@ -460,7 +463,7 @@ void PietEditor::execInit(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWi
             inputWindow->setPlainText(Input);
             isWaitingInput = false;
             return m;
-        },image);
+        },image,loadedFilePath);
     ArrowQueue.clear();
     isExecuting = true;
     InitialInput = inputWindow->toPlainText();
@@ -523,7 +526,7 @@ void PietEditor::execCancel( QPlainTextEdit * inputWindow){
     if(!isExecuting) return;
     if(isWaitingInput){ isWaintingInputThenExecCancelSignal = true; return;}
     isExecuting = false;
-    core.init([](QString s){},[](){return QChar(72);},[](bool & b){return 0;},image);
+    core.init([](QString s){},[](){return QChar(72);},[](bool & b){return 0;},image,loadedFilePath);
     MSGBOX("Debug Canceled");
     inputWindow->setPlainText(InitialInput);
     update();
