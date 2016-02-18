@@ -72,8 +72,9 @@ void PietEditor::paintEvent(QPaintEvent *event){
                 painter.fillRect(rect,color);
                 if(zoom > 6 && !PietCore::isNormalColor(image.pixel(x,y))){
                     painter.setPen(PietCore::getVividColor(color));
-                    int rgb = image.pixel(x,y);
-                    PaintText(x,y ,QString(rgb));
+                    int rgb = image.pixel(x,y); //ARGB,強制的に A => 0 として処理
+                    if(32 == PietCore::CutA(rgb))PaintText(x,y ,QString("SP"));
+                    else PaintText(x,y ,QString(rgb));
                 }
             }
         }
@@ -222,8 +223,9 @@ void PietEditor::keyPressEvent( QKeyEvent *event ){
                         prepos = core.getPos();
                         core.setPos(prepos + PietCore::directionFromDP(core.getDP()));
                     }
-                    imageStack.push_back(ImageOperateLog( image.copy(),core.getPos(),core.getDP(),c));
-                    setImagePixel(zoom * core.getPos(), c.unicode() );
+                    imageStack.push_back(ImageOperateLog( image.copy(),core.getPos(),core.getDP(),QString("")));
+                    int ic = c.unicode();
+                    setImagePixel(zoom * core.getPos(), ic );
                     if(imageStack.size() > StackMaxSize()) imageStack.pop_front();
                     emit MovedPos (zoom * core.getPos().x(),zoom * core.getPos().y());
                 }

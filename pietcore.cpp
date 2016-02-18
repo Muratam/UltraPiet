@@ -198,8 +198,12 @@ void PietCore::execOneAction(){
     QPoint nextpos = p8.getbyDPCC(dp,cc);
     if(nextpos == Wall){processWall(); return ;}
     int currentcode = PIXEL(pos);
-    if(currentcode < 0 || currentcode > 19) currentcode = 0;
-    EOrder order = fromRelativeColor(currentcode,PIXEL(nextpos));
+    int nextcode = PIXEL(nextpos);
+    if(currentcode < 0 || currentcode > 19) {
+        if(nextcode < 0 || nextcode > 19) currentcode = 0;
+        else currentcode = nextcode ; //Unicode => NormalColor はなにもしない
+    }
+    EOrder order = fromRelativeColor(currentcode,nextcode);
     int WhiteColor = 18;
     int BlackColor = 19;
     #define STACK_TOP stack[stack.size()-1]
@@ -219,7 +223,10 @@ void PietCore::execOneAction(){
         }
     #define SET_CURRENT_ORDER_LESS_ARGS {currentOrder = QString("Less Arg");LightcurrentOrder = QString("??");}
     switch(order){
-    case EOrder::Same: break; // 普通はないはず
+    case EOrder::Same:
+        currentOrder = QString("Nop");
+        LightcurrentOrder =  QString("Nop");
+        break; //Unicode => NormalColor
     case EOrder::Push:
         stack.push_back(PietTree(p8.BlockSize));
         currentOrder = QString("Push %1").arg(p8.BlockSize);
@@ -390,7 +397,7 @@ void PietCore::execOneAction(){
             currentOrder = QString("Nop") ;
             LightcurrentOrder = QString("");
         }else{
-            QString str = QString(-1 * (PIXEL (nextpos)));
+            QString str = QString(PietCore::CutA (-1 * (PIXEL (nextpos))));
             stack.push_back(PietTree(str));
             currentOrder = QString("Push ") + str;
             LightcurrentOrder = str;
