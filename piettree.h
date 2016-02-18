@@ -35,7 +35,7 @@ public :
     void append(const PietTree& pt);  //@Add : OK
     void split(PietTree & pt);  //@Sub : OK
     void product(const PietTree & pt);//@Mul : OK
-    void match(const PietTree & pt);  //@Div  : ?? 未実装
+    void match(PietTree & pt);  //@Div  : ?? 未実装
     void zip(const PietTree &pt);     //@Mod : OK
     void loadFile(const PietTree &pt); //@Greater : 未実装
     //void loadDll(4 args); //@Roll : 未実装

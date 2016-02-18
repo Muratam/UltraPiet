@@ -13,7 +13,7 @@ const QRgb PietCore::normalColors[3][7] =  {
 };
 const QString PietCore::normalOrders[3][7] = {
     {QString("* \nU tf-8"),   QString("+ add\nappend") ,QString("/ div\nmatch"),QString("<great\nfile")    , QString("Ｄ up")      , QString("ｉ n(c)")       ,QString("SPACE")},
-    {QString("p ush"),QString("- sub\nsplit")  ,QString("% mod\nzip")  ,QString("@point\nhead") , QString("Ｒ oll\ndll"), QString("Ｏ ut(n)\nsize"),QString("Ｂ lack")},
+    {QString("p ush"),QString("- sub\nsplit")  ,QString("% mod\nzip")  ,QString("@point\nlast") , QString("Ｒ oll\ndll"), QString("Ｏ ut(n)\nnodes"),QString("Ｂ lack")},
     {QString("P op♪"), QString("* mul\nprod")   ,QString("! not")   ,QString("^switch\nflat")   , QString("Ｉ n(n)")    , QString("ｏ ut(c)")      ,QString("Ｕ ser\n insert")}
 };
 const EOrder PietCore::normalEOrders[3][7] = {
@@ -196,16 +196,17 @@ void PietCore::execOneAction(){
     if (finished)return;
     Point8 p8 = POINT8(pos);
     QPoint nextpos = p8.getbyDPCC(dp,cc);
+    const int WhiteColor = 18;
+    const int BlackColor = 19;
     if(nextpos == Wall){processWall(); return ;}
     int currentcode = PIXEL(pos);
     int nextcode = PIXEL(nextpos);
-    if(currentcode < 0 || currentcode > 19) {
-        if(nextcode < 0 || nextcode > 19) currentcode = 0;
+    if(currentcode < 0 || currentcode > BlackColor) { //Unicode
+        if(nextcode < 0 || nextcode > BlackColor) currentcode = 0; //unicodeが連続
+        else if (nextcode == BlackColor) currentcode = 0; //壁
         else currentcode = nextcode ; //Unicode => NormalColor はなにもしない
-    }
+    }else  if(currentcode == WhiteColor && nextcode == BlackColor) currentcode = 0; //壁
     EOrder order = fromRelativeColor(currentcode,nextcode);
-    int WhiteColor = 18;
-    int BlackColor = 19;
     #define STACK_TOP stack[stack.size()-1]
     #define PROCESARITHMETICORDER(OPERATE,OPERATENAME,LIGHTOPERATE) \
         if(stack.size() >= 2){ \
@@ -280,8 +281,8 @@ void PietCore::execOneAction(){
         if(stack.size() > 0 ){
             if(! STACK_TOP.isLeaf()){
                 stack.push_back(STACK_TOP.popHead());
-                currentOrder = QString("head");
-                LightcurrentOrder = QString("HD");
+                currentOrder = QString("last");
+                LightcurrentOrder = QString("＠");
             }else{// 時計回り -1 % 4 => -1
                 dp = (EDirectionPointer)((int)dp + (STACK_TOP.Val() % 4));
                 stack.pop_back();
@@ -296,7 +297,7 @@ void PietCore::execOneAction(){
             if(! STACK_TOP.isLeaf()){
                 STACK_TOP.flatten();
                 currentOrder = QString("flatten");
-                LightcurrentOrder = QString("⊥");
+                LightcurrentOrder = QString("＾");
             }else{
                 if(STACK_TOP.Val() % 2 != 0)
                     cc = (cc == ccR ? ccL : ccR);
@@ -354,7 +355,7 @@ void PietCore::execOneAction(){
         currentOrder = QString("In ") + QString(gotChar);
         LightcurrentOrder =  QString(gotChar);
         } break;
-    case EOrder::OutN: //size
+    case EOrder::OutN: //Nodes
         if(stack.size() > 0){
             if(! STACK_TOP.isLeaf()){
                 PietTree top = STACK_TOP;
@@ -362,6 +363,8 @@ void PietCore::execOneAction(){
                 stack.pop_back();
                 for(auto t : top.Nodes()) stack.push_back(t);
                 stack.push_back(PietTree(size));
+                currentOrder = QString("Nodes");
+                LightcurrentOrder = QString("NO");
             }else{
                 outPutFunction( QString("%1").arg(STACK_TOP.Val()));
                 currentOrder = QString("Out %1").arg(STACK_TOP.Val());

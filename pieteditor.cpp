@@ -47,13 +47,13 @@ void PietEditor::setZoomFactor(int newZoom){
 void PietEditor::paintEvent(QPaintEvent *event){
     QPainter painter (this);
     int zm = this->zoom ;
-    auto PaintText = [this,&painter,zm] (int x,int y,QString str) {
+    auto PaintText = [this,&painter,zm] (int x,int y,QString str,bool fill = true) {
         const int Margin = 6;
         QRect TextRect ( zm * x + zm / Margin, zm * y+ zm / Margin ,zm ,zm);
         auto basecolor = QColor::fromRgba(image.pixel(x,y));
         painter.setPen(PietCore::getVividColor(basecolor));
         auto backcolor = QColor::fromRgba(image.pixel(x,y));
-        painter.fillRect( this->pixelRect(x,y),backcolor);
+        if(fill) painter.fillRect( this->pixelRect(x,y),backcolor);
         painter.drawText(TextRect,str);
     };
     if(zoom >= 3){ //grid line
@@ -69,12 +69,13 @@ void PietEditor::paintEvent(QPaintEvent *event){
             auto rect = pixelRect(x,y);
             if(!event->region().intersected(rect).isEmpty()){
                 auto color = QColor::fromRgba(image.pixel(x,y));
-                painter.fillRect(rect,color);
                 if(zoom > 6 && !PietCore::isNormalColor(image.pixel(x,y))){
                     painter.setPen(PietCore::getVividColor(color));
                     int rgb = image.pixel(x,y); //ARGB,強制的に A => 0 として処理
                     if(32 == PietCore::CutA(rgb))PaintText(x,y ,QString("SP"));
                     else PaintText(x,y ,QString(rgb));
+                }else{
+                    painter.fillRect(rect,color);
                 }
             }
         }
@@ -107,7 +108,8 @@ void PietEditor::paintEvent(QPaintEvent *event){
                 }
             }
         }
-        PaintText(core.getPos().x(),core.getPos().y(),PietCore::arrowFromDP(core.getDP()));
+        PaintText(core.getPos().x(),core.getPos().y(),PietCore::arrowFromDP(core.getDP()),false);
+
     }
 }
 void PietEditor::dragEnterEvent(QDragEnterEvent *event){
@@ -125,7 +127,7 @@ void PietEditor::keyPressEvent( QKeyEvent *event ){
     if(isExecuting )return;
     QRgb nowRGB = image.pixel(core.getPos().x(),core.getPos().y());
     int nowcode = -1;
-    REP(i,3) REP(j,7) if(nowRGB == PietCore::normalColors[i][j]){nowcode = 3*j+i; goto MATCHED;}
+    REP(i,3) REP(j,6) if(nowRGB == PietCore::normalColors[i][j]){nowcode = 3*j+i; goto MATCHED;}
     ;MATCHED:;
     if(nowcode == -1 ){nowcode = 0;}
     auto CommandCore = [nowcode,this](EOrder nextOrder,QString strorder){

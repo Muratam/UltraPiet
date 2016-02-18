@@ -10,8 +10,7 @@ Pasxx の対応
 
 優先順位 低
 	## Editor
-	Redo
-	3D化,copy paste
+	3D化,copy paste(Redo)
 	Fontを変更できるように
 
 # 他の人に手伝って欲しいところ
@@ -33,10 +32,7 @@ Piet# : 概要
       例えばライフゲームやゲームAIのシュミレーションが書けると楽しい
 
 
-RGB32 //A==255(常に)
-=> 11111111RRRRRRRRGGGGGGGGBBBBBBBB
-=> 00000000RRRRRRRRGGGGGGGGBBBBBBBB
-として処理している
+RGB32 //A==255(常に)だが、Unicode値を取得処理するときはA == 0で正の値として扱う
 
 IN  : c.unicode       (Button u)
 OUT : get (pixel()()) (Pushのところ 絵のとこ) => cut A する

@@ -6,11 +6,12 @@ void PietTree::MakeStackByMod0(int n,std::vector<PietTree> & pts){
     if(n <= 0) return ;
     int size = pts.size();
     int min = n < size ? n : size ;
+    if(min < 0) min = 0;if(min == 0)return;
     std::vector<PietTree> NewNode;
     REP(i,min){
-        NewNode.push_back(pts[size - min + i ]);
-        pts.pop_back();
+        NewNode.push_back(PietTree(pts[size  - min + i ]));
     }
+    REP(i,min){ pts.pop_back();}
     pts.push_back(PietTree(NewNode));
 }
 
@@ -126,8 +127,8 @@ void PietTree::split(PietTree & pt){
         val -= pt.Val(); return;
     }
     auto base = this->toString();
-    auto rx = QRegExp(this->toString());
-    auto spilited = base.split(rx);
+    auto rx = QRegExp(pt.toString());
+    QStringList spilited = base.split(rx);
     isleaf = false;
     this->nodes.clear();
     for(auto str : spilited) nodes.push_back(PietTree(str));
@@ -169,20 +170,22 @@ void PietTree::product(const PietTree & pt){
 //isLeaf*______ : OK
 //______*isleaf : OK
 //______*______ : OK
-void PietTree::match(const PietTree &pt){
+void PietTree::match(PietTree &pt){
     if(isleaf && pt.isLeaf()){
         val /= pt.Val(); return;
     }
     QString base = this->toString();
-    QRegExp rx = QRegExp(this->toString());
+    QRegExp rx = QRegExp(pt.toString());
     QStringList matched;
-    for(int pos = 0; pos = rx.indexIn(base, pos) != -1;) {
-        matched << rx.cap(1);
+    for(int pos = 0; (pos = rx.indexIn(base, pos)) != -1;) {
+        matched << rx.cap();
         pos += rx.matchedLength();
     }
     isleaf = false;
     this->nodes.clear();
+
     for(auto str : matched) nodes.push_back(PietTree(str));
+    if(matched.size()>0) nodes.push_back(base);
 }
 
 //@Mod          : OK
