@@ -5,9 +5,28 @@
 Dll File 
 Linuxでの実行の対応
 3D化,copy paste(Redo)
-標準ライブラリは全てSTD~~から始まるとするSTD~~はultrapietのおいてあるパスに直接おいてあるのでどこからでも読み込める。またパスは移動しないという特徴をもつ
+標準ライブラリは全てG/~から始まるとするG/~ に行くときはultrapietはカレントディレクトリを変更しない。また、ultrapiet.exeのあるパスのGディレクトリには沢山あるのでそこに標準ライブラリを置くことにする
 DLLでなく組み込みの関数は、Roll/STD~に任せる
 OpenGL,Audio
+|識別| Cでの型 | Cでの別名 |
+|i   | int   | INT,LONG,BOOL|
+|c   | char  | CHAR   |
+|s   | short | SHORT  |
+|u   | unsigned int   | UINT,DWORD,ULONG  |
+|b   | unsigned char  | BYTE |
+|w   | unsigned short | WORD |
+|f   | float | FLOAT  |
+|v   | void  | (返り値) |
+|C   | const char* | LPSTR,LPWSTR | 木を文字列として処理する場合。
+|V   | void* | HANDLE | 保持している数値をそのままポインタとして使う場合.
+  // 返り値に v を指定した場合は返り値はありません。
+  // その他の場合はその返り値を返します。
+  // V の時は更新された値を保持したスタックも得ます。
+  // 帰り値の型はポインタは無効です。
+2/24 (水) Kickoff 17:30~ 19:00
+          Cahon
+
+
 
 Greater(LoadFile)
 	[R] or [0] : 読み込み(Read)モードで開く.

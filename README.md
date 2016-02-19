@@ -349,16 +349,8 @@ char*(LPSTR),unsigned int (UINT) で,
 返り値はint型にするという宣言で,
 前から順にvoid*,char*,char*,unsigned int,intなので
 頭文字をとって "vssui"です.
-- Roll ["TestDLL.dll","TestDll.CsDll.LangA",0,[123,"RA"]]  
-自作.Net製DllでTestDll.CsDll.LangA(123,"RA")を実行します.
-第二引数は NAMESPACE.CLASSNAME.STATICFUNCTIONNAME とします.
-.Net製Dllは型情報が内蔵されているために,
-型を推論することができ,第三引数は省略できます.
-　というか,型を書いても無視されます.
-C製Dllで扱えるプリミティブな型以外はサポートしません.
 
 ## 実装
-
 ここまで,仕様を詳細に示してきました.
 あとは実装するだけですね！
 スクリプト言語としてのPietとなって,

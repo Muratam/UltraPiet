@@ -15,21 +15,23 @@ TEMPLATE = app
 #if you have mintty, it works naturally !!
 #CONFIG += console
 
-QMAKE_CXXFLAGS += -std=c++11
+QMAKE_CXXFLAGS += -std=c++14
 
 SOURCES += main.cpp\
         mainwindow.cpp \
     widgettest.cpp \
     pieteditor.cpp \
     pietcore.cpp \
-    piettree.cpp
+    piettree.cpp \
+    executingpietlibraries.cpp
 
 HEADERS  += mainwindow.h \
     widgettest.h \
     pietcore.h \
     defines.h \
     pieteditor.h \
-    piettree.h
+    piettree.h \
+    executingpietlibraries.h
 
 FORMS    += mainwindow.ui \
     widgettest.ui
