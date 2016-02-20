@@ -31,7 +31,8 @@ public:
     inline static Various FromSHORT  (const PietTree &pt){Various v;v.SHT = (short)pt.Val(); return v;}
     inline static Various FromBYTE   (const PietTree &pt){Various v;v.BYT = (unsigned char)pt.Val(); return v;}
     inline static Various FromWORD   (const PietTree &pt){Various v;v.WRD = (unsigned short)pt.Val(); return v;}
-    inline static Various FromHANDLE (const PietTree &pt){Various v;v.VP =(void*) pt.Val(); return v;}
+    //inline static Various FromHANDLE (const PietTree &pt){Various v;v.VP  = (int*) pt.Val(); return v;}
+    inline static Various MakeNEW (const PietTree &pt)   {Various v;v.VP  = new int() ; return v;}
     inline static Various FromLPSTR  (PietTree &pt){
         Various v;
         auto tmp = pt.toString().toStdString();
@@ -40,9 +41,10 @@ public:
         REP(i,size){ v.CCP[i] = tmp[i];}
         v.CCP[size] = '\0';
         return v;}
-    inline static Various FromQChar (PietTree pt,QChar c){
+    inline static Various FromQChar (PietTree &pt,QChar c){
         switch(c.unicode()){
-        case 'v':case'V':  return FromHANDLE(pt);
+        case 'n':case'N':  return MakeNEW(pt);
+        //case 'v':case'V':  return FromHANDLE(pt);
         case 'C':          return FromLPSTR(pt);
         case 'f':case 'F': return FromFLOAT(pt);
         case 'w':case 'W': return FromWORD(pt);
@@ -54,7 +56,7 @@ public:
         case 'i':case 'I': return FromINT(pt);
         }
     }
-    void* VP; char* CCP;
+    int* VP; char* CCP;
     unsigned int UIN;int INT; float FLT;char CHA;short SHT; unsigned char BYT;unsigned short WRD;
 };
 #define TMPSTR(NEWNAME,PTS) auto TMP ## PTS = PTS.toString().toStdString(); auto NEWNAME = TMP ## PTS.c_str();
@@ -64,7 +66,7 @@ public:
 #define SWITCHZEROTYPE     \
 if(size == 0){\
 switch(TypeNames[size].unicode()){ \
-    case 'v':case 'V':retLibv(dllname,funcname);Miss = true; break; \
+    case 'v':case 'V':retLibv(dllname,funcname); break; \
     case 's':case 'S':res = PietTree((int)retLib<short>(dllname,funcname));break; \
     case 'c':case 'C':res = PietTree((int)retLib<char>(dllname,funcname ));break; \
     case 'u':case 'U':res = PietTree((int)retLib<int>(dllname,funcname  ));break; \
@@ -78,7 +80,7 @@ switch(TypeNames[size].unicode()){ \
 #define SWITCHTYPE(N,...)     \
 if(size == N){\
 switch(TypeNames[size].unicode()){ \
-    case 'v':case 'V':retLibv(dllname,funcname,__VA_ARGS__);Miss = true; break; \
+    case 'v':case 'V':retLibv(dllname,funcname,__VA_ARGS__); break; \
     case 's':case 'S':res = PietTree((int)retLib<short>(dllname,funcname,__VA_ARGS__));break; \
     case 'c':case 'C':res = PietTree((int)retLib<char>(dllname,funcname,__VA_ARGS__));break; \
     case 'u':case 'U':res = PietTree((int)retLib<int>(dllname,funcname,__VA_ARGS__));break; \
@@ -95,23 +97,29 @@ PietTree ExecutingPietLibraries::LoadDLL(bool& Miss ,QString dllname,QString fun
     if (size < 0) PIETTREELOADDLLMISS
     if (pts.size() < size) PIETTREELOADDLLMISS
     vector<Various> v;
-    PietTree res(0);
+    PietTree res(-765);
     REP(i,size)v.push_back(Various::FromQChar(pts[i],TypeNames[i]));
-    SWITCHZEROTYPE(0);
-    SWITCHTYPE(1,v[0]);
-    SWITCHTYPE(2,v[0],v[1]);
-    SWITCHTYPE(3,v[0],v[1],v[2]);
-    SWITCHTYPE(4,v[0],v[1],v[2],v[3]);
-    SWITCHTYPE(5,v[0],v[1],v[2],v[3],v[4]);
-    SWITCHTYPE(6,v[0],v[1],v[2],v[3],v[4],v[5]);
-    SWITCHTYPE(7,v[0],v[1],v[2],v[3],v[4],v[5],v[6]);
-    SWITCHTYPE(8,v[0],v[1],v[2],v[3],v[4],v[5],v[6],v[7]);
-    SWITCHTYPE(9,v[0],v[1],v[2],v[3],v[4],v[5],v[6],v[7],v[8]);
+    SWITCHZEROTYPE;
+    SWITCHTYPE(1 ,v[0]);
+    SWITCHTYPE(2 ,v[0],v[1]);
+    SWITCHTYPE(3 ,v[0],v[1],v[2]);
+    SWITCHTYPE(4 ,v[0],v[1],v[2],v[3]);
+    SWITCHTYPE(5 ,v[0],v[1],v[2],v[3],v[4]);
+    SWITCHTYPE(6 ,v[0],v[1],v[2],v[3],v[4],v[5]);
+    SWITCHTYPE(7 ,v[0],v[1],v[2],v[3],v[4],v[5],v[6]);
+    SWITCHTYPE(8 ,v[0],v[1],v[2],v[3],v[4],v[5],v[6],v[7]);
+    SWITCHTYPE(9 ,v[0],v[1],v[2],v[3],v[4],v[5],v[6],v[7],v[8]);
     SWITCHTYPE(10,v[0],v[1],v[2],v[3],v[4],v[5],v[6],v[7],v[8],v[9]);
     SWITCHTYPE(11,v[0],v[1],v[2],v[3],v[4],v[5],v[6],v[7],v[8],v[9],v[10]);
     SWITCHTYPE(12,v[0],v[1],v[2],v[3],v[4],v[5],v[6],v[7],v[8],v[9],v[10],v[11]);
-    REP(i,size) {if (TypeNames[i].unicode() == 'V'){ pts[i] = PietTree((int)v[i].VP);}}
     REP(i,size) {if (TypeNames[i].unicode() == 'C'){ free (v[i].CCP);}}
+    vector<PietTree> cp;
+    REP(i,size) {if (TypeNames[i].unicode() == 'n'|| TypeNames[i].unicode() == 'N' ){
+        cp.push_back(PietTree( *(v[i].VP)));
+        delete v[i].VP;
+    }}
+    REP(i,size) pts.pop_back();
+    pts.push_back(PietTree(cp));
     return res;
 }
 

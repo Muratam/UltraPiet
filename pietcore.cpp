@@ -1,4 +1,5 @@
 #include "pietcore.h"
+#include "executingpietlibraries.h"
 #include <iostream>
 #include <queue>
 #include <unordered_set>
@@ -327,10 +328,31 @@ void PietCore::execOneAction(){
              LightcurrentOrder = QString("Ｄ");
         }else {SET_CURRENT_ORDER_LESS_ARGS}
         break;
-    case EOrder::Roll:
+    case EOrder::Roll: //DLL
         if(stack.size() > 2){
             if(!stack[stack.size()-1].isLeaf() || !stack[stack.size()-2].isLeaf()){
-                //未実装ーーーーーー
+                if(stack.size() < 4) {
+                    currentOrder = QString("Less Args");
+                    LightcurrentOrder = QString("??");
+                    break;
+                }
+                PietTree ppath = stack[stack.size() - 4]; QString spath = ppath.toString();
+                PietTree pfunc = stack[stack.size() - 3]; QString sfunc = pfunc.toString();
+                PietTree ptype = stack[stack.size() - 2]; QString stype = ptype.toString();
+                vector<PietTree> pts = stack[stack.size()-1].Nodes();
+                bool Miss = false;
+                PietTree res = ExecutingPietLibraries::LoadDLL(Miss,spath,sfunc,stype,pts);
+                REP(i,4)stack.pop_back();
+                if( Miss ){
+                    currentOrder = QString("Dll Miss");
+                    LightcurrentOrder = QString("??");
+                    break;
+                }else{
+                    stack.push_back(pts);
+                    stack.push_back(res);
+                    currentOrder = QString("Dll Load");
+                    LightcurrentOrder = QString("DL");
+                }
                 break;
             }
             // [2,3,4,3,2,1] => 2,3とPopして,深さ3まで2回転 : [4,3,2,1] => [3,2,4,1] => [2,4,3,1]//PidetのRollはO(depth*roll)だった

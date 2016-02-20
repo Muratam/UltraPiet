@@ -1,15 +1,19 @@
 # Todo
 京都バスの予約,Drone,Blender持っていく
 
+345588552
+
 ## UltraPiet
-Dll File 
+Dllテスト(Midi) File 
 Linuxでの実行の対応
 3D化,copy paste(Redo)
 標準ライブラリは全てG/~から始まるとするG/~ に行くときはultrapietはカレントディレクトリを変更しない。また、ultrapiet.exeのあるパスのGディレクトリには沢山あるのでそこに標準ライブラリを置くことにする
 DLLでなく組み込みの関数は、Roll/STD~に任せる
+
 OpenGL,Audio
+例 Roll "user32" "MessageBoxA" "iCCui" [[0,"Hello","title",0]]
 |識別| Cでの型 | Cでの別名 |
-|i   | int   | INT,LONG,BOOL|
+|i   | int   | INT,LONG,BOOL,HANDLE | 
 |c   | char  | CHAR   |
 |s   | short | SHORT  |
 |u   | unsigned int   | UINT,DWORD,ULONG  |
@@ -18,11 +22,11 @@ OpenGL,Audio
 |f   | float | FLOAT  |
 |v   | void  | (返り値) |
 |C   | const char* | LPSTR,LPWSTR | 木を文字列として処理する場合。
-|V   | void* | HANDLE | 保持している数値をそのままポインタとして使う場合.
+|N   | void* | HANDLE | 新たにintptr_tとしてポインタを得る場合.(PietTreeの中身は更新される)
   // 返り値に v を指定した場合は返り値はありません。
   // その他の場合はその返り値を返します。
-  // V の時は更新された値を保持したスタックも得ます。
-  // 帰り値の型はポインタは無効です。
+  // N の時は更新された値を得ます。
+  // 現在、帰り値の型はポインタは無効です。
 2/24 (水) Kickoff 17:30~ 19:00
           Cahon
 
