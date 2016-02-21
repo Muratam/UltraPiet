@@ -53,6 +53,7 @@ private :
     EDirectionPointer dp;
     ECodelChooser cc;
     std::vector<PietTree> stack ;
+    PietTree & stackTop(){return stack[stack.size()-1];}
     bool isInImage(const QPoint & p){return p.x() >= 0 && p.y() >= 0 && p.x() < w && p.y() < h;}
     void search(QPoint me);
     void processWall();

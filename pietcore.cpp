@@ -198,12 +198,11 @@ void PietCore::processWall(){
     processWallCount ++;
 }
 
-#define STACK_TOP stack[stack.size()-1]
 #define PROCESARITHMETICORDER(OPERATE,OPERATENAME,LIGHTOPERATE) \
     if(stack.size() >= 2){ \
-        auto v1 = STACK_TOP; \
+        auto v1 = stackTop(); \
         stack.pop_back(); \
-        auto v2 = STACK_TOP; \
+        auto v2 = stackTop(); \
         stack.pop_back(); \
         OPERATE;\
         stack.push_back(v2); \
@@ -254,7 +253,7 @@ void PietCore::execOneAction(){
         break;
     case EOrder::Div:{
         if(stack.size()< 2){ setCurrentOrderLessArgs(); break;}
-        if(STACK_TOP .isLeaf() && STACK_TOP.Val() == 0){
+        if(stackTop() .isLeaf() && stackTop().Val() == 0){
             PietTree cp = PietTree(stack[stack.size() - 2]);
             QString readpath = ( cp.isLeaf()?QString::number(cp.Val()) : cp.toString() );
             if(readpath.size() > 2 && readpath[0].unicode() == 'L' && (readpath[1].unicode() == '/' || readpath[1].unicode() == '\\'  ) ){
@@ -290,9 +289,9 @@ void PietCore::execOneAction(){
         }}break;
     case EOrder::Mod:
         if(stack.size() < 2){setCurrentOrderLessArgs(); break;}
-        if(STACK_TOP .isLeaf() && STACK_TOP.Val() == 0){
+        if(stackTop() .isLeaf() && stackTop().Val() == 0){
             stack.pop_back();
-            int n = (STACK_TOP.isLeaf() ? STACK_TOP.Val(): INT_MAX - 1 );
+            int n = (stackTop().isLeaf() ? stackTop().Val(): INT_MAX - 1 );
             stack.pop_back();
             PietTree::MakeStackByMod0(n,stack);
             currentOrder = QString("ToStack");
@@ -303,7 +302,7 @@ void PietCore::execOneAction(){
         break;
     case EOrder::Not:
         if(stack.size() > 0 ){
-             STACK_TOP = PietTree( STACK_TOP .Not()) ;
+             stackTop() = PietTree( stackTop() .Not()) ;
              currentOrder = QString("Not");
              LightcurrentOrder = QString("!");
         }else{setCurrentOrderLessArgs();}
@@ -313,12 +312,12 @@ void PietCore::execOneAction(){
         break;
     case EOrder::Point:
         if(stack.size() > 0 ){
-            if(! STACK_TOP.isLeaf()){
-                stack.push_back(STACK_TOP.popHead());
+            if(! stackTop().isLeaf()){
+                stack.push_back(stackTop().popHead());
                 currentOrder = QString("last");
                 LightcurrentOrder = QString("＠");
             }else{// 時計回り -1 % 4 => -1
-                dp = (EDirectionPointer)((int)dp + (STACK_TOP.Val() % 4));
+                dp = (EDirectionPointer)((int)dp + (stackTop().Val() % 4));
                 stack.pop_back();
                 while (dp >= 4) { dp =(EDirectionPointer)((int)dp - 4); }
                 currentOrder = QString("Point");
@@ -328,12 +327,12 @@ void PietCore::execOneAction(){
         break;
     case EOrder::Switch:
         if(stack.size() > 0 ){ //-1 % 4 => -1
-            if(! STACK_TOP.isLeaf()){
-                STACK_TOP.flatten();
+            if(! stackTop().isLeaf()){
+                stackTop().flatten();
                 currentOrder = QString("flatten");
                 LightcurrentOrder = QString("＾");
             }else{
-                if(STACK_TOP.Val() % 2 != 0)
+                if(stackTop().Val() % 2 != 0)
                     cc = (cc == ccR ? ccL : ccR);
                 stack.pop_back();
                 currentOrder = QString("Switch");
@@ -343,7 +342,7 @@ void PietCore::execOneAction(){
         break;
     case EOrder::Dup:
         if(stack.size() > 0 ){
-             stack.push_back( STACK_TOP);
+             stack.push_back( stackTop());
              currentOrder = QString("Duplicate");
              LightcurrentOrder = QString("Ｄ");
         }else {setCurrentOrderLessArgs();}
@@ -408,8 +407,8 @@ void PietCore::execOneAction(){
         } break;
     case EOrder::OutN: //Nodes
         if(stack.size() > 0){
-            if(! STACK_TOP.isLeaf()){
-                PietTree top = STACK_TOP;
+            if(! stackTop().isLeaf()){
+                PietTree top = stackTop();
                 int size = top.Nodes().size();
                 stack.pop_back();
                 for(auto t : top.Nodes()) stack.push_back(t);
@@ -417,19 +416,19 @@ void PietCore::execOneAction(){
                 currentOrder = QString("Nodes");
                 LightcurrentOrder = QString("NO");
             }else{
-                outPutFunction( QString("%1").arg(STACK_TOP.Val()));
-                currentOrder = QString("Out %1").arg(STACK_TOP.Val());
-                LightcurrentOrder =(STACK_TOP.Val() >= 0 && STACK_TOP.Val() < 100)?QString::number(STACK_TOP.Val()):QString("ON");
+                outPutFunction( QString("%1").arg(stackTop().Val()));
+                currentOrder = QString("Out %1").arg(stackTop().Val());
+                LightcurrentOrder =(stackTop().Val() >= 0 && stackTop().Val() < 100)?QString::number(stackTop().Val()):QString("ON");
                 stack.pop_back();
             }
         }else {setCurrentOrderLessArgs();}
         break;
     case EOrder::OutC:
         if(stack.size() > 0){
-            QString str = STACK_TOP.toString();
+            QString str = stackTop().toString();
             outPutFunction(str);
-            currentOrder = QString("Out ") + (STACK_TOP.isLeaf() ? str : QString("(C)"));
-            LightcurrentOrder = (STACK_TOP.isLeaf() ? str : QString("OC"));
+            currentOrder = QString("Out ") + (stackTop().isLeaf() ? str : QString("(C)"));
+            LightcurrentOrder = (stackTop().isLeaf() ? str : QString("OC"));
             stack.pop_back();
         }else{setCurrentOrderLessArgs();}
         break;
@@ -462,7 +461,6 @@ void PietCore::execOneAction(){
     processWallCount = 0;
 }
 
-#undef STACK_TOP
 #undef PROCESARITHMETICORDER
 
 QString PietCore::printStack(){

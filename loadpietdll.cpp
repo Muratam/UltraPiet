@@ -4,7 +4,7 @@
 #include <thread>
 #include <stdarg.h>
 
-//DLLを実行時に動的に呼び出すには悪魔の力を借りるしかなかったのでこのソースコードは魔界だよ！
+//DLLを実行時に動的に呼び出すには悪魔の力を借りるしかなかったのでここのソースコードは魔界だよ！
 
 using namespace std;
 //template< typename F >auto curry( F f ){return [=]( auto a ){ return [=]( auto... args ){ return f( a, args... ); }; };}
