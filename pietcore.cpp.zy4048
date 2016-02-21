@@ -1,9 +1,7 @@
 #include "pietcore.h"
 #include "executingpietlibraries.h"
-#include "loadpietdll.h"
 #include <iostream>
 #include <queue>
-#include <string>
 #include <unordered_set>
 #include <QPoint>
 #include <QDir>
@@ -55,17 +53,19 @@ namespace std{
         }
     };
 }
+#define PIXEL(POS) coded[ (POS) .x()][ (POS) .y()]
+#define POINT8(POS) pos8[ (POS) .x()][ (POS) .y()]
 
 void PietCore::search(QPoint me){//実行前にメモ化しておく
-    if(Pos8(me).defined) return;
+    if(POINT8(me).defined) return;
     const QPoint dR =QPoint(1,0),dD = QPoint(0,1),dL = QPoint(-1,0),dU = QPoint(0,-1);
     const QPoint dir[]{dR,dD,dL,dU};
 
     // 1Blockな可能性は高いので先に処理
     bool is1Block = true;
-    auto c0 = Coded(me);
+    auto c0 = PIXEL(me);
     for (auto& d : dir){
-        if( isInImage(me+d) && c0 == Coded(me+d) ){
+        if( isInImage(me+d) && c0 == PIXEL(me+d) ){
            is1Block = false;
         }
     }
@@ -74,7 +74,7 @@ void PietCore::search(QPoint me){//実行前にメモ化しておく
         QPoint pD = me.y() == h - 1 ? Wall : me+dD;
         QPoint pL = me.x() == 0     ? Wall : me+dL;
         QPoint pU = me.y() == 0     ? Wall : me+dU;
-        pos8[ me.x()][ me.y()] ={pR,pR,pD,pD,pL,pL,pU,pU,true,1};
+        POINT8(me) ={pR,pR,pD,pD,pL,pL,pU,pU,true,1};
         return;
     }
 
@@ -89,7 +89,7 @@ void PietCore::search(QPoint me){//実行前にメモ化しておく
             QPoint seek = current + d;
 
             if( isInImage(seek)) { //探索リストに追加
-                if(c0 == Coded(seek) ){
+                if(c0 == PIXEL(seek) ){
                     if(seeked.find(seek) == seeked.end()){ //not found
                         bfs.push(seek);
                         seeked.insert(seek);
@@ -123,7 +123,7 @@ void PietCore::search(QPoint me){//実行前にメモ化しておく
         bfs.pop();
     }
     res8.BlockSize = seeked.size();
-    for(const auto& s : seeked) pos8[s.x()][s.y()] =res8;
+    for(const auto& s : seeked) POINT8(s) =res8;
 }
 void PietCore::setImage(const QImage & image,QString ImagePath){
     this->ImagePath =  ImagePath;
@@ -199,20 +199,19 @@ void PietCore::processWall(){
 
 void PietCore::execOneAction(){
     if (finished)return;
-    Point8 p8 = Pos8(pos);
+    Point8 p8 = POINT8(pos);
     QPoint nextpos = p8.getbyDPCC(dp,cc);
     const int WhiteColor = 18;
     const int BlackColor = 19;
     if(nextpos == Wall){processWall(); return ;}
-    int currentcode = Coded(pos);
-    int nextcode = Coded(nextpos);
+    int currentcode = PIXEL(pos);
+    int nextcode = PIXEL(nextpos);
     if(currentcode < 0 || currentcode > BlackColor) { //Unicode
         if(nextcode < 0 || nextcode > BlackColor) currentcode = 0; //unicodeが連続
         else if (nextcode == BlackColor) currentcode = 0; //壁
         else currentcode = nextcode ; //Unicode => NormalColor はなにもしない
     }else  if(currentcode == WhiteColor && nextcode == BlackColor) currentcode = 0; //壁
     EOrder order = fromRelativeColor(currentcode,nextcode);
-    auto setCurrentOrderLessArgs= [this] (){currentOrder = QString("Less Arg");LightcurrentOrder = QString("??");};
     #define STACK_TOP stack[stack.size()-1]
     #define PROCESARITHMETICORDER(OPERATE,OPERATENAME,LIGHTOPERATE) \
         if(stack.size() >= 2){ \
@@ -225,8 +224,10 @@ void PietCore::execOneAction(){
             currentOrder = QString(OPERATENAME);\
             LightcurrentOrder = QString(LIGHTOPERATE);\
         }else { \
-            setCurrentOrderLessArgs(); \
+            currentOrder = QString("Less Arg");\
+            LightcurrentOrder = QString ("??");\
         }
+    #define SET_CURRENT_ORDER_LESS_ARGS {currentOrder = QString("Less Arg");LightcurrentOrder = QString("??");}
     switch(order){
     case EOrder::Same:
         currentOrder = QString("Nop");
@@ -252,7 +253,7 @@ void PietCore::execOneAction(){
         PROCESARITHMETICORDER(v2.product(v1),"Mul","×");
         break;
     case EOrder::Div:{
-        if(stack.size()< 2){ setCurrentOrderLessArgs(); break;}
+        if(stack.size()< 2){ SET_CURRENT_ORDER_LESS_ARGS; break;}
         if(STACK_TOP .isLeaf() && STACK_TOP.Val() == 0){
             PietTree cp = PietTree(stack[stack.size() - 2]);
             QString readpath = ( cp.isLeaf()?QString::number(cp.Val()) : cp.toString() );
@@ -288,7 +289,7 @@ void PietCore::execOneAction(){
             PROCESARITHMETICORDER(v2.match (v1),"Div","÷");
         }}break;
     case EOrder::Mod:
-        if(stack.size() < 2){setCurrentOrderLessArgs(); break;}
+        if(stack.size() < 2){SET_CURRENT_ORDER_LESS_ARGS; break;}
         if(STACK_TOP .isLeaf() && STACK_TOP.Val() == 0){
             stack.pop_back();
             int n = (STACK_TOP.isLeaf() ? STACK_TOP.Val(): INT_MAX - 1 );
@@ -305,7 +306,7 @@ void PietCore::execOneAction(){
              STACK_TOP = PietTree( STACK_TOP .Not()) ;
              currentOrder = QString("Not");
              LightcurrentOrder = QString("!");
-        }else{setCurrentOrderLessArgs();}
+        }else{SET_CURRENT_ORDER_LESS_ARGS}
         break;
     case EOrder::Great: //v1 < v2 ? 0 : 1
         PROCESARITHMETICORDER(v2.loadFile(v1),"Greater","＞");
@@ -323,7 +324,7 @@ void PietCore::execOneAction(){
                 currentOrder = QString("Point");
                 LightcurrentOrder = arrowFromDP(dp);
             }
-        }else {setCurrentOrderLessArgs();}
+        }else {SET_CURRENT_ORDER_LESS_ARGS}
         break;
     case EOrder::Switch:
         if(stack.size() > 0 ){ //-1 % 4 => -1
@@ -338,25 +339,29 @@ void PietCore::execOneAction(){
                 currentOrder = QString("Switch");
                 LightcurrentOrder = QString(cc == ccR ? "cR" :"cL" );
             }
-        }else {setCurrentOrderLessArgs();}
+        }else {SET_CURRENT_ORDER_LESS_ARGS}
         break;
     case EOrder::Dup:
         if(stack.size() > 0 ){
              stack.push_back( STACK_TOP);
              currentOrder = QString("Duplicate");
              LightcurrentOrder = QString("Ｄ");
-        }else {setCurrentOrderLessArgs();}
+        }else {SET_CURRENT_ORDER_LESS_ARGS}
         break;
     case EOrder::Roll: //DLL
         if(stack.size() > 2){
             if(!stack[stack.size()-1].isLeaf() || !stack[stack.size()-2].isLeaf()){
-                if(stack.size() < 4) {setCurrentOrderLessArgs(); break;}
+                if(stack.size() < 4) {
+                    currentOrder = QString("Less Args");
+                    LightcurrentOrder = QString("??");
+                    break;
+                }
                 PietTree ppath = stack[stack.size() - 4]; QString spath = ppath.toString();
                 PietTree pfunc = stack[stack.size() - 3]; QString sfunc = pfunc.toString();
                 PietTree ptype = stack[stack.size() - 2]; QString stype = ptype.toString();
                 vector<PietTree> pts = stack[stack.size()-1].Nodes();
                 bool Miss = false;
-                PietTree res = LoadPietDLL::LoadDLL(Miss,spath,sfunc,stype,pts);
+                PietTree res = ExecutingPietLibraries::LoadDLL(Miss,spath,sfunc,stype,pts);
                 REP(i,4)stack.pop_back();
                 if( Miss ){
                     currentOrder = QString("Dll Miss");
@@ -374,7 +379,7 @@ void PietCore::execOneAction(){
             int roll = stack[stack.size()-1].Val();
             int depth = stack[stack.size()-2].Val();
             int forCurrentOrderRoll = roll;
-            if(depth <= 0) break;//負Rollは無視
+            if(depth < 0) break;//負Rollは無視
             if(stack.size() - 2 < depth) break;//depthの方が大きい場合も無視
             stack.pop_back();
             stack.pop_back();
@@ -386,7 +391,7 @@ void PietCore::execOneAction(){
                             i - roll < 0 ? copy[i - roll + depth ] : copy[i - roll] ;
             currentOrder = QString("Roll d %1,r %2").arg(depth).arg(forCurrentOrderRoll);
             LightcurrentOrder = QString("Ｒ");
-        }else{setCurrentOrderLessArgs();}
+        }else{SET_CURRENT_ORDER_LESS_ARGS}
         break;
     case EOrder::InN:{
         bool Missed = false;
@@ -421,7 +426,7 @@ void PietCore::execOneAction(){
                 LightcurrentOrder =(STACK_TOP.Val() >= 0 && STACK_TOP.Val() < 100)?QString::number(STACK_TOP.Val()):QString("ON");
                 stack.pop_back();
             }
-        }else {setCurrentOrderLessArgs();}
+        }else{SET_CURRENT_ORDER_LESS_ARGS}
         break;
     case EOrder::OutC:
         if(stack.size() > 0){
@@ -430,13 +435,13 @@ void PietCore::execOneAction(){
             currentOrder = QString("Out ") + (STACK_TOP.isLeaf() ? str : QString("(C)"));
             LightcurrentOrder = (STACK_TOP.isLeaf() ? str : QString("OC"));
             stack.pop_back();
-        }else{setCurrentOrderLessArgs();}
+        }else{SET_CURRENT_ORDER_LESS_ARGS}
         break;
     case EOrder::White:{
             QPoint searchpos = nextpos;
             for (;;searchpos += directionFromDP(dp)){
-                if(!isInImage(searchpos) || Coded(searchpos) == BlackColor){processWall();return;}
-                else if (Coded(searchpos) != WhiteColor){
+                if(!isInImage(searchpos) || PIXEL(searchpos) == BlackColor){processWall();return;}
+                else if (PIXEL(searchpos) != WhiteColor){
                     nextpos = searchpos;
                     currentOrder = QString("Nop");
                     LightcurrentOrder =  QString("");
@@ -446,11 +451,11 @@ void PietCore::execOneAction(){
         }break;
     case EOrder::Black: processWall();return;
     default: case EOrder::Exception:{
-        if(Coded (nextpos) >= 0 && Coded (nextpos) < 20) {
+        if(PIXEL (nextpos) >= 0 && PIXEL (nextpos) < 20) {
             currentOrder = QString("Nop") ;
             LightcurrentOrder = QString("");
         }else{
-            QString str = QString(PietCore::CutA (-1 * (Coded (nextpos))));
+            QString str = QString(PietCore::CutA (-1 * (PIXEL (nextpos))));
             stack.push_back(PietTree(str));
             currentOrder = QString("Push ") + str;
             LightcurrentOrder = str;
@@ -464,6 +469,7 @@ void PietCore::execOneAction(){
 QString PietCore::printStack(){
     auto res = QString ("");
     for(auto& s : stack){
+        //res += QString("%1 (").arg(s) + QString(s) + QString(")\n");
         res += s.showStack(showStackAsNumber) +QString("\n");
     }
     return res;
@@ -498,7 +504,7 @@ void PietCore::ExecOtherPietCore(QImage CorrectImage,QString newFilePath){
 }
 
 void PietCore::ExecLib(QString LibPath){ //"L/~~.png" の "~~"部分
-    if(!doesCPPPietLibExist(LibPath)) return ;
+    if(doesCPPPietLibExist(LibPath)) return ;
     vector<PietTree> PTTopstack ;
     if(stack.size() > 0){ PTTopstack.push_back( stack[stack.size() - 1]);stack.pop_back(); }
     ExecutingPietLibraries::functionHash[LibPath](PTTopstack);

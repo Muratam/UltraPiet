@@ -1,11 +1,20 @@
 #ifndef EXECUTINGPIETLIBRARIES_H
 #define EXECUTINGPIETLIBRARIES_H
 #include "piettree.h"
-
+#include <QHash>
+#include <functional>
+#include <iostream>
 class ExecutingPietLibraries{
 public:
-    static PietTree LoadDLL(bool& Miss ,QString dllname,QString funcname,QString TypeNames,std::vector<PietTree>& pts);
-    ExecutingPietLibraries();
+    static void A(std::vector<PietTree> & pt){ //空だったり、[[7],""]とかだったりする要素数は、0 または1となる
+        int i = pt[0].Val();
+        std::cout << i << std::endl;
+    }
+    static QHash<QString,std::function<void(std::vector<PietTree>&)>> functionHash ;
+    static bool Hash_HadSet ;
+    static void Hash_FuncSet();
+private :
+    ExecutingPietLibraries(){}
 };
 
 #endif // EXECUTINGPIETLIBRARIES_H

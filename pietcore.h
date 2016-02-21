@@ -8,6 +8,7 @@
 #include <functional>
 #include "defines.h"
 #include "piettree.h"
+#include "executingpietlibraries.h"
 #include <functional>
 #include <QDir>
 //UltraPietの実際の命令処理をするクラス (なのでGUIには依存しません)
@@ -35,7 +36,9 @@ const QPoint Wall = {-1,-1};
 class PietCore {
 private :
     std::vector<std::vector<int>> coded;
+    int Coded(const QPoint &pos){return coded[pos.x()][pos.y()];}
     std::vector<std::vector<Point8>> pos8;
+    Point8 Pos8 (const QPoint &pos ){return pos8[pos.x()][pos.y()];}
     bool isCommandLineMode = false;//未実装
     int w,h;
     int step=0;
@@ -54,6 +57,7 @@ private :
     void search(QPoint me);
     void processWall();
 public :
+    static QString rootpath;
     static const QRgb normalColors[3][7] ;
     static const QString normalOrders[3][7];
     static const EOrder normalEOrders[3][7];
@@ -75,6 +79,8 @@ public :
     void setStack(std::vector<PietTree> &nstack ){stack.clear();stack = nstack;}
     std::vector<PietTree> getStack(){return stack;}
     void ExecOtherPietCore(QImage CorrectImage, QString newFilePath);
+    void ExecLib(QString LibPath);
+    bool doesCPPPietLibExist (QString LibPath){if(LibPath.isEmpty())return false;else return ExecutingPietLibraries::functionHash.contains(LibPath);}
     QPoint getPos() {return pos;}
     void setPos(QPoint npos){if(npos.x() < 0 || npos.y() < 0 || npos.x() >= w || npos.y() >= h) return ;else  pos = npos;}
     void incrementDP(){dp = (EDirectionPointer)((int)dp + 1);if((int)dp >=4)dp = (EDirectionPointer)0;}
@@ -86,9 +92,11 @@ public :
     QString getCurrentOrder() {return currentOrder;}
     QString getLightCurrentOrder() {return LightcurrentOrder;}
     void execOneAction();
-    void exec(){
-        QString nextDirPath = QFileInfo(ImagePath).absoluteDir().absolutePath();
-        QDir::setCurrent(nextDirPath);
+    void exec(bool MoveDirectory = true){
+        if(MoveDirectory){
+            QString nextDirPath = QFileInfo(ImagePath).absoluteDir().absolutePath();
+            QDir::setCurrent(nextDirPath);
+        }
         while (!finished){execOneAction();}
     } //For Command line or Div0
     void setImage(const QImage & image, QString ImagePath);

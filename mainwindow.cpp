@@ -10,6 +10,7 @@
 #include <QDir>
 #include <QTreeWidget>
 
+
 #define CB(i,j) \
     {  auto c = QColor(PietCore::normalColors[i][j]); \
        auto strrgb = QString("background-color : rgb(%1,%2,%3);\n").arg(c.red()).arg(c.green()).arg(c.blue()); \
@@ -32,12 +33,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //tabifyDockWidget(ui->DockInput,ui->DockStatus);
     //splitDockWidget(ui->DockStatus,ui->DockInput,Qt::Horizontal);
     //splitDockWidget(ui->DockInput,ui->DockOutput,Qt::Horizontal);
-    connect(ui->actionZoom_In,SIGNAL(triggered(bool)),ui->pietEditor,SLOT(incrementZoomFactor()));
+    connect(ui->actionZoom_In, SIGNAL(triggered(bool)),ui->pietEditor,SLOT(incrementZoomFactor()));
     connect(ui->actionZoom_Out,SIGNAL(triggered(bool)),ui->pietEditor,SLOT(decrementZoomFactor()));
-    connect(ui->actionUndo,SIGNAL(triggered(bool)),ui->pietEditor,SLOT(undo()));
-    connect(ui->action_Open,SIGNAL(triggered(bool)),ui->pietEditor,SLOT(openImage()));
-    connect(ui->action_New,SIGNAL(triggered(bool)),ui->pietEditor,SLOT(newImage()));
-    connect(ui->actionResize,SIGNAL(triggered(bool)),ui->pietEditor,SLOT(resize()));
+    connect(ui->actionUndo,    SIGNAL(triggered(bool)),ui->pietEditor,SLOT(undo()));
+    connect(ui->action_Open,   SIGNAL(triggered(bool)),ui->pietEditor,SLOT(openImage()));
+    connect(ui->action_New,    SIGNAL(triggered(bool)),ui->pietEditor,SLOT(newImage()));
+    connect(ui->actionResize,  SIGNAL(triggered(bool)),ui->pietEditor,SLOT(resize()));
     connect(ui->action_Save,QAction::triggered,[=](){ui->pietEditor->saveImage(false);});
     connect(ui->actionSave_as_New,QAction::triggered,[=](){ui->pietEditor->saveImage(true);});
     connect(ui->actionDebug_1_Step,QAction::triggered,[=](){

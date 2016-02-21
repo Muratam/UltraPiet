@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     pieteditor.cpp \
     pietcore.cpp \
     piettree.cpp \
-    executingpietlibraries.cpp
+    executingpietlibraries.cpp \
+    loadpietdll.cpp
 
 HEADERS  += mainwindow.h \
     widgettest.h \
@@ -31,7 +32,8 @@ HEADERS  += mainwindow.h \
     defines.h \
     pieteditor.h \
     piettree.h \
-    executingpietlibraries.h
+    executingpietlibraries.h \
+    loadpietdll.h
 
 FORMS    += mainwindow.ui \
     widgettest.ui
