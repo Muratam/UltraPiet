@@ -4,6 +4,8 @@
 #include <thread>
 #include <stdarg.h>
 
+//DLLを実行時に動的に呼び出すには悪魔の力を借りるしかなかったのでこのソースコードは魔界だよ！
+
 using namespace std;
 //template< typename F >auto curry( F f ){return [=]( auto a ){ return [=]( auto... args ){ return f( a, args... ); }; };}
 #define LIBCALL(RES) QLibrary lib(libname);lib.load(); string stdpath =  Path.toStdString(); const char* stdcpath = stdpath.c_str(); auto func = (RES(*)(Args...)) lib.resolve(stdcpath) ;
@@ -37,7 +39,7 @@ public:
         auto tmp = pt.toString().toStdString();
         auto size = tmp.size();
         v.CCP = (char *)calloc(size + 1,sizeof(char));
-        REP(i,size){ v.CCP[i] = tmp[i];}
+        for(auto i : range(size)){ v.CCP[i] = tmp[i];}
         v.CCP[size] = '\0';
         return v;}
     inline static Various FromQChar (PietTree &pt,QChar c){
@@ -97,7 +99,7 @@ PietTree LoadPietDLL::LoadDLL(bool& Miss ,QString dllname,QString funcname,QStri
     if (pts.size() < size) PIETTREELOADDLLMISS
     vector<Various> v;
     PietTree res(-765);
-    REP(i,size)v.push_back(Various::FromQChar(pts[i],TypeNames[i]));
+    for(auto i:range(size))v.push_back(Various::FromQChar(pts[i],TypeNames[i]));
     SWITCHZEROTYPE;
     SWITCHTYPE(1 ,v[0]);
     SWITCHTYPE(2 ,v[0],v[1]);
@@ -111,13 +113,13 @@ PietTree LoadPietDLL::LoadDLL(bool& Miss ,QString dllname,QString funcname,QStri
     SWITCHTYPE(10,v[0],v[1],v[2],v[3],v[4],v[5],v[6],v[7],v[8],v[9]);
     SWITCHTYPE(11,v[0],v[1],v[2],v[3],v[4],v[5],v[6],v[7],v[8],v[9],v[10]);
     SWITCHTYPE(12,v[0],v[1],v[2],v[3],v[4],v[5],v[6],v[7],v[8],v[9],v[10],v[11]);
-    REP(i,size) {if (TypeNames[i].unicode() == 'C'){ free (v[i].CCP);}}
+    for(auto i:range(size)) {if (TypeNames[i].unicode() == 'C'){ free (v[i].CCP);}}
     vector<PietTree> cp;
-    REP(i,size) {if (TypeNames[i].unicode() == 'n'|| TypeNames[i].unicode() == 'N' ){
+    for(auto i:range(size)) {if (TypeNames[i].unicode() == 'n'|| TypeNames[i].unicode() == 'N' ){
         cp.push_back(PietTree( *(v[i].VP)));
         delete v[i].VP;
     }}
-    REP(i,size) pts.pop_back();
+    for(auto i:range(size)) pts.pop_back();
     pts.push_back(PietTree(cp));
     return res;
 }

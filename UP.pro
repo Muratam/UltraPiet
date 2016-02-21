@@ -4,9 +4,11 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+LIBS += -lopengl32
 
 TARGET = ultrapiet
 TEMPLATE = app
@@ -14,28 +16,29 @@ TEMPLATE = app
 #if enabled this console option,this application cat work by windows cmd , but the power will down gread...
 #if you have mintty, it works naturally !!
 #CONFIG += console
+CONFIG += opengl
 
 QMAKE_CXXFLAGS += -std=c++14
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    widgettest.cpp \
     pieteditor.cpp \
     pietcore.cpp \
     piettree.cpp \
     executingpietlibraries.cpp \
-    loadpietdll.cpp
+    loadpietdll.cpp \
+    glgamewidget.cpp
 
 HEADERS  += mainwindow.h \
-    widgettest.h \
     pietcore.h \
     defines.h \
     pieteditor.h \
     piettree.h \
     executingpietlibraries.h \
-    loadpietdll.h
+    loadpietdll.h \
+    glgamewidget.h \
+    integerrange.h
 
-FORMS    += mainwindow.ui \
-    widgettest.ui
+FORMS    += mainwindow.ui
 
 RESOURCES     = qdarkstyle/style.qrc

@@ -59,14 +59,14 @@ void PietEditor::paintEvent(QPaintEvent *event){
     };
     if(zoom >= 3){ //grid line
         painter.setPen(palette().foreground().color());
-        REP(i,image.width()+1)  painter.drawLine(zoom*i,0,zoom*i,zoom*image.height());
-        REP(i,image.height()+1) painter.drawLine(0,zoom*i,zoom*image.width(),zoom*i);    
+        for(auto i:range(image.width()+1 ))  painter.drawLine(zoom*i,0,zoom*i,zoom*image.height());
+        for(auto i:range(image.height()+1))  painter.drawLine(0,zoom*i,zoom*image.width(),zoom*i);
     }
     QFont monofont =  QFontDatabase::systemFont(QFontDatabase::FixedFont);
     monofont.setPointSize(zoom / 1.8 );
     painter.setFont(monofont);
-    REP(x,image.width()){
-        REP(y,image.height()){
+    for(auto x : range(image.width())){
+        for(auto y:range(image.height())){
             auto rect = pixelRect(x,y);
             if(!event->region().intersected(rect).isEmpty()){
                 auto color = QColor::fromRgba(image.pixel(x,y));
@@ -128,7 +128,7 @@ void PietEditor::keyPressEvent( QKeyEvent *event ){
     if(isExecuting )return;
     QRgb nowRGB = image.pixel(core.getPos().x(),core.getPos().y());
     int nowcode = -1;
-    REP(i,3) REP(j,6) if(nowRGB == PietCore::normalColors[i][j]){nowcode = 3*j+i; goto MATCHED;}
+    for(auto i:range(3)) for(auto j:range(6)) if(nowRGB == PietCore::normalColors[i][j]){nowcode = 3*j+i; goto MATCHED;}
     ;MATCHED:;
     if(nowcode == -1 ){nowcode = 0;}
     auto CommandCore = [nowcode,this](EOrder nextOrder,QString strorder){
@@ -361,7 +361,7 @@ void PietEditor::resize(){
     newImage.fill(qRgba(255,255,255,255));
     int minw = std::min(gotw,image.width());
     int minh = std::min(goth,image.height());
-    REP(x,minw)REP(y,minh){newImage.setPixel(x,y,image.pixel(x,y));}
+    for(auto x:range( minw)) for(auto y:range(minh)){newImage.setPixel(x,y,image.pixel(x,y));}
     image = newImage;
     //if(image.size().width() > gotw || image.size().height > goth){
     core.setPos(QPoint(0,0));

@@ -9,10 +9,10 @@ void PietTree::MakeStackByMod0(int n,std::vector<PietTree> & pts){
     int min = n < size ? n : size ;
     if(min < 0) min = 0;if(min == 0)return;
     std::vector<PietTree> NewNode;
-    REP(i,min){
+    for(auto i:range(min)){
         NewNode.push_back(PietTree(pts[size  - min + i ]));
     }
-    REP(i,min){ pts.pop_back();}
+    for(auto i:range(min)){ pts.pop_back();}
     pts.push_back(PietTree(NewNode));
 }
 
@@ -33,7 +33,7 @@ QString PietTree::showStack(bool asNumber) const {
         else return QString(val);
     }
     QString res("[");
-    REP(i,nodes.size()){
+    for(auto i:range(nodes.size())){
         res += nodes[i].showStack(asNumber) ;
         if((i != nodes.size()-1) && asNumber)res +=  QString(",");
     }
@@ -210,7 +210,7 @@ void PietTree::zip(const PietTree &pt){
         pt.copyNodes();
     int min = nodes.size() > HerNodes.size() ? HerNodes.size() : nodes.size();
     std::vector<PietTree> newNodes ;
-    REP(i,min){
+    for(auto i:range(min)){
         std::vector<PietTree> New;
         New.push_back(nodes[i]);
         New.push_back(pt.Nodes()[i]);

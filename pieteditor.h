@@ -8,6 +8,7 @@
 #include <functional>
 #include <QPlainTextEdit>
 #include "pietcore.h"
+
 class PietEditor : public QWidget {
     Q_OBJECT
     Q_PROPERTY(QColor penColor READ penColor WRITE setPenColor)

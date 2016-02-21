@@ -133,9 +133,9 @@ void PietCore::setImage(const QImage & image,QString ImagePath){
 
     coded.clear();
     coded = vector<vector<int>>(image.width(), vector<int>(image.height()));
-    REP(x,w){
-        REP(y,h){
-            REP(i,3) REP(j,7) if(image.pixel(x,y) == normalColors[i][j]){
+    for(auto x : range(w)){
+        for(auto y : range(h)){
+            for(auto i : range(3)) for (auto j:range(7)) if(image.pixel(x,y) == normalColors[i][j]){
                 coded[x][y] = 3*j+i;
                 goto COLORMATCHED;
             }
@@ -147,7 +147,7 @@ void PietCore::setImage(const QImage & image,QString ImagePath){
 
     pos8.clear();
     pos8 =  vector<vector<Point8>>(image.width(), vector<Point8>(image.height()));
-    REP(x,image.width()) REP(y,image.height()) search(QPoint(x,y));
+    for(auto x: range(image.width())) for(auto y:range(image.height())) search(QPoint(x,y));
 }
 EOrder PietCore::fromRelativeColor(int from,int to){
     if (from < 0 || to < 0) return EOrder::Exception; // 未実装
@@ -358,7 +358,7 @@ void PietCore::execOneAction(){
                 vector<PietTree> pts = stack[stack.size()-1].Nodes();
                 bool Miss = false;
                 PietTree res = LoadPietDLL::LoadDLL(Miss,spath,sfunc,stype,pts);
-                REP(i,4)stack.pop_back();
+                for(auto i:range(4))stack.pop_back();
                 if( Miss ){
                     currentOrder = QString("Dll Miss");
                     LightcurrentOrder = QString("??");
@@ -382,8 +382,8 @@ void PietCore::execOneAction(){
             if(stack.size()==0) break;
             roll = roll % depth ;      // Pidetはここ微妙に何故か違った
             vector<PietTree> copy;
-            REP(i,depth) copy.push_back( stack[stack.size() - depth + i ]);
-            REP(i,depth) stack[stack.size() - depth + i] =
+            for(auto i:range(depth)) copy.push_back( stack[stack.size() - depth + i ]);
+            for(auto i:range(depth)) stack[stack.size() - depth + i] =
                             i - roll < 0 ? copy[i - roll + depth ] : copy[i - roll] ;
             currentOrder = QString("Roll d %1,r %2").arg(depth).arg(forCurrentOrderRoll);
             LightcurrentOrder = QString("Ｒ");

@@ -9,6 +9,8 @@
 #include <QDebug>
 #include <QDir>
 #include <QTreeWidget>
+#include <QtWidgets>
+#include "glgamewidget.h"
 
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
@@ -68,6 +70,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     CB(2,0);CB(2,1);CB(2,2);CB(2,3);CB(2,4);CB(2,5);
     #undef CB
     UpdateTree();
+    auto MakeGLView = [=](QWidget *parent ,int w ,int h,QString title){
+        QDockWidget* dw = new QDockWidget(parent);
+        dw->setFloating(true);
+        dw->setAllowedAreas(Qt::NoDockWidgetArea);
+        dw->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+        GLGameWidget* glgw = new GLGameWidget;
+        glgw->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+        glgw->setSize(w,h);
+        dw->setWidget(glgw);
+        dw->setWindowTitle(title);
+        dw->show();
+    };
+    connect(ui->actionCut, QAction::triggered,[this,&MakeGLView](){MakeGLView(this,600,400,QString("Music Game"));});
 }
 
 MainWindow::~MainWindow(){

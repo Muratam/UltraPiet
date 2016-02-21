@@ -62,7 +62,9 @@ public :
     static const QString normalOrders[3][7];
     static const EOrder normalEOrders[3][7];
     static QRgb getNormalColor(int nowCode,EOrder nextOrder);
-    static bool isNormalColor(QRgb rgb){REP(i,3)REP(j,7)if(rgb == normalColors[i][j])return true;return false;}
+    static bool isNormalColor(QRgb rgb){
+        for(int i:range(3)) for(int j:range(7)) if(rgb == normalColors[i][j])return true;return false;
+    }
     static QColor getVividColor(const QColor & c){int g = DiffMax255( qGray(c.red(),c.green(),c.blue()));return QColor(g,g,g); }//int g = qGray(DiffMax255(c.red()) ,DiffMax255(c.blue()) ,DiffMax255( c.green())); return QColor(g,g,g);}
     static int DiffMax255(int c) {return c < 100 ? 255 : 0;}
     static int CutA(int c) { return ((qAlpha(c) & 0x00) << 24) | ((qRed(c) & 0xff) << 16) | ((qGreen(c) & 0xff) << 8) | (qBlue(c) & 0xff); }

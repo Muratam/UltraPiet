@@ -5,11 +5,9 @@
 #include <QString>
 #include <QTextStream>
 #include "pietcore.h"
-#include "widgettest.h"
 #include "executingpietlibraries.h"
 #include <iostream>
 #include <QLibrary>
-
 
 using namespace std;
 void ApplyDarkStyleSheet(QApplication& a ){
@@ -61,5 +59,5 @@ int main(int argc, char *argv[]){
         return a.exec();
     }
 }
-//auto wg = new WidgetTest(&w);
-//wg->show();
+
+

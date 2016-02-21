@@ -1,6 +1,7 @@
 # Todo
 京都バスの予約,Drone,Blender持っていく
 
+#define MainWindow::CB
 
 ## UltraPiet
 File 
@@ -12,7 +13,9 @@ G/~ に行くときはultrapietはカレントディレクトリを変更しな�
 DLLでなく組み込みの関数は、 Div0 L/~ に任せる(Library)
 2/24 (水) Kickoff 17:30~ 19:00
           Cahon
-
+//widgettest / glgamewidget は不要？
+//myglwidget
+//window.ui <->testwidget
 OpenGL,Audio
 
 MODULE |  LIBRARY(組み込み含む)の作り方の指針
