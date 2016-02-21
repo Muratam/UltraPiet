@@ -111,6 +111,7 @@ void PietCore::search(QPoint me){//実行前にメモ化しておく
                         CHECK8(res8.UL,y(),x(),>,>);
                         CHECK8(res8.UR,y(),x(),>,<);
                     }
+                    #undef CHECK8
                 }
             }else{
                 if(d == dR)      res8.RL = res8.RR = Wall;
@@ -197,6 +198,20 @@ void PietCore::processWall(){
     processWallCount ++;
 }
 
+#define STACK_TOP stack[stack.size()-1]
+#define PROCESARITHMETICORDER(OPERATE,OPERATENAME,LIGHTOPERATE) \
+    if(stack.size() >= 2){ \
+        auto v1 = STACK_TOP; \
+        stack.pop_back(); \
+        auto v2 = STACK_TOP; \
+        stack.pop_back(); \
+        OPERATE;\
+        stack.push_back(v2); \
+        currentOrder = QString(OPERATENAME);\
+        LightcurrentOrder = QString(LIGHTOPERATE);\
+    }else { \
+        setCurrentOrderLessArgs(); \
+    }
 void PietCore::execOneAction(){
     if (finished)return;
     Point8 p8 = Pos8(pos);
@@ -213,20 +228,6 @@ void PietCore::execOneAction(){
     }else  if(currentcode == WhiteColor && nextcode == BlackColor) currentcode = 0; //壁
     EOrder order = fromRelativeColor(currentcode,nextcode);
     auto setCurrentOrderLessArgs= [this] (){currentOrder = QString("Less Arg");LightcurrentOrder = QString("??");};
-    #define STACK_TOP stack[stack.size()-1]
-    #define PROCESARITHMETICORDER(OPERATE,OPERATENAME,LIGHTOPERATE) \
-        if(stack.size() >= 2){ \
-            auto v1 = STACK_TOP; \
-            stack.pop_back(); \
-            auto v2 = STACK_TOP; \
-            stack.pop_back(); \
-            OPERATE;\
-            stack.push_back(v2); \
-            currentOrder = QString(OPERATENAME);\
-            LightcurrentOrder = QString(LIGHTOPERATE);\
-        }else { \
-            setCurrentOrderLessArgs(); \
-        }
     switch(order){
     case EOrder::Same:
         currentOrder = QString("Nop");
@@ -460,6 +461,9 @@ void PietCore::execOneAction(){
     pos = nextpos;
     processWallCount = 0;
 }
+
+#undef STACK_TOP
+#undef PROCESARITHMETICORDER
 
 QString PietCore::printStack(){
     auto res = QString ("");

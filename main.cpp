@@ -20,9 +20,7 @@ void ApplyDarkStyleSheet(QApplication& a ){
         a.setStyleSheet(ts.readAll());
     }
 }
-
-
-int main(int argc, char *argv[]){ //C:/hoge/hgoe/...../release\ //
+int main(int argc, char *argv[]){
     ExecutingPietLibraries::Hash_FuncSet();
     PietCore::rootpath = (QFileInfo (argv[0])).absolutePath() + QDir::separator();
 

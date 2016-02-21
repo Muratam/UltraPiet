@@ -1,10 +1,9 @@
 #ifndef DEFINES_H
 #define DEFINES_H
-
-#define REP(i,n) for(int i = 0 ; i < (int)(n);++i)
-
 #include <QMessageBox>
-#define MSGBOX(STR) {    QMessageBox msgBox(this); msgBox.setText(STR); msgBox.exec();}
-//auto MSGBOX = [] (QString str, QWidget* parent) {    QMessageBox msgBox(parent); msgBox.setText(str); msgBox.exec();};
+
+//REPだけはエイリアスとしてこのプロジェクト全体どうしても使いたいです！ごめんね！
+#define REP(i,n) for(int i = 0 ; i < (int)(n);++i)
+auto MSGBOX = [] (const char* str, QWidget* parent = 0) {    QMessageBox msgBox(parent); msgBox.setText(QString(str)); msgBox.exec();};
 
 #endif // DEFINES_H

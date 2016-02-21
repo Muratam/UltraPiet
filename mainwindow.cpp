@@ -11,20 +11,6 @@
 #include <QTreeWidget>
 
 
-#define CB(i,j) \
-    {  auto c = QColor(PietCore::normalColors[i][j]); \
-       auto strrgb = QString("background-color : rgb(%1,%2,%3);\n").arg(c.red()).arg(c.green()).arg(c.blue()); \
-       auto vivC = PietCore::getVividColor(c); \
-       auto strrgbfontcolor = QString ("color : rgb(%1,%2,%3);\n").arg(vivC.red()).arg(vivC.green()).arg(vivC.blue());\
-       ui->B ## i ## j->setStyleSheet(strrgb + strrgbfontcolor+"selection-"+strrgbfontcolor); \
-       ui->B##i##j->setText( PietCore::normalOrders[i][j]); \
-    }\
-    connect(ui->B ## i ## j,QPushButton::clicked,[=](){ \
-        auto c = PietCore::normalColors[i][j]; \
-        ui->pietEditor->setPenColor(c); setEditColor(c); \
-    })
-
-
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow){
     ui->setupUi(this);
     this->setWindowTitle("ultrapiet");
@@ -65,9 +51,22 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     };
     connect(ui->projectTreeWidget,QTreeWidget::itemDoubleClicked,TreeWidgetSelectItem);
     connect(ui->projectTreeWidget,QTreeWidget::itemActivated,TreeWidgetSelectItem);
+    #define CB(i,j) \
+        {  auto c = QColor(PietCore::normalColors[i][j]); \
+           auto strrgb = QString("background-color : rgb(%1,%2,%3);\n").arg(c.red()).arg(c.green()).arg(c.blue()); \
+           auto vivC = PietCore::getVividColor(c); \
+           auto strrgbfontcolor = QString ("color : rgb(%1,%2,%3);\n").arg(vivC.red()).arg(vivC.green()).arg(vivC.blue());\
+           ui->B ## i ## j->setStyleSheet(strrgb + strrgbfontcolor+"selection-"+strrgbfontcolor); \
+           ui->B##i##j->setText( PietCore::normalOrders[i][j]); \
+        }\
+        connect(ui->B ## i ## j,QPushButton::clicked,[=](){ \
+            auto c = PietCore::normalColors[i][j]; \
+            ui->pietEditor->setPenColor(c); setEditColor(c); \
+        })
     CB(0,0);CB(0,1);CB(0,2);CB(0,3);CB(0,4);CB(0,5);CB(0,6);
     CB(1,0);CB(1,1);CB(1,2);CB(1,3);CB(1,4);CB(1,5);CB(1,6);
     CB(2,0);CB(2,1);CB(2,2);CB(2,3);CB(2,4);CB(2,5);
+    #undef CB
     UpdateTree();
 }
 

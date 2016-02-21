@@ -9,6 +9,7 @@ void ExecutingPietLibraries::Hash_FuncSet(){
     if(Hash_HadSet) return;
     Hash_HadSet = true;
     REGISTFUNCTION(A);
+    #undef REGISTFUNCTION
 }
 
 

@@ -428,7 +428,7 @@ void PietEditor::execInit(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWi
             outputWindow->insertPlainText (outstr);
             outputWindow->moveCursor (QTextCursor::End);
         },[inputWindow,this](){
-            if(inputWindow->toPlainText().isEmpty())MSGBOX("NO INPUT CHARS")
+            if(inputWindow->toPlainText().isEmpty())MSGBOX("NO INPUT CHARS");
             while(inputWindow->toPlainText().isEmpty()){
                 this->isWaitingInput = true;
                 QApplication::processEvents();
@@ -444,7 +444,7 @@ void PietEditor::execInit(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWi
             isWaitingInput = false;
             return res;
         },[inputWindow,this](bool &Miss){
-            if(inputWindow->toPlainText().isEmpty())MSGBOX("NO INPUT CHARS")
+            if(inputWindow->toPlainText().isEmpty())MSGBOX("NO INPUT CHARS");
             while(inputWindow->toPlainText().isEmpty()){
                 this->isWaitingInput = true;
                 QApplication::processEvents();
