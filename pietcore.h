@@ -22,11 +22,14 @@ struct Point8{
     bool defined;
     int BlockSize;
     QPoint & getbyDPCC(EDirectionPointer dp,ECodelChooser cc){
-#define IFDPRDLUCCLR(R_D_L_U,L_R) if(dp == dp##R_D_L_U && cc == cc##L_R ) return R_D_L_U ## L_R
-        IFDPRDLUCCLR(R,L);IFDPRDLUCCLR(R,R);
-        IFDPRDLUCCLR(D,L);IFDPRDLUCCLR(D,R);
-        IFDPRDLUCCLR(L,L);IFDPRDLUCCLR(L,R);
-        IFDPRDLUCCLR(U,L);IFDPRDLUCCLR(U,R);
+        if(dp == dpR && cc == ccL ) return RL;
+        if(dp == dpR && cc == ccR ) return RR;
+        if(dp == dpD && cc == ccL ) return DL;
+        if(dp == dpD && cc == ccR ) return DR;
+        if(dp == dpL && cc == ccL ) return LL;
+        if(dp == dpL && cc == ccR ) return LR;
+        if(dp == dpU && cc == ccL ) return UL;
+        if(dp == dpU && cc == ccR ) return UR;
         return RL;
     }
 };
@@ -101,7 +104,7 @@ public :
             QDir::setCurrent(nextDirPath);
         }
         while (!finished){execOneAction();}
-    } //For Command line or Div0
+    }
     void setImage(const QImage & image, QString ImagePath);
     QString printStack();
     QString printStatus();

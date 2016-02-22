@@ -54,7 +54,6 @@ protected :
     QColor curColor;
     PietCore core;
     QImage image;
-    //bool hadnotFocused = true;
     class QPointAndQString :public QPoint{public :QString c; QPointAndQString(int x,int y,QString cc):QPoint(x,y){c =cc;}};
     std::deque<QPointAndQString> ArrowQueue;
     const int ArrowQueueMaxSize = 256;

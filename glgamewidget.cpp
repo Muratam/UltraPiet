@@ -1,14 +1,19 @@
 #include "glgamewidget.h"
 #include "defines.h"
 
-GLGameWidget* GLGameWidget::SingleGLWidget = nullptr;
+GLGameWidget* GLGameWidget::UniqueGLWidget = nullptr;
 GLGameWidget::GLGameWidget(QWidget *parent):QGLWidget(parent){
     setFormat(QGLFormat(QGL::DoubleBuffer ));
-    faceColor = Qt::red;
-    if(SingleGLWidget == nullptr) SingleGLWidget = this;
-    else SingleGLWidget = nullptr;
+    connect(this,GLGameWidget::destroyed ,[=](){UniqueGLWidget = nullptr;});
 }
-//before paintGL
+
+GLGameWidget* GLGameWidget::MakeUniqueGLWidget (QWidget *parent ){
+    if(UniqueGLWidget == nullptr){
+        return UniqueGLWidget = new GLGameWidget(parent);
+    }else return nullptr;
+}
+
+
 void GLGameWidget::initializeGL(){
     glShadeModel(GL_FLAT);
     glEnable(GL_CULL_FACE);
@@ -16,32 +21,27 @@ void GLGameWidget::initializeGL(){
     glOrtho(0.0, w, 0.0, h , -1.0, 1.0);
 }
 
-//paintGL <= resizeGL <= initializeGL
 void GLGameWidget::resizeGL(int width,int height){
     glViewport(0, 0, width, height);
     glLoadIdentity();
     glOrtho(0.0, w, 0.0, h, -1.0, 1.0);
 }
-
-void GLGameWidget::paintGL(){
-        QGLContext* context = QGLWidget::context();
-        context->makeCurrent();
+void GLGameWidget::refresh (){
     qglClearColor(Qt::black);
     glClear(GL_COLOR_BUFFER_BIT);
-    draw();
-        context->swapBuffers();
-        context->doneCurrent();
 }
 
-void GLGameWidget::draw(){
-    qglColor(faceColor);
+
+void GLGameWidget::drawRect(int x ,int y,int w,int h,QColor color){
+    qglColor(color);
     glBegin(GL_QUADS);
-    glVertex2d(w*0.1,h* 0.1);
-    glVertex2d(w*0.9,h* 0.1);
-    glVertex2d(w*0.9,h* 0.9);
-    glVertex2d(w*0.1,h* 0.9);
+    glVertex2d(x,y);
+    glVertex2d(x+w,y);
+    glVertex2d(x+w,y+h);
+    glVertex2d(x,y+h);
     glEnd();
 }
+
 
 // 当面2Dで考える 3DにしたかったらGLGameWidget3Dとかつくればいい
 // 本当の最低限だけでいいや (本当のゲームのライブラリならもっと関数が必要なところだ)
@@ -54,10 +54,13 @@ void GLGameWidget::draw(){
 //   L/MPLoadAudio    ["res/arcadia.mp3"]  => [0|mhandle] (SingleTon)
 //3. L/GLDrawImage    [handle,100,200]  => None              / GLView
 //   L/MPPlayAudio    [mhandle]         => None
-//4. L/GLShowBuffer   []                => None              / GLView
+//4. L/GLProcessAll   []                => None              / GLView
 //   L/MPGetPosition  [mhandle]         => 100
 //5. L/sleep          [16]              => None
-
+//   L/processmessage []                => 0 | 1
+//N. L/GLProcessAll   []                => (processMessage & sleep(1) & showbuffer)
+//test := L/GLShowWindow
+//                => L/GLDrawRect  [x,y,20,20,FFFFFF] => L/GLProcessAll => ...
 
 //3D memo
 //construct : | QGL::DepthBuffer));

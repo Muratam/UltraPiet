@@ -1,6 +1,6 @@
 # Todo
 京都バスの予約,Drone,Blender持っていく
-
+OBさんに連絡
 #define MainWindow::CB
 
 ## UltraPiet
@@ -15,9 +15,11 @@ DLLでなく組み込みの関数は、 Div0 L/~ に任せる(Library)
           Cahon
 //widgettest / glgamewidget は不要？
 //myglwidget
-//window.ui <->testwidget
+//window.ui <->testwidgetglgamewidget.cpp
 OpenGL,Audio
 
+//connect(ui->actionCut, QAction::triggered,[this,&MakeGLView](){MakeGLView(this,600,400,QString("Music Game"));});
+    
 MODULE |  LIBRARY(組み込み含む)の作り方の指針
 Div 0 はスタックの先頭要素のみを引き継ぎます。
 この制約により、先頭要素以外が変更されないことが保証されます。

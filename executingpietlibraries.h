@@ -4,6 +4,8 @@
 #include <QHash>
 #include <functional>
 #include <iostream>
+#include <QtWidgets>
+#include <glgamewidget.h>
 class ExecutingPietLibraries{
 public:
     static void A(std::vector<PietTree> & pt){ //空だったり、[[7],""]とかだったりする要素数は、0 または1となる
@@ -16,5 +18,9 @@ public:
 private :
     ExecutingPietLibraries(){}
 };
+
+
+
+
 
 #endif // EXECUTINGPIETLIBRARIES_H

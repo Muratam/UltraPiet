@@ -8,19 +8,23 @@
 
 class GLGameWidget : public QGLWidget{
     Q_OBJECT
+private:
+    GLGameWidget(QWidget *parent = 0) ;//QWidget *parent = 0);
+    static GLGameWidget* UniqueGLWidget ;
 public:
-    explicit GLGameWidget(QWidget *parent = 0);
+    static GLGameWidget* MakeUniqueGLWidget (QWidget *parent = 0);
+    static GLGameWidget* getUniqueGLWidget(){return UniqueGLWidget;}
     QSize sizeHint() const{return QSize(w,h);}
     void setSize(int w,int h){if(w < 0 || h < 0) return;this->w = w;this->h = h; }
-    static GLGameWidget* SingleGLWidget ;
+    void refresh ();
+    void drawRect(int x ,int y,int w,int h,QColor color);
 protected:
     void initializeGL();
     void resizeGL(int width,int height);
-    void paintGL();
+    void paintGL(){}
 private:
-    void draw();
     int w = 600, h = 400;
-    QColor faceColor;
 };
+
 
 #endif // GLGAMEWIDGET_H
