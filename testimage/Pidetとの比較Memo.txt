@@ -1,2 +1,0 @@
-Chihaya.pngのような無限ループ＋無限出力に対してPidetは動かなかった
-HelloWorld.pngのような大きい画像に対してはPidetはとても重たかった

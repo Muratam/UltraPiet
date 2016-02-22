@@ -45,8 +45,7 @@ void GLGameWidget::drawRect(int x ,int y,int w,int h,QColor color){
     glEnd();
 }
 
-// 0   : Miss
-// > 1 : Succ
+// 0   : Miss, > 1 : Succ
 int GLGameWidget::loadImage(QString path){
     QImage image(path);
     if(image.isNull())return 0;
@@ -68,21 +67,25 @@ void GLGameWidget::drawImage(int x,int y,int handle){
     glEnd();
 }
 
-
-// 当面2Dで考える 3DにしたかったらGLGameWidget3Dとかつくればいい
-// 本当の最低限だけでいいや (本当のゲームのライブラリならもっと関数が必要なところだ)
-// 音楽も同期をとらなければ
-// texture = bindTexture(QImage(":/image.jpg", GL_TEXTURE_2D));
-// QMediaPlayer
-//0. L/system         ["ls"]            => output ni are
-//1. // L/GLShowWindow   [600,400,"title"] => [0|1] (SingleTon) / MainWindow | NULL
+//標準 Lライブラリ (少ないから,あとは頑張れ～)
+//0. L/system           ["ls"]          => output ni are
+//1. //L/GLShowWindow   [600,400,"title"]    => [0|1] (SingleTon) / MainWindow | NULL
 //2. //L/GLLoadImage    ["res/chihaya.png"]  => [0|handle]     / GLView
-//   L/MPLoadAudio    ["res/arcadia.mp3"]  => [0|mhandle] (SingleTon)
-//3. //L/GLDrawImage    [handle,100,200]  => None              / GLView
-//   L/MPPlayAudio    [mhandle]         => None
-//4. //L/GLProcessAll   []                => 0 | 1             / GLView
-//   L/MPGetPosition  [mhandle]         => 100
-//N. // L/GLProcessAll   []                => (processMessage & sleep(1) & showbuffer)
+//   //L/MPPlayAudio    [mhandle]            => None
+//3. //L/GLDrawImage    [handle,100,200]     => None              / GLView
+//4. //L/GLProcessAll   []                   => 0 | 1             / GLView
+//   L/MPGetPosition  [mhandle]         => 100 //millisecond
+//   // L/GLProcessAll  []                   => (processMessage & sleep(1) & showbuffer)
+//   L/GetKey         [10]              => 0 | 1
+
+//標準　Gライブラリ
+//G/Echo
+//G/Echo2
+//G/EchoNum
+//G/WinMsgBoxA
+//G/心
+//G/C_HelloWorld
+//G/Loop_72CHIHAYA
 
 //3D memo
 //construct : | QGL::DepthBuffer));
