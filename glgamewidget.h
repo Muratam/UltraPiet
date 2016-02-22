@@ -4,7 +4,8 @@
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
 #include <QOpenGLBuffer>
-
+#include <QHash>
+#include <QMediaPlayer>
 
 class GLGameWidget : public QGLWidget{
     Q_OBJECT
@@ -18,11 +19,15 @@ public:
     void setSize(int w,int h){if(w < 0 || h < 0) return;this->w = w;this->h = h; }
     void refresh ();
     void drawRect(int x ,int y,int w,int h,QColor color);
+    int loadImage(QString path);
+    void drawImage(int x, int y, int handle);
+    QMediaPlayer mp;
 protected:
     void initializeGL();
     void resizeGL(int width,int height);
     void paintGL(){}
 private:
+    QHash<unsigned int,QSize> imageSizeHash;
     int w = 600, h = 400;
 };
 

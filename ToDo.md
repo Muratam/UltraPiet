@@ -1,7 +1,5 @@
 # Todo
-京都バスの予約,Drone,Blender持っていく
-OBさんに連絡
-#define MainWindow::CB
+京都バスの予約  OBさんに連絡
 
 ## UltraPiet
 File 
@@ -13,13 +11,7 @@ G/~ に行くときはultrapietはカレントディレクトリを変更しな�
 DLLでなく組み込みの関数は、 Div0 L/~ に任せる(Library)
 2/24 (水) Kickoff 17:30~ 19:00
           Cahon
-//widgettest / glgamewidget は不要？
-//myglwidget
-//window.ui <->testwidgetglgamewidget.cpp
-OpenGL,Audio
 
-//connect(ui->actionCut, QAction::triggered,[this,&MakeGLView](){MakeGLView(this,600,400,QString("Music Game"));});
-    
 MODULE |  LIBRARY(組み込み含む)の作り方の指針
 Div 0 はスタックの先頭要素のみを引き継ぎます。
 この制約により、先頭要素以外が変更されないことが保証されます。
@@ -74,14 +66,6 @@ Greater(LoadFile)
     Greater ["f3.txt",a] => [1] : 2.で開いていたf2.txtを閉じてf3.txtをAppendで開く
     Greater [[],[cr]] => [0] : 1.で開いていたf1.txtを閉じる.
 
-
-優先順位 低
-マルチスレッドはめんどいね
-色18色のもめんどいね。
-Fontを変更できるように
-
-# 他の人に手伝って欲しいところ
-標準ライブラリの充実
 
 Qt:You can use various MaltiMedia & GUIs so easy.
 1. Install Qt5.5 (& qmake & make) (by this,you can built only-window application.)

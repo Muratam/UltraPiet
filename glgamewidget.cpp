@@ -17,6 +17,9 @@ GLGameWidget* GLGameWidget::MakeUniqueGLWidget (QWidget *parent ){
 void GLGameWidget::initializeGL(){
     glShadeModel(GL_FLAT);
     glEnable(GL_CULL_FACE);
+    glEnable(GL_TEXTURE_2D);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     qglClearColor(Qt::black);
     glOrtho(0.0, w, 0.0, h , -1.0, 1.0);
 }
@@ -42,6 +45,29 @@ void GLGameWidget::drawRect(int x ,int y,int w,int h,QColor color){
     glEnd();
 }
 
+// 0   : Miss
+// > 1 : Succ
+int GLGameWidget::loadImage(QString path){
+    QImage image(path);
+    if(image.isNull())return 0;
+    unsigned int uihandle = bindTexture(image);
+    imageSizeHash[uihandle] = QSize(image.width(),image.height());
+    return (int)(uihandle);
+}
+
+void GLGameWidget::drawImage(int x,int y,int handle){
+    unsigned int uihandle = (unsigned int)(handle);
+    if(!imageSizeHash.contains(uihandle)) return;
+    QSize size = imageSizeHash[uihandle];
+    glBindTexture(GL_TEXTURE_2D, uihandle);
+    glBegin(GL_QUADS);
+        glTexCoord2f(0,0); glVertex2d(x,y);
+        glTexCoord2f(1,0); glVertex2d(x+size.width(),y);
+        glTexCoord2f(1,1); glVertex2d(x+size.width(),y+size.height());
+        glTexCoord2f(0,1); glVertex2d(x,y+size.height());
+    glEnd();
+}
+
 
 // 当面2Dで考える 3DにしたかったらGLGameWidget3Dとかつくればいい
 // 本当の最低限だけでいいや (本当のゲームのライブラリならもっと関数が必要なところだ)
@@ -49,18 +75,14 @@ void GLGameWidget::drawRect(int x ,int y,int w,int h,QColor color){
 // texture = bindTexture(QImage(":/image.jpg", GL_TEXTURE_2D));
 // QMediaPlayer
 //0. L/system         ["ls"]            => output ni are
-//1. L/GLShowWindow   [600,400,"title"] => [0|1] (SingleTon) / MainWindow | NULL
-//2. L/GLLoadImage    ["res/chihaya.png"]  => [0|handle]     / GLView
+//1. // L/GLShowWindow   [600,400,"title"] => [0|1] (SingleTon) / MainWindow | NULL
+//2. //L/GLLoadImage    ["res/chihaya.png"]  => [0|handle]     / GLView
 //   L/MPLoadAudio    ["res/arcadia.mp3"]  => [0|mhandle] (SingleTon)
-//3. L/GLDrawImage    [handle,100,200]  => None              / GLView
+//3. //L/GLDrawImage    [handle,100,200]  => None              / GLView
 //   L/MPPlayAudio    [mhandle]         => None
-//4. L/GLProcessAll   []                => None              / GLView
+//4. //L/GLProcessAll   []                => 0 | 1             / GLView
 //   L/MPGetPosition  [mhandle]         => 100
-//5. L/sleep          [16]              => None
-//   L/processmessage []                => 0 | 1
-//N. L/GLProcessAll   []                => (processMessage & sleep(1) & showbuffer)
-//test := L/GLShowWindow
-//                => L/GLDrawRect  [x,y,20,20,FFFFFF] => L/GLProcessAll => ...
+//N. // L/GLProcessAll   []                => (processMessage & sleep(1) & showbuffer)
 
 //3D memo
 //construct : | QGL::DepthBuffer));

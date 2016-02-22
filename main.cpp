@@ -8,6 +8,7 @@
 #include "executingpietlibraries.h"
 #include <iostream>
 #include <QLibrary>
+#include <stdlib.h>
 
 using namespace std;
 void ApplyDarkStyleSheet(QApplication& a ){
@@ -29,6 +30,7 @@ auto MakeGLView = [=](QWidget *parent ,int w ,int h,QString title){
     QDockWidget* dw = new QDockWidget(parent);
     dw->setFloating(true);
     dw->setAllowedAreas(Qt::NoDockWidgetArea);
+    dw->connect(dw,QDockWidget::dockLocationChanged,[=](){ dw->setFloating(true);});
     dw->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     dw->setWidget(glgw);
     dw->setAttribute(Qt::WA_DeleteOnClose);
@@ -47,9 +49,25 @@ auto GLProcessAll = [=](){
 };
 
 auto GLDrawRect = [=](int x ,int y,int w,int h,QColor color){
-    if(GLGameWidget::getUniqueGLWidget() == nullptr) return false;
-    else GLGameWidget::getUniqueGLWidget()->drawRect(x,y,w,h,color);
-    return true;
+    if(GLGameWidget::getUniqueGLWidget() != nullptr)
+       GLGameWidget::getUniqueGLWidget()->drawRect(x,y,w,h,color);
+};
+auto GLLoadImage = [=](QString path){
+    if(GLGameWidget::getUniqueGLWidget() != nullptr)
+       return GLGameWidget::getUniqueGLWidget()->loadImage(path);
+    else return 0;
+};
+auto GLDrawImage = [=](int x,int y,int handle){
+    if(GLGameWidget::getUniqueGLWidget() != nullptr)
+       GLGameWidget::getUniqueGLWidget()->drawImage(x,y,handle);
+};
+
+auto GLPlayMusic = [=](QString path,int Volume = 20){
+    GLGameWidget * gw = GLGameWidget::getUniqueGLWidget();
+    if(gw == nullptr) return;
+    gw->mp.setMedia(QUrl::fromLocalFile(path));
+    gw->mp.setVolume(Volume);
+    gw->mp.play();
 };
 
 
@@ -61,13 +79,16 @@ int main(int argc, char *argv[]){
 #ifdef DEBUGSHOWOPENGL
     QApplication a(argc, argv);
     MakeGLView(NULL,600,400,QString("Music Game"));
+    int h = GLLoadImage(QString("2.png"));
     int x = 0, y = 0;
+    GLPlayMusic(QString("NeverSayNever.mp3"));
     while(GLProcessAll()){
         x++;y++;if(x > 300) x = 0; if(y > 300) y = 0;
-        GLDrawRect(x,y,200,200,QColor(255,255,0));
-        GLDrawRect(600- x,400 - y,200,200,QColor(0,255,0));
+        //GLDrawRect(x,y,200,200,QColor(255,255,0));
+        GLDrawImage(x,y,h);
     }return 0;
 #endif
+#undef DEBUGSHOWOPENGL
     if(argc >= 2 ){
         auto loadedimage = QImage(argv[1]);
         if(loadedimage.isNull() ){cout << "Invalid Image! " << endl; return 0;}
