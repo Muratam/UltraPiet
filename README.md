@@ -7,25 +7,12 @@
 3. 同梱のsampleフォルダの画像やbin/windows/G フォルダの画像でテスト出来ますよ
 4. 大きな画像も無限ループも無理なく扱えるし、追跡機能も命令履歴機能もあるよ！
 
-
-## CUIで使う方法(Windows)
-../bin/windows/ultrapiet bin/windows/G/C_HelloWorld.png でコマンドラインで実行できます。
-Windowsの場合はMinttyなどのターミナルを使って下さい。
-コマンドプロンプト及びパワーシェルでは標準入出力が上手く行われません。
-
-### Minttyがよく分からない場合
-Pietをやろうとしているということは、あなたはGitをインストールしているはずです。
-「Win + R 」で「C:\Program Files\Git\usr\bin\mintty」を入力し、minttyを起動できます。
-cd ~ ののち、cd とpwd を駆使してultrapietのあるディレクトリに行き
-./ultrapiet G/C_HelloWorld.png のようにして実行出来ます。
-ultrapietのあるディレクトリにパスを通せばperlやpythonと同じように利用できます
-
-
 ## UltraPietの新機能
-- スタックに木構造も積むことができる
-- 強力な文字処理機構
-- DLLのインポート
-- 他のPietのコードの呼び出し
+- 既存のPietもそのまま動く！
+- スタックに木構造も積むことができる！
+- 強力な文字処理機構を搭載！
+- DLLのインポートができる！
+- 他のPietのコードを呼び出せる！
 
 ## UltraPietで新たに出来ること
 
@@ -65,11 +52,22 @@ UltraPietはあくまでもPietです.
 [UltraPietWiki](https://github.com/Muratam/UltraPiet/wiki) に記載していますので
 ご覧ください。
 
+## CUIで使う方法(Windows)
+../bin/windows/ultrapiet bin/windows/G/C_HelloWorld.png でコマンドラインで実行できます。
+Windowsの場合はMinttyなどのターミナルを使って下さい。
+コマンドプロンプト及びパワーシェルでは標準入出力が上手く行われません。
+Pietをやろうとしているということは、あなたはGitをインストールしているはずです。
+「Win + R 」で「C:\Program Files\Git\usr\bin\mintty」を入力し、minttyを起動できます。
+cd ~ ののち、cd とpwd を駆使してultrapietのあるディレクトリに行き
+./ultrapiet G/C_HelloWorld.png のようにして実行出来ます。
+ultrapietのあるディレクトリにパスを通せばperlやpythonと同じように利用できます
+
+
 ## 実装
 スクリプト言語としてのPietとなって,
 Perl,PHP,Python,UltraPiet の 4Pとなることを願っています.
 オープンソースプロジェクトとして,
-公開後は標準ライブラリの実装のContributeをお待ちしております！
+標準ライブラリの実装のContributeをお待ちしております！
 最新情報は Github : Muratam, Twitter : paradigm_9 を参照下さい！
 UltraPietは、Qtフリーライセンス、すなわちLGPLに従うオープンソースで提供しております
 
