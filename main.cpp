@@ -95,9 +95,12 @@ int main(int argc, char *argv[]){
 
         QString buffer(""); //I/0 処理
         QTextStream qstdin(stdin);
-        qstdin.setCodec("UTF-8");
-        PietCore core( [](QString outstr){
-             cout << outstr.toStdString() << flush;
+        QTextStream qstdout(stdout);
+        qstdin.setCodec("UTF-16");
+        qstdout.setCodec("UTF-16");
+        PietCore core( [&qstdout](QString outstr){
+            qstdout << outstr ;
+            qstdout.flush();
         },[&buffer,&qstdin](){
             if(buffer.isEmpty()) {buffer = qstdin.read(1);} //バッファに一文字読み込む
             QChar gotchar = buffer.at(0);
