@@ -96,8 +96,8 @@ int main(int argc, char *argv[]){
         QString buffer(""); //I/0 処理
         QTextStream qstdin(stdin);
         QTextStream qstdout(stdout);
-        qstdin.setCodec("UTF-16");
-        qstdout.setCodec("UTF-16");
+        qstdin.setCodec("UTF-8");
+        qstdout.setCodec("UTF-8");
         PietCore core( [&qstdout](QString outstr){
             qstdout << outstr ;
             qstdout.flush();
