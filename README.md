@@ -52,6 +52,10 @@ UltraPietはあくまでもPietです.
 これらを守ることで,Cに対するC++のように,
 旧Pietのコードもそのまま動かすことが可能となります.
 
+## CUIで使う方法(Linux)
+./bin/linux/ultrapiet sample/2.png
+デスクトップ環境でなくても動きます
+
 ## CUIで使う方法(Windows)
 ../bin/windows/ultrapiet bin/windows/G/C_HelloWorld.png でコマンドラインで実行できます。
 Windowsの場合はMinttyなどのターミナルを使って下さい。
