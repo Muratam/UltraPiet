@@ -1,13 +1,12 @@
 #include "mainwindow.h"
+#include "pietcore.h"
+#include "executingpietlibraries.h"
 #include <QApplication>
 #include <QImage>
 #include <QFile>
 #include <QString>
 #include <QTextStream>
-#include "pietcore.h"
-#include "executingpietlibraries.h"
 #include <iostream>
-#include <QLibrary>
 #include <stdlib.h>
 
 using namespace std;
@@ -20,75 +19,114 @@ void ApplyDarkStyleSheet(QApplication& a ){
     }
 }
 
+int PlayHangGliderGame(){
+    //たけしのハンググライダー
+    //１　主人公はハンググライダー。操作は上下移動のみ。
+    //２　敵は鳥。左にしか進まない。あたると即死
+    //３　nループに一度縦方向のどこかに現れるのでよけ続ける
+    //Me.png,Bird.png,Back.png,Sky.png,GameOver.pngのみでよい
+    //(自分の移動),(敵の描画),(ロジック),(ゲームオーバー処理)
+    //   50*50      ,  50*50   , 600 * 400 , 600 * 400
+    // [y] ,[[x,y],...],LoopCount,KeyPushed
 
-auto MakeGLView = [=](QWidget *parent ,int w ,int h,QString title){
-    GLGameWidget* glgw = GLGameWidget::MakeUniqueGLWidget(parent);
-    if(glgw == nullptr) return ;
-    glgw->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-    glgw->setSize(w,h);
+    const int w = 600, h = 400;
+    const int size = 50;
+    const int meX = 50;
+    const int birdemitcount = 1000;
+    const int birdspeed = 1;
+    vector<PietTree>pts;
 
-    QDockWidget* dw = new QDockWidget(parent);
-    dw->setFloating(true);
-    dw->setAllowedAreas(Qt::NoDockWidgetArea);
-    dw->connect(dw,QDockWidget::dockLocationChanged,[=](){ dw->setFloating(true);});
-    dw->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
-    dw->setWidget(glgw);
-    dw->setAttribute(Qt::WA_DeleteOnClose);
-    dw->setWindowTitle(title);
-    dw->show();
-};
+    pts = {PietTree(w),PietTree(h),PietTree(QString("Hang Glider Game"))};
+    ExecutingPietLibraries::functionHash[QString("MakeGLView")](pts);
 
+    pts = {PietTree(QString("Me.png"))};
+    ExecutingPietLibraries::functionHash[QString("GLLoadImage")](pts);
+    int meH = pts[0].Val();
 
-auto GLProcessAll = [=](){
-    QApplication::processEvents();
-    Sleep(1);
-    if(GLGameWidget::getUniqueGLWidget() == nullptr) return false;
-    GLGameWidget::getUniqueGLWidget()->updateGL();
-    GLGameWidget::getUniqueGLWidget()->refresh();
-    return true;
-};
+    pts = {PietTree(QString("Bird.png"))};
+    ExecutingPietLibraries::functionHash[QString("GLLoadImage")](pts);
+    int birdH = pts[0].Val();
 
-auto GLDrawRect = [=](int x ,int y,int w,int h,QColor color){
-    if(GLGameWidget::getUniqueGLWidget() != nullptr)
-       GLGameWidget::getUniqueGLWidget()->drawRect(x,y,w,h,color);
-};
-auto GLLoadImage = [=](QString path){
-    if(GLGameWidget::getUniqueGLWidget() != nullptr)
-       return GLGameWidget::getUniqueGLWidget()->loadImage(path);
-    else return 0;
-};
-auto GLDrawImage = [=](int x,int y,int handle){
-    if(GLGameWidget::getUniqueGLWidget() != nullptr)
-       GLGameWidget::getUniqueGLWidget()->drawImage(x,y,handle);
-};
+    pts = {PietTree(QString("Sky.png"))};
+    ExecutingPietLibraries::functionHash[QString("GLLoadImage")](pts);
+    int skyH = pts[0].Val();
 
-auto GLPlayMusic = [=](QString path,int Volume = 20){
-    GLGameWidget * gw = GLGameWidget::getUniqueGLWidget();
-    if(gw == nullptr) return;
-    gw->mp.setMedia(QUrl::fromLocalFile(path));
-    gw->mp.setVolume(Volume);
-    gw->mp.play();
-};
+    pts = {PietTree(QString("GameOver.png"))};
+    ExecutingPietLibraries::functionHash[QString("GLLoadImage")](pts);
+    int gameoverH = pts[0].Val();
+
+    //pts = {PietTree(QString("NeverSayNever.mp3")),PietTree(20)};
+    //ExecutingPietLibraries::functionHash[QString("GLPlayMusic")](pts);
+
+    int meY = h / 2;
+    int count = 0;
+    int dead = 0;
+    vector<pair<int,int>> birds;
+    while(true){
+
+        pts = {};
+        ExecutingPietLibraries::functionHash[QString("GLProcessAll")](pts);
+        if(pts[0].Val() == 0) break;
+
+        if(!dead){
+            count ++;
+
+            pts = {PietTree(0),PietTree(0),PietTree(skyH)};
+            ExecutingPietLibraries::functionHash[QString("GLDrawImage")](pts);
+
+            pts = {PietTree(Qt::Key_Up)};
+            ExecutingPietLibraries::functionHash[QString("GLGetKey")](pts);
+            if(pts[0].Val())meY += 1;
+
+            pts = {PietTree(Qt::Key_Down)};
+            ExecutingPietLibraries::functionHash[QString("GLGetKey")](pts);
+            if(pts[0].Val())meY -= 1;
+
+            if(meY > h - size) meY = h - size;
+            if(meY < 0) meY = 0 ;
+
+            pts = {PietTree(meX),PietTree(meY),PietTree(meH)};
+            ExecutingPietLibraries::functionHash[QString("GLDrawImage")](pts);
+
+            if(count % birdemitcount == 0){
+                pts = {PietTree(h - size)};
+                ExecutingPietLibraries::functionHash[QString("random")](pts);
+                birds.push_back(std::make_pair(w,pts[0].Val()));
+            }
+            for(pair<int,int>& bird : birds){
+                bird.first -= birdspeed;
+
+                pts = {PietTree(bird.first),PietTree(bird.second),PietTree(birdH)};
+                ExecutingPietLibraries::functionHash[QString("GLDrawImage")](pts);
+
+                if(bird.first + size < 0) {
+                    pts = {PietTree(w)};
+                    ExecutingPietLibraries::functionHash[QString("random")](pts);
+                    bird = make_pair(w + pts[0].Val(),bird.second);
+                }
+                if(meX + size > bird.first && meX < bird.first + size && meY + size > bird.second && meY < bird.second + size ){
+                    dead = 1;
+                }
+            }
+            if(dead) {
+                birds.clear();
+                count = 0;
+            }
+        }else{
+            count ++;
+            pts = {PietTree(0),PietTree(0),PietTree(gameoverH)};
+            ExecutingPietLibraries::functionHash[QString("GLDrawImage")](pts);
+            if(count > 2000)dead = false;
+        }
+    }return 0;
+}
 
 
 int main(int argc, char *argv[]){
     ExecutingPietLibraries::Hash_FuncSet();
     PietCore::rootpath = (QFileInfo (argv[0])).absolutePath() + QDir::separator();
-
-//#define DEBUGSHOWOPENGL
-#ifdef DEBUGSHOWOPENGL
     QApplication a(argc, argv);
-    MakeGLView(NULL,600,400,QString("Music Game"));
-    int h = GLLoadImage(QString("2.png"));
-    int x = 0, y = 0;
-    GLPlayMusic(QString("NeverSayNever.mp3"));
-    while(GLProcessAll()){
-        x++;y++;if(x > 300) x = 0; if(y > 300) y = 0;
-        //GLDrawRect(x,y,200,200,QColor(255,255,0));
-        GLDrawImage(x,y,h);
-    }return 0;
-#endif
-#undef DEBUGSHOWOPENGL
+
     if(argc >= 2 ){
         auto loadedimage = QImage(argv[1]);
         if(loadedimage.isNull() ){cout << "Invalid Image! " << endl; return 0;}
@@ -122,7 +160,6 @@ int main(int argc, char *argv[]){
         return 0;
     }else{
         cout << "Welcome to UltraPiet !" << endl;
-        QApplication a(argc, argv);
         ApplyDarkStyleSheet(a);
         MainWindow w;
         w.show();

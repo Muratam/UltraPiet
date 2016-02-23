@@ -21,8 +21,12 @@ public:
     void drawRect(int x ,int y,int w,int h,QColor color);
     int loadImage(QString path);
     void drawImage(int x, int y, int handle);
+    bool getKeyDown(int keyCode);
     QMediaPlayer mp;
 protected:
+    void keyPressEvent( QKeyEvent *event );
+    void keyReleaseEvent(QKeyEvent *event);
+    QHash<int,bool> keyPushHash;
     void initializeGL();
     void resizeGL(int width,int height);
     void paintGL(){}

@@ -1,5 +1,6 @@
 #include "glgamewidget.h"
 #include "defines.h"
+#include <QKeyEvent>
 
 GLGameWidget* GLGameWidget::UniqueGLWidget = nullptr;
 GLGameWidget::GLGameWidget(QWidget *parent):QGLWidget(parent){
@@ -67,25 +68,19 @@ void GLGameWidget::drawImage(int x,int y,int handle){
     glEnd();
 }
 
-//標準 Lライブラリ (少ないから,あとは頑張れ～)
-//0. L/system           ["ls"]          => output ni are
-//1. //L/GLShowWindow   [600,400,"title"]    => [0|1] (SingleTon) / MainWindow | NULL
-//2. //L/GLLoadImage    ["res/chihaya.png"]  => [0|handle]     / GLView
-//   //L/MPPlayAudio    [mhandle]            => None
-//3. //L/GLDrawImage    [handle,100,200]     => None              / GLView
-//4. //L/GLProcessAll   []                   => 0 | 1             / GLView
-//   L/MPGetPosition  [mhandle]         => 100 //millisecond
-//   // L/GLProcessAll  []                   => (processMessage & sleep(1) & showbuffer)
-//   L/GetKey         [10]              => 0 | 1
+bool GLGameWidget::getKeyDown(int keyCode){
+    if(!keyPushHash.contains(keyCode))return false;
+    else return keyPushHash[keyCode];
+}
 
-//標準　Gライブラリ
-//G/Echo
-//G/Echo2
-//G/EchoNum
-//G/WinMsgBoxA
-//G/心
-//G/C_HelloWorld
-//G/Loop_72CHIHAYA
+void GLGameWidget::keyPressEvent( QKeyEvent *event ){
+    keyPushHash[event->key()] = true;
+}
+
+void GLGameWidget::keyReleaseEvent(QKeyEvent *event){
+    keyPushHash[event->key()] = false;
+}
+
 
 //3D memo
 //construct : | QGL::DepthBuffer));
