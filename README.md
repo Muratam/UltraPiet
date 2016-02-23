@@ -1,11 +1,11 @@
 # 音ゲーもなんでも出来る最強のPiet「UltraPiet」
 
 ## 遊び方
-1. git clone https://github.com/Muratam/UltraPiet.git
-   (もしくはZipをダウンロード)
-2. ./bin/windows/ultrapiet.exe を実行
-3. 同梱のsampleフォルダの画像やbin/windows/G フォルダの画像でテスト出来ますよ
-4. 大きな画像も無限ループも無理なく扱えるし、追跡機能も命令履歴機能もあるよ！
+1. https://github.com/Muratam/UltraPiet/releases/ へ移動して！
+1. 対応するOS版バイナリをダウンロード！
+1. ./ultrapiet を実行するとIDEが起動！ 
+1. ./ultrapiet G/C_HelloWorld.png のように引数に渡すとCUI上でも動作するよ！
+1. 同梱のsampleフォルダの画像やG フォルダの画像でテスト出来ますよ！
 
 ## UltraPietの新機能
 - 既存のPietもそのまま動く！
@@ -13,6 +13,7 @@
 - 強力な文字処理機構を搭載！
 - DLLのインポートができる！
 - 他のPietのコードを呼び出せる！
+- 大きな画像も無限ループも無理なく扱えるし、追跡機能も命令履歴機能もあるよ！
 
 ## 詳細な仕様
 [UltraPietWiki](https://github.com/Muratam/UltraPiet/wiki) に記載していますので
@@ -53,16 +54,19 @@ UltraPietはあくまでもPietです.
 旧Pietのコードもそのまま動かすことが可能となります.
 
 ## CUIで使う方法(Linux)
-./bin/linux/ultrapiet sample/2.png
+1. https://github.com/Muratam/UltraPiet/releases/ からLinux版バイナリをダウンロード
+1. ./ultrapiet G/C_HelloWorld.png
 デスクトップ環境でなくても動きます
 
 ## CUIで使う方法(Windows)
-../bin/windows/ultrapiet bin/windows/G/C_HelloWorld.png でコマンドラインで実行できます。
-Windowsの場合はMinttyなどのターミナルを使って下さい。
-コマンドプロンプト及びパワーシェルでは標準入出力が上手く行われません。
-Pietをやろうとしているということは、あなたはGitをインストールしているはずです。
-「Win + R 」で「C:\Program Files\Git\usr\bin\mintty」を入力し、minttyを起動できます。
-cd ~ ののち、cd とpwd を駆使してultrapietのあるディレクトリに行き
-./ultrapiet G/C_HelloWorld.png のようにして実行出来ます。
-ultrapietのあるディレクトリにパスを通せばperlやpythonと同じように利用できます
+1. https://github.com/Muratam/UltraPiet/releases/ からWindows版バイナリをダウンロード
+1. ./ultrapiet.exe G/C_HelloWorld.png のようにしてコマンドラインで実行できます。
+
+- Windowsの場合はMinttyなどのターミナルを使って下さい。
+  - コマンドプロンプト及びパワーシェルでは標準入出力が上手く行われません。
+    Pietをやろうとしているということは、あなたはGitをインストールしているはずです。
+    「Win + R 」で「C:\Program Files\Git\usr\bin\mintty」を入力し、minttyを起動できます。
+    cd ~ ののち、cd とpwd を駆使してultrapietのあるディレクトリに行き
+    ./ultrapiet G/C_HelloWorld.png のようにして実行出来ます。
+    ultrapietのあるディレクトリにパスを通せばperlやpythonと同じように利用できます
 
