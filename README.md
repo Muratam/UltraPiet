@@ -53,20 +53,12 @@ UltraPietはあくまでもPietです.
 これらを守ることで,Cに対するC++のように,
 旧Pietのコードもそのまま動かすことが可能となります.
 
-## CUIで使う方法(Linux)
-1. https://github.com/Muratam/UltraPiet/releases/ からLinux版バイナリをダウンロード
-1. ./ultrapiet G/C_HelloWorld.png
-デスクトップ環境でなくても動きます
-
 ## CUIで使う方法(Windows)
-1. https://github.com/Muratam/UltraPiet/releases/ からWindows版バイナリをダウンロード
-1. ./ultrapiet.exe G/C_HelloWorld.png のようにしてコマンドラインで実行できます。
-
 - Windowsの場合はMinttyなどのターミナルを使って下さい。
-  - コマンドプロンプト及びパワーシェルでは標準入出力が上手く行われません。
-    Pietをやろうとしているということは、あなたはGitをインストールしているはずです。
-    「Win + R 」で「C:\Program Files\Git\usr\bin\mintty」を入力し、minttyを起動できます。
-    cd ~ ののち、cd とpwd を駆使してultrapietのあるディレクトリに行き
-    ./ultrapiet G/C_HelloWorld.png のようにして実行出来ます。
-    ultrapietのあるディレクトリにパスを通せばperlやpythonと同じように利用できます
+- コマンドプロンプト及びパワーシェルでは標準入出力が上手く行われません。
+  Pietをやろうとしているということは、あなたはGitをインストールしているはずです。
+  「Win + R 」で「C:\Program Files\Git\usr\bin\mintty」を入力し、minttyを起動できます。
+  cd ~ ののち、cd とpwd を駆使してultrapietのあるディレクトリに行き
+  ./ultrapiet G/C_HelloWorld.png のようにして実行出来ます。
+  ultrapietのあるディレクトリにパスを通せばperlやpythonと同じように利用できます
 
