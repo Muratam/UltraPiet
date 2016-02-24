@@ -1,0 +1,433 @@
+//たけしのハンググライダー
+//１　主人公はハンググライダー。操作は上下移動のみ。
+//２　敵は鳥。左にしか進まない。あたると即死
+//３　nループに一度縦方向のどこかに現れるのでよけ続ける
+//Me.png,Bird.png,Back.png,Sky.png,GameOver.pngのみでよい
+//(自分の移動),(敵の描画),(ロジック),(ゲームオーバー処理)
+//   50*50      ,  50*50   , 600 * 400 , 600 * 400
+// [y] ,[[x,y],...],LoopCount,KeyPushed
+
+
+//GL関数見なおしたほうがいいかも(特にDraw系は引数の順番hを前にしたい)
+特に、関数呼び出しの前には引数が必要なときには必ずPackをすること
+返り値は生データであることを明記しておく(複数の返り値がある場合のみPackな返り値)
+// h x y とする
+
+const int w = 600, h = 400;
+const int size = 50;
+const int meX = 50;
+const int birdemitcount = 1000;
+const int birdspeed = 1;
+vector<PietTree>pts;
+
+ultrapiet Sky.png;
+alias Pack = Mod0;
+
+Sky.png(){
+	//()
+	Push w
+	Push h
+	Push "Hang Glider Game"
+	Pack 3
+	Div0 "L/MakeGLView"	
+	//()
+	
+	Push "Me.png"
+	Pack 1
+	Div0 "L/GLLoadImage"
+	//(meH)
+	
+	Push "Bird.png"
+	Pack 1
+	Div0 "L/GLLoadImage"
+	//(meH,birdH)
+	
+	Push "Sky.png"
+	Pack 1
+	Div0 "L/GLLoadImage"
+	//(meH,birdH,skyH)
+	
+	Push "GameOver.png"
+	Pack 1
+	Div0 "L/GLLoadImage"
+	//(meH,birdH,skyH,gameoverH)
+	
+	Push "NeverSayNever.mp3"
+	Push 20
+	Pack 2
+	Div0 "L/GLPlayMusic"
+	//(meH,birdH,skyH,gameoverH)
+
+	Mod0 4	
+	//([meH,birdH,skyH,gameoverH])
+
+    Push h / 2;
+    Push 0;
+    Push 0;
+    Push [];
+	//([meH,birdH,skyH,gameoverH],meY,count,dead,[])
+	
+	Loop {
+		Div0 "L/GLProcessAll"
+		PointIf(Top == 0) FINISH!!
+		//([meH,birdH,skyH,gameoverH],meY,count,dead,[])
+
+		Roll 1 2
+		Dup
+		//([meH,birdH,skyH,gameoverH],meY,count,[],dead,dead)
+
+		PointIf(Top != 1){
+			//([meH,birdH,skyH,gameoverH],meY,count,[],dead)
+
+			Roll 2 3
+			Add 1
+			//([meH,birdH,skyH,gameoverH],meY,[],dead,count)
+
+			Roll 4 5
+			Dup
+			LastPop
+			Last
+			//(meY,[],dead,count,[meH,birdH,skyH,gameoverH],[meH,birdH],skyH)
+			
+			Push 0
+			Push 0
+			Pack 3
+			Dic0 "L/GLDrawImage"
+			Pop
+			//(meY,[],dead,count,[meH,birdH,skyH,gameoverH])
+			
+			Roll 4 5
+			Div0 "Me"
+			//([],dead,count,[meH,birdH,skyH,gameoverH],meY) //meY Update!
+			
+			Roll 1 2
+			Dup
+			LastPop*3
+			Last
+			//([],dead,count,meY,[meH,birdH,skyH,gameoverH],meH)
+				
+			Roll 2 3
+			Dup
+			Roll 1 7
+			//(meY,[],dead,count,[meH,birdH,skyH,gameoverH],meH,meY)
+			
+			Push meX
+			Roll 1 2
+			Pack 3
+			Div0 "L/GLDrawImage"
+			//(meY,[],dead,count,[meH,birdH,skyH,gameoverH])
+			
+			Dup
+			LastPop * 2
+			Last
+			Roll 1 2
+			Pop
+			//(meY,[],dead,count,[meH,birdH,skyH,gameoverH],birdH)
+
+			Roll 2 6
+			Pack 5
+			//([meH,birdH,skyH,gameoverH],[meY,[],dead,count,birdH])
+			Div0 "Bird"
+			//([meH,birdH,skyH,gameoverH],meY,birdH,count,[],dead)
+			Roll 3 4 
+			Pop
+			//([meH,birdH,skyH,gameoverH],meY,count,[],dead)
+			Roll 1 2
+		}//=> ([meH,birdH,skyH,gameoverH],meY,count,dead,[])
+		else{
+			//([meH,birdH,skyH,gameoverH],meY,count,[],dead)
+			Pack 5
+			Div0 "GameOver"
+		}//=> ([meH,birdH,skyH,gameoverH],meY,count,dead,[])
+	}
+}
+
+Me.png(meY){
+	Push Qt::Key_Up
+	Pack 1
+	Div0 "GLGetKey"
+	PointIf(Top != 0) {
+		Add 1;
+	}
+	Push Qt::Key_Down
+	Pack 1
+	Div0 "GLGetKey"
+	PointIf(Top != 0) {
+		Sub 1;
+	}
+	Dup 
+	Push h - size
+	Sub 
+	PointIf(Top > 0) {
+		Pop
+		Push h - size;
+    }
+    PointIf (Top < 0){
+    	Pop
+    	Push 0
+    }
+}=> (meY)
+
+Bird.png([meY,[],dead,count,birdH]){
+	NodesPop
+	Roll 1 2
+	Dup
+	//(meY,[],dead,birdH,count,count)
+	
+	Push birdemitcount
+	Mod
+	PointIf(Top ==0) {//(meY,[],dead,birdH,count)
+		Push h - size
+		Pack 1
+		Div0 "L/random"
+		//(meY,[],dead,birdH,count,rnd)
+		Push w
+		Roll 1 2
+		Mod0 2
+		//(meY,[],dead,birdH,count,[w,rnd])
+		Roll 4 5
+		//(meY,dead,birdH,count,[w,rnd],[[],[],...,[]])
+		Roll 1 2
+		//(meY,dead,birdH,count,[[],[],...,[]],[w,rnd])
+		Append 
+		//(meY,dead,birdH,count,[[],[],...,[],[w,rnd]])
+		Roll 1 4		
+	}//(meY,[],dead,birdH,count)
+        
+    Roll 3 4
+    //(meY,dead,birdH,count,[[],[],...,[]])
+    
+    Roll 1 5
+    Mod0 4
+    Dup
+    //([[],[],...,[]],[meY,dead,birdH,count],[meY,dead,birdH,count])
+    NodesPop
+    //([[],[],...,[]],[meY,dead,birdH,count],meY,dead,birdH,count)
+    Roll 4 6 
+    //(meY,dead,birdH,count,[[],[],...,[]],[meY,dead,birdH,count])
+    Prod
+    //(meY,dead,birdH,count,[[[x,y],s],...,[x,y,s]])  // s = [meY,dead,birdH,count]
+    Push []
+    Roll 1 2
+    //(meY,dead,birdH,count,[],[[[x,y],s],...,[x,y,s]]) 
+    For(Dup,LoopPointIfNot(Top != []),Dup){
+        Last 
+        //(meY,dead,birdH,count,[],[[[x,y],s],...,[x,y,s]],[x,y,s])
+        NodesPop
+        Roll 2 3
+        //(meY,dead,birdH,count,[],[...],y,s,x)
+        Push birdspeed
+        Sub
+        Roll 1 3
+        Dup
+        //(meY,dead,birdH,count,[],[...],x,y,s,s)
+        LastPop
+        Last
+        Roll 1 2
+        Pop
+        //(meY,dead,birdH,count,[],[...],x,y,s,birdH)
+        Roll 2 4
+        //(meY,dead,birdH,count,[],[...],s,birdH,x,y)                
+        Pack 3
+        Dup
+        //(meY,dead,birdH,count,[],[...],s,[birdH,x,y],[birdH,x,y])
+        Div0 "L/GLDrawImage"                
+        
+        NodesPop
+        Roll 2 3
+        Pop
+        Mod0 2
+        //(meY,dead,birdH,count,[],[...],s,[x,y])
+        Dup
+        NodesPop
+        //(meY,dead,birdH,count,[],[...],s,[x,y],x,y)
+		Pop
+		//(meY,dead,birdH,count,[],[...],s,[x,y],x)
+		Add size
+		PointIf(Top < 0){//(meY,dead,birdH,count,[],[...],s,[x,y])
+			Last
+			Push w
+			Pack 1
+			Div0 "L/random"
+			Add w
+			//(meY,dead,birdH,count,[],[...],s,[x],y,w + rnd)
+			Roll 1 2
+			//(meY,dead,birdH,count,[],[...],s,[x],w + rnd,y)
+			Mod0 2
+			//(meY,dead,birdH,count,[],[...],s,[x],[nx,y])
+			Roll 1 2 
+			Pop
+			//(meY,dead,birdH,count,[],[...],s,[nx,y])
+		}//(meY,dead,birdH,count,[],[...],s,[x,y])  // s = [meY,dead,birdH,count]		
+		
+        //くるくる回る色ペン装備で頑張る
+        if(meX + size - bird.first > 0 && meX - (bird.first + size) < 0 && meY + size - bird.second > 0 && meY - (bird.second + size) < 0 ){
+            dead = 1;
+        }
+        
+        //(meY,dead,birdH,count,[],[...],[x,y])
+        Roll 2 3
+        //(meY,dead,birdH,count,[...],[x,y],[])
+        Append
+        //(meY,dead,birdH,count,[...],[[x,y]])
+        Roll 1 2
+        //(meY,dead,birdH,count,[],[[[x,y],s],...,[x,y,s]]) 
+    }   
+    Pop    
+    //(meY,dead,birdH,count,[[],[],...,[]])
+    Roll 4 3
+    Dup
+    //(meY,birdH,count,[[],[],...,[]],dead,dead)
+    PointIf(Top != 0){//(meY,birdH,count,[[],[],...,[]],dead)
+		Roll 1 2
+		Pop
+		Push []
+		Roll 2 3
+		//(meY,birdH,dead,[],count)
+		Pop
+		Push 0
+		Roll 1 2
+		Roll 2 3
+    }
+}=> (meY,birdH,count,[],dead)
+
+GameOver.png([[meH,birdH,skyH,gameoverH],meY,count,[],dead]){
+	NodesPop
+	Roll 2 3
+	//([meH,birdH,skyH,gameoverH],meY,[],dead,count)
+	Add 1
+	Roll 4 5
+	Dup
+	// (meY,[],dead,count,[meH,birdH,skyH,gameoverH],[meH,birdH,skyH,gameoverH])
+	Last
+	Push 0
+	Push 0
+	Pack 3
+	Div0 "L/GLDrawImage"
+	Pop
+	// (meY,[],dead,count,[meH,birdH,skyH,gameoverH])
+	Roll 1 2
+	Dup 
+	Push 2000
+	Sub
+	// (meY,[],dead,[meH,birdH,skyH,gameoverH],count,count-2000)
+	PointIf(Top > 0){ // (meY,[],dead,[meH,birdH,skyH,gameoverH],count)
+		Roll 2 3
+		Pop
+		Push 0
+		// (meY,[],[meH,birdH,skyH,gameoverH],count,dead)
+		Roll 1 3
+	}// (meY,[],dead,[meH,birdH,skyH,gameoverH],count)
+	Roll 2 5
+	// ([meH,birdH,skyH,gameoverH],count,meY,[],dead)
+	Roll 3 4
+	// ([meH,birdH,skyH,gameoverH],meY,[],dead,count)
+	Roll 1 3
+	// ([meH,birdH,skyH,gameoverH],meY,count,[],dead)
+	Roll 1 2
+}=> ([meH,birdH,skyH,gameoverH],meY,count,dead,[])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+int PlayHangGliderGame(){
+
+    //pts = {PietTree(w),PietTree(h),PietTree(QString("Hang Glider Game"))};
+    ExecutingPietLibraries::functionHash[QString("MakeGLView")](pts);
+
+    pts = {PietTree(QString("Me.png"))};
+    ExecutingPietLibraries::functionHash[QString("GLLoadImage")](pts);
+    int meH = pts[0].Val();
+
+    pts = {PietTree(QString("Bird.png"))};
+    ExecutingPietLibraries::functionHash[QString("GLLoadImage")](pts);
+    int birdH = pts[0].Val();
+
+    pts = {PietTree(QString("Sky.png"))};
+    ExecutingPietLibraries::functionHash[QString("GLLoadImage")](pts);
+    int skyH = pts[0].Val();
+
+    pts = {PietTree(QString("GameOver.png"))};
+    ExecutingPietLibraries::functionHash[QString("GLLoadImage")](pts);
+    int gameoverH = pts[0].Val();
+
+    //pts = {PietTree(QString("NeverSayNever.mp3")),PietTree(20)};
+    //ExecutingPietLibraries::functionHash[QString("GLPlayMusic")](pts);
+
+    int meY = h / 2;
+    int count = 0;
+    int dead = 0;
+    vector<pair<int,int>> birds;
+    while(true){
+
+        pts = {};
+        ExecutingPietLibraries::functionHash[QString("GLProcessAll")](pts);
+        if(pts[0].Val() == 0) break;
+
+        if(!dead){
+            count ++;
+
+            pts = {PietTree(0),PietTree(0),PietTree(skyH)};
+            ExecutingPietLibraries::functionHash[QString("GLDrawImage")](pts);
+
+            pts = {PietTree(Qt::Key_Up)};
+            ExecutingPietLibraries::functionHash[QString("GLGetKey")](pts);
+            if(pts[0].Val())meY += 1;
+
+            pts = {PietTree(Qt::Key_Down)};
+            ExecutingPietLibraries::functionHash[QString("GLGetKey")](pts);
+            if(pts[0].Val())meY -= 1;
+
+            if(meY > h - size) meY = h - size;
+            if(meY < 0) meY = 0 ;
+
+            pts = {PietTree(meX),PietTree(meY),PietTree(meH)};
+            ExecutingPietLibraries::functionHash[QString("GLDrawImage")](pts);
+
+            if(count % birdemitcount == 0){
+                pts = {PietTree(h - size)};
+                ExecutingPietLibraries::functionHash[QString("random")](pts);
+                birds.push_back(std::make_pair(w,pts[0].Val()));
+            }
+            for(pair<int,int>& bird : birds){
+                bird.first -= birdspeed;
+
+                pts = {PietTree(bird.first),PietTree(bird.second),PietTree(birdH)};
+                ExecutingPietLibraries::functionHash[QString("GLDrawImage")](pts);
+
+                if(bird.first + size < 0) {
+                    pts = {PietTree(w)};
+                    ExecutingPietLibraries::functionHash[QString("random")](pts);
+                    bird = make_pair(w + pts[0].Val(),bird.second);
+                }
+                if(meX + size > bird.first && meX < bird.first + size && meY + size > bird.second && meY < bird.second + size ){
+                    dead = 1;
+                }
+            }
+            if(dead) {
+                birds.clear();
+                count = 0;
+            }
+        }else{
+            count ++;
+            pts = {PietTree(0),PietTree(0),PietTree(gameoverH)};
+            ExecutingPietLibraries::functionHash[QString("GLDrawImage")](pts);
+            if(count > 2000)dead = false;
+        }
+    }return 0;
+}
+
