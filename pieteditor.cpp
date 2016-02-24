@@ -421,7 +421,20 @@ void PietEditor::saveImage(bool asNew){
     QApplication::setOverrideCursor(Qt::ArrowCursor);
 }
 
-void PietEditor::execInit(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow){
+
+void PietEditor::SetUpInitialStack(QPlainTextEdit * stackWindow){
+    if(isExecuting) return;
+    bool ok = false;
+    QString defaultstr = stackWindow->toPlainText().isEmpty() ? QString("[hoge[huga]]"):stackWindow->toPlainText();
+    QString unicodes = QInputDialog::getText(this, tr("QInputDialog::getText()"), tr("SetUp Initial Stack"), QLineEdit::Normal,defaultstr , &ok);
+    if (!ok || unicodes.isEmpty()) return;
+    initialStack.clear();
+    initialStack.push_back( PietTree::fromString(unicodes));
+    core.setStack(initialStack);
+    stackWindow->setPlainText(core.printStack());
+}
+
+void PietEditor::execInit(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow){
     core.init(
         [outputWindow,this](QString outstr){
             outputWindow->moveCursor (QTextCursor::End);
@@ -466,15 +479,18 @@ void PietEditor::execInit(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWi
         },image,loadedFilePath);
     ArrowQueue.clear();
     isExecuting = true;
-    InitialInput = inputWindow->toPlainText();
+    InitialInput = inputWindow->toPlainText();    
+    stackWindow->setPlainText(core.printStack());
     isWaintingInputThenExecCancelSignal = isWaitingInput = false;
+    core.setStack(initialStack);
+    stackWindow->setPlainText(core.printStack());
     update();
 }
 
 void PietEditor::exec1Step (QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel){
     if(!isExecuting){
         outputWindow->setPlainText(QString(""));
-        execInit(outputWindow,inputWindow);
+        execInit(outputWindow,inputWindow,stackWindow);
     }else if(isWaitingInput)return;
     core.execOneAction();
     ArrowQueue.push_back(QPointAndQString( core.getPos().x(),core.getPos().y(),core.getLightCurrentOrder()));
@@ -487,8 +503,10 @@ void PietEditor::exec1Step (QPlainTextEdit * outputWindow,QPlainTextEdit * input
         isExecuting = false;
         MSGBOX("Debug Finished !!");
         inputWindow->setPlainText(InitialInput);
+        core.setStack(initialStack);
+        stackWindow->setPlainText(core.printStack());
     }
-    if(isWaintingInputThenExecCancelSignal) execCancel(inputWindow);
+    if(isWaintingInputThenExecCancelSignal) execCancel(inputWindow,stackWindow);
 }
 
 
@@ -496,7 +514,7 @@ void PietEditor::exec1Step (QPlainTextEdit * outputWindow,QPlainTextEdit * input
 void PietEditor::execPiet(QPlainTextEdit * outputWindow, QPlainTextEdit * inputWindow, QPlainTextEdit * stackWindow, QLabel* statusLabel, bool processExentSequential){
     if(!isExecuting){
         outputWindow->setPlainText(QString(""));
-        execInit(outputWindow,inputWindow);
+        execInit(outputWindow,inputWindow,stackWindow);
     }else return; //既に実行中の場合は二重起動しない
     while(! core.getFinished() && isExecuting){
         core.execOneAction();
@@ -519,15 +537,19 @@ void PietEditor::execPiet(QPlainTextEdit * outputWindow, QPlainTextEdit * inputW
         isExecuting = false;
         if(processExentSequential) MSGBOX("Debug Finished !!");
         inputWindow->setPlainText(InitialInput);
+        core.setStack(initialStack);
+        stackWindow->setPlainText(core.printStack());
     }
 }
 
-void PietEditor::execCancel( QPlainTextEdit * inputWindow){
+void PietEditor::execCancel( QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow){
     if(!isExecuting) return;
     if(isWaitingInput){ isWaintingInputThenExecCancelSignal = true; return;}
     isExecuting = false;
     core.init([](QString s){},[](){return QChar(72);},[](bool & b){return 0;},image,loadedFilePath);
     MSGBOX("Debug Canceled");
     inputWindow->setPlainText(InitialInput);
+    core.setStack(initialStack);
+    stackWindow->setPlainText(core.printStack());
     update();
 }

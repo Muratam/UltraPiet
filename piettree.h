@@ -22,6 +22,7 @@ public :
     PietTree(std::vector<PietTree> nodes){ this->nodes = nodes; isleaf = false;}
     PietTree(const QString &str);
     static void MakeStackByMod0(int n,std::vector<PietTree> & pts); //Mod 0 : OK
+    static PietTree fromString(QString &treestr);
     //Push InC,InNは定義されない
     //Popはそのまま捨てる
     //@Dup は普通にコピー

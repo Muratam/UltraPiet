@@ -16,6 +16,42 @@ void PietTree::MakeStackByMod0(int n,std::vector<PietTree> & pts){
     pts.push_back(PietTree(NewNode));
 }
 
+//[[][HER[erere]]HH]
+//aaaaa => a
+//]     => ]
+//[]
+//[,
+//e
+//[] or e
+//[[[]]]
+//[[]]
+PietTree PietTree::fromString(QString &treestr){
+    if(treestr.isNull())return PietTree(QString(""));
+    if(treestr.at(0).unicode() == '['){
+        std::vector<PietTree> pts;
+        treestr.remove(0,1);
+        while (treestr.size() > 0){
+            if(treestr.at(0).unicode() == '['){
+                pts.push_back(fromString(treestr));
+            }else  if(treestr.at(0).unicode() == ']'){
+                treestr.remove(0,1);
+                break;
+            }else {
+                auto c = treestr.at(0);
+                treestr.remove(0,1);
+                pts.push_back( PietTree(c));
+            }
+        }
+        return PietTree(pts);
+    }else{
+        auto c = treestr.at(0);
+        treestr.remove(0,1);
+        return PietTree(c);
+    }
+}
+
+
+
 PietTree::PietTree(const QString &str){
     isleaf = false;
     for(QChar c : str) nodes.push_back(PietTree(c));

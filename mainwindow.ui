@@ -216,6 +216,13 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="setinitialstackstatus">
+       <property name="text">
+        <string>SetUp Stack</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="changeAsNumber">
        <property name="text">
         <string>123 ⇔ ABC</string>

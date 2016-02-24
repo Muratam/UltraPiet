@@ -34,8 +34,9 @@ public slots :
     void saveImage(bool asNew);
     void execPiet(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel,bool processExentSequential);
     void exec1Step(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWindow,QPlainTextEdit * stackWindow,QLabel* statusLabel);
-    void execCancel(QPlainTextEdit *inputWindow);
-    void ChangeShowStackAsNumber(QPlainTextEdit * stackWindow){core.showStackAsNumber = !core.showStackAsNumber ;stackWindow->setPlainText(core.printStack());}
+    void execCancel(QPlainTextEdit *inputWindow, QPlainTextEdit *stackWindow);
+    void ChangeShowStackAsNumber(QPlainTextEdit * stackWindow){ core.showStackAsNumber = !core.showStackAsNumber ; stackWindow->setPlainText(core.printStack()); }
+    void SetUpInitialStack(QPlainTextEdit * stackWindow);
 signals :
     void changedPenColor(const QColor &color);
     void MovedPos(int x,int y);
@@ -49,7 +50,7 @@ protected :
     void keyPressEvent( QKeyEvent *event );
     void setImagePixel(const QPoint &pos,const QRgb &rgb);
     QRgb getImagePixel(const QPoint &pos);
-    void execInit(QPlainTextEdit *outputWindow, QPlainTextEdit *inputWindow);
+    void execInit(QPlainTextEdit *outputWindow, QPlainTextEdit *inputWindow, QPlainTextEdit *stackWindow);
     QRect pixelRect(int i,int j)const;
     QColor curColor;
     PietCore core;
@@ -68,6 +69,7 @@ protected :
     //16 * 16 なら実質無限回, 500 * 500 なら 20回, 1000 * 500 なら 10回,サイズは同じになる
     int StackMaxSize (){if(image.width() <= 0 || image.height() <= 0)return 32;else return 1000000 / (image.width() * image.height());}
     int zoom;
+    std::vector<PietTree> initialStack;
     QString InitialInput;
     bool isWaitingInput = false;
     bool isWaintingInputThenExecCancelSignal = false;

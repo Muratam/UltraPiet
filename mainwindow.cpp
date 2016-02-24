@@ -37,13 +37,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         ui->pietEditor->execPiet(ui->outputTextEdit,ui->inputTextEdit,ui->stackTextEdit,ui->StatusLabel,false);});
     connect(ui->changeAsNumber,     QPushButton::clicked,[=](){ui->pietEditor->ChangeShowStackAsNumber(ui->stackTextEdit);});
     connect(ui->actionShow_As_Number,QAction::triggered,[=](){ui->pietEditor->ChangeShowStackAsNumber(ui->stackTextEdit);});
-    connect(ui->actionCancel,QAction::triggered,[=](){ui->pietEditor->execCancel(ui->inputTextEdit);});
+    connect(ui->actionCancel,QAction::triggered,[=](){ui->pietEditor->execCancel(ui->inputTextEdit,ui->stackTextEdit);});
     connect(ui->pietEditor,SIGNAL(changedPenColor(const QColor &)),this,SLOT(setEditColor(const QColor &)));
     connect(ui->pietEditor,SIGNAL(OpenedImage(QString)),this,SLOT(MoveCurrentDirectrory(QString)));
     connect(ui->pietEditor,PietEditor::MovedPos,[=](int x,int y){
         ui->scrollArea->horizontalScrollBar()->setValue(x - ui->scrollArea->viewport()->width()  / 2);
         ui->scrollArea->verticalScrollBar()->setValue(y - ui->scrollArea->viewport()->height() / 2);
     });
+    connect(ui->setinitialstackstatus,QPushButton::clicked,[=](){ui->pietEditor->SetUpInitialStack(ui->stackTextEdit);});
 
     auto TreeWidgetSelectItem = [=,this](QTreeWidgetItem* item,int n){
         QString str = item->text(0);
