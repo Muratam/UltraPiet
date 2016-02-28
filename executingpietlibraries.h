@@ -23,7 +23,7 @@ public:
     //(QString path) => (int)
     static void GLLoadImage(std::vector<PietTree> & pt);
 
-    //(int x,int y,int handle) => ()
+    //(int handle,int x,int y) => ()
     static void GLDrawImage(std::vector<PietTree> & pt);
 
     //(int keyCode) => (bool)

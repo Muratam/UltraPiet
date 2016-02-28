@@ -259,8 +259,8 @@ void PietCore::execOneAction(){
             if(readpath.size() > 2 && readpath[0].unicode() == 'L' && (readpath[1].unicode() == '/' || readpath[1].unicode() == '\\'  ) ){
                 readpath = readpath.mid(2);
                 if( doesCPPPietLibExist(readpath)){
-                    ExecLib(readpath);
                     stack.pop_back(); stack.pop_back();
+                    ExecLib(readpath);
                     currentOrder = QString("Load LIB") ;
                     LightcurrentOrder = QString("÷0");
                 }else {
@@ -502,7 +502,9 @@ void PietCore::ExecOtherPietCore(QImage CorrectImage,QString newFilePath){
 void PietCore::ExecLib(QString LibPath){ //"L/~~.png" の "~~"部分
     if(!doesCPPPietLibExist(LibPath)) return ;
     vector<PietTree> PTTopstack ;
-    if(stack.size() > 0){ PTTopstack.push_back( stack[stack.size() - 1]);stack.pop_back(); }
+    if(stack.size() > 0){
+        PTTopstack.push_back( stack[stack.size() - 1]);stack.pop_back();
+    }
     ExecutingPietLibraries::functionHash[LibPath](PTTopstack);
     for (auto p : PTTopstack){ stack.push_back(p); }
 }

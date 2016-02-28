@@ -26,6 +26,10 @@ void ExecutingPietLibraries::Hash_FuncSet(){
 
 std::mt19937 rnd ;
 void ExecutingPietLibraries::random(std::vector<PietTree> & pt){
+    if(pt.size() == 0 )return;
+    if(pt[0].isLeaf()) return;
+    pt = pt[0].Nodes();
+
     if(pt.size() < 1) return;
     int max = pt[0].Val();
     for(int i:range(1)) pt.pop_back();
@@ -36,6 +40,10 @@ void ExecutingPietLibraries::random(std::vector<PietTree> & pt){
 
 
 void ExecutingPietLibraries::MakeGLView (std::vector<PietTree> & pt){
+    if(pt.size() == 0 )return;
+    if(pt[0].isLeaf()) return;
+    pt = pt[0].Nodes();
+
     if(pt.size() < 3) return;
     int w = pt[0].Val();
     int h = pt[1].Val();
@@ -67,6 +75,10 @@ void ExecutingPietLibraries::GLProcessAll (std::vector<PietTree> & pt){
 }
 
 void ExecutingPietLibraries::GLDrawRect(std::vector<PietTree> & pt){
+    if(pt.size() == 0 )return;
+    if(pt[0].isLeaf()) return;
+    pt = pt[0].Nodes();
+
     if(pt.size() < 7) return;
     int x = pt[0].Val();
     int y = pt[1].Val();
@@ -81,6 +93,10 @@ void ExecutingPietLibraries::GLDrawRect(std::vector<PietTree> & pt){
 }
 
 void ExecutingPietLibraries::GLLoadImage(std::vector<PietTree> & pt){
+    if(pt.size() == 0 )return;
+    if(pt[0].isLeaf()) return;
+    pt = pt[0].Nodes();
+
     if(pt.size() < 1) return;
     QString path = pt[0].toString();
     for(int i:range(1)) pt.pop_back();
@@ -92,16 +108,25 @@ void ExecutingPietLibraries::GLLoadImage(std::vector<PietTree> & pt){
 }
 
 void ExecutingPietLibraries::GLDrawImage(std::vector<PietTree> & pt){
+    if(pt.size() == 0 )return;
+    if(pt[0].isLeaf()) return;
+    pt = pt[0].Nodes();
+
     if(pt.size() < 3) return;
-    int x = pt[0].Val();
-    int y = pt[1].Val();
-    int handle = pt[2].Val();
+    int handle = pt[0].Val();
+    int x = pt[1].Val();
+    int y = pt[2].Val();
+
     for(int i:range(3)) pt.pop_back();
     if(GLGameWidget::getUniqueGLWidget() != nullptr)
        GLGameWidget::getUniqueGLWidget()->drawImage(x,y,handle);
 }
 
 void ExecutingPietLibraries::GLGetKey(std::vector<PietTree> & pt){
+    if(pt.size() == 0 )return;
+    if(pt[0].isLeaf()) return;
+    pt = pt[0].Nodes();
+
     if(pt.size() < 1) return;
     int keyCode = pt[0].Val();
     for(int i:range(1)) pt.pop_back();
@@ -111,6 +136,10 @@ void ExecutingPietLibraries::GLGetKey(std::vector<PietTree> & pt){
 }
 
 void ExecutingPietLibraries::GLPlayMusic(std::vector<PietTree> & pt){
+    if(pt.size() == 0 )return;
+    if(pt[0].isLeaf()) return;
+    pt = pt[0].Nodes();
+
     if(pt.size() < 2) return;
     QString path = pt[0].toString();
     int Volume = pt[1].Val();
