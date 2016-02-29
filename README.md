@@ -1,4 +1,4 @@
-# 音ゲーもなんでも出来る最強のPiet「UltraPiet」
+# ゲームも作れる最強のPiet「UltraPiet」
 
 ## 遊び方
 1. https://github.com/Muratam/UltraPiet/releases/ へ移動して！
@@ -6,6 +6,7 @@
 1. ./ultrapiet を実行するとIDEが起動！ 
 1. ./ultrapiet G/C_HelloWorld.png のように引数に渡すとCUI上でも動作するよ！
 1. 同梱のsampleフォルダの画像やG フォルダの画像でテスト出来ますよ！
+1. sample/HangGliderGame/Sky.png で実際にultrapiet製のゲームが遊べるよ！
 
 ## UltraPietの新機能
 - 既存のPietもそのまま動く！
