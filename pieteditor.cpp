@@ -12,7 +12,7 @@ PietEditor::PietEditor(QWidget *parent) : QWidget (parent) {
     image.fill(qRgba(255,255,255,255));
     imageStack.push_back(ImageOperateLog( image.copy(),QPoint(0,0),dpR));
     setAcceptDrops(true);
-    core.setImage(image,QString(""));
+    core.setImage(image,QString(""),true);
     loadedFilePath = QString("");
 }
 QSize PietEditor::sizeHint()const{
@@ -333,7 +333,7 @@ void PietEditor::openImage(QString FilePath ){
     if(imageStack.size() > StackMaxSize()) imageStack.pop_front();
     core.setPos(QPoint(0,0));
     core.setDP(dpR);
-    core.setImage(image,loadedFilePath);
+    core.setImage(image,loadedFilePath,true);
     update();
     updateGeometry();
     emit OpenedImage(loadedFilePath);
@@ -368,7 +368,7 @@ void PietEditor::resize(){
     core.setDP(dpR);
     imageStack.clear();
     imageStack.push_back(ImageOperateLog( image.copy(),QPoint(0,0),dpR));
-    core.setImage(image,loadedFilePath);
+    core.setImage(image,loadedFilePath,true);
     ArrowQueue.clear();
     update();
     updateGeometry();
@@ -400,7 +400,7 @@ void PietEditor::newImage(){
     loadedFilePath = QString("");
     core.setPos(QPoint(0,0));
     core.setDP(dpR);
-    core.setImage(image,QString(""));
+    core.setImage(image,QString(""),true);
     ArrowQueue.clear();
     update();
     updateGeometry();
@@ -476,7 +476,7 @@ void PietEditor::execInit(QPlainTextEdit * outputWindow,QPlainTextEdit * inputWi
             inputWindow->setPlainText(Input);
             isWaitingInput = false;
             return m;
-        },image,loadedFilePath);
+        },image,loadedFilePath,true);
     ArrowQueue.clear();
     isExecuting = true;
     InitialInput = inputWindow->toPlainText();    

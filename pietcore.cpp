@@ -128,12 +128,12 @@ void PietCore::search(QPoint me){//実行前にメモ化しておく
     res8.BlockSize = seeked.size();
     for(const auto& s : seeked) pos8[s.x()][s.y()] =res8;
 }
-void PietCore::setImage(const QImage & image,QString ImagePath){
+void PietCore::setImage(const QImage & image, QString ImagePath, bool UpdateImage){
     this->ImagePath =  ImagePath;
     w = image.width();
     h = image.height();
 
-    if(PietCore::Coded_Pos8_Hash.contains(ImagePath)){
+    if(!UpdateImage && PietCore::Coded_Pos8_Hash.contains(ImagePath)){
         coded = get<0>(PietCore::Coded_Pos8_Hash[ImagePath]);
         pos8 = get<1>(PietCore::Coded_Pos8_Hash[ImagePath]);
     }else {
