@@ -427,9 +427,9 @@ void PietEditor::SetUpInitialStack(QPlainTextEdit * stackWindow){
     bool ok = false;
     QString defaultstr = stackWindow->toPlainText().isEmpty() ? QString("[hoge[huga]]"):stackWindow->toPlainText();
     QString unicodes = QInputDialog::getText(this, tr("QInputDialog::getText()"), tr("SetUp Initial Stack"), QLineEdit::Normal,defaultstr , &ok);
-    if (!ok || unicodes.isEmpty()) return;
+    if (!ok ) return;
     initialStack.clear();
-    initialStack.push_back( PietTree::fromString(unicodes));
+    if(!unicodes.isEmpty())initialStack.push_back( PietTree::fromString(unicodes));
     core.setStack(initialStack);
     stackWindow->setPlainText(core.printStack());
 }

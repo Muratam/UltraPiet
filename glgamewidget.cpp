@@ -17,6 +17,8 @@ GLGameWidget* GLGameWidget::MakeUniqueGLWidget (QWidget *parent ){
 
 void GLGameWidget::initializeGL(){
     glShadeModel(GL_FLAT);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
     glEnable(GL_CULL_FACE);
     glEnable(GL_TEXTURE_2D);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

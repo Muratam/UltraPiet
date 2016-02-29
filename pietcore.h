@@ -11,6 +11,7 @@
 #include "executingpietlibraries.h"
 #include <functional>
 #include <QDir>
+#include <QHash>
 //UltraPietの実際の命令処理をするクラス (なのでGUIには依存しません)
 
 enum EDirectionPointer{dpR=0,dpD=1,dpL=2,dpU=3};
@@ -69,6 +70,7 @@ public :
     static bool isNormalColor(QRgb rgb){
         for(int i:range(3)) for(int j:range(7)) if(rgb == normalColors[i][j])return true;return false;
     }
+    static QHash<QString,std::tuple<std::vector<std::vector<int>>,std::vector<std::vector<Point8>> >> Coded_Pos8_Hash ;
     static QColor getVividColor(const QColor & c){int g = DiffMax255( qGray(c.red(),c.green(),c.blue()));return QColor(g,g,g); }//int g = qGray(DiffMax255(c.red()) ,DiffMax255(c.blue()) ,DiffMax255( c.green())); return QColor(g,g,g);}
     static int DiffMax255(int c) {return c < 100 ? 255 : 0;}
     static int CutA(int c) { return ((qAlpha(c) & 0x00) << 24) | ((qRed(c) & 0xff) << 16) | ((qGreen(c) & 0xff) << 8) | (qBlue(c) & 0xff); }

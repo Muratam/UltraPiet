@@ -7,6 +7,7 @@
 #include <unordered_set>
 #include <QPoint>
 #include <QDir>
+#include <tuple>
 using namespace std;
 
 QString PietCore::rootpath ;
@@ -27,6 +28,7 @@ const EOrder PietCore::normalEOrders[3][7] = {
     {EOrder::Push,EOrder::Sub,EOrder::Mod,EOrder::Point,EOrder::Roll,EOrder::OutN,EOrder::Exception},
     {EOrder::Pop,EOrder::Mul,EOrder::Not,EOrder::Switch,EOrder::InN,EOrder::OutC,EOrder::Exception},
 };
+QHash<QString,std::tuple<std::vector<std::vector<int>>,std::vector<std::vector<Point8>> >> PietCore::Coded_Pos8_Hash;
 
 PietCore::PietCore( function<void(QString)> outPutFunction, function<QChar(void)>inPutCharFunction , function<int(bool &)> inPutNumFunction){
     stack = vector<PietTree>();
@@ -131,23 +133,29 @@ void PietCore::setImage(const QImage & image,QString ImagePath){
     w = image.width();
     h = image.height();
 
-    coded.clear();
-    coded = vector<vector<int>>(image.width(), vector<int>(image.height()));
-    for(auto x : range(w)){
-        for(auto y : range(h)){
-            for(auto i : range(3)) for (auto j:range(7)) if(image.pixel(x,y) == normalColors[i][j]){
-                coded[x][y] = 3*j+i;
-                goto COLORMATCHED;
+    if(PietCore::Coded_Pos8_Hash.contains(ImagePath)){
+        coded = get<0>(PietCore::Coded_Pos8_Hash[ImagePath]);
+        pos8 = get<1>(PietCore::Coded_Pos8_Hash[ImagePath]);
+    }else {
+        coded.clear();
+        coded = vector<vector<int>>(image.width(), vector<int>(image.height()));
+        for(auto x : range(w)){
+            for(auto y : range(h)){
+                for(auto i : range(3)) for (auto j:range(7)) if(image.pixel(x,y) == normalColors[i][j]){
+                    coded[x][y] = 3*j+i;
+                    goto COLORMATCHED;
+                }
+                coded[x][y] = -1* image.pixel(x,y);
+                COLORMATCHED:;
             }
-            coded[x][y] = -1* image.pixel(x,y);
-            COLORMATCHED:;
         }
-    }
-    //if(coded[0][0] < 0 || coded[0][0] >= 18 ) coded[0][0] = normalColors[0][0]; //普通のPietでは無い場合
+        //if(coded[0][0] < 0 || coded[0][0] >= 18 ) coded[0][0] = normalColors[0][0]; //普通のPietでは無い場合
 
-    pos8.clear();
-    pos8 =  vector<vector<Point8>>(image.width(), vector<Point8>(image.height()));
-    for(auto x: range(image.width())) for(auto y:range(image.height())) search(QPoint(x,y));
+        pos8.clear();
+        pos8 =  vector<vector<Point8>>(image.width(), vector<Point8>(image.height()));
+        for(auto x: range(image.width())) for(auto y:range(image.height())) search(QPoint(x,y));
+        PietCore::Coded_Pos8_Hash[ImagePath] = make_tuple(coded,pos8);
+    }
 }
 EOrder PietCore::fromRelativeColor(int from,int to){
     if (from < 0 || to < 0) return EOrder::Exception; // 未実装
