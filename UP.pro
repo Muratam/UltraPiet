@@ -8,14 +8,11 @@ QT       += core gui opengl multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-LIBS += -lopengl32
+
 
 TARGET = ultrapiet
 TEMPLATE = app
 
-#if enabled this console option,this application cat work by windows cmd , but the power will down gread...
-#if you have mintty, it works naturally !!
-#CONFIG += console
 CONFIG += opengl
 
 QMAKE_CXXFLAGS += -std=c++14
@@ -42,3 +39,16 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui
 
 RESOURCES     = qdarkstyle/style.qrc
+
+
+#if Use OpenGL
+LIBS += -lopengl32
+
+#for mobile
+#CONFIG += mobility
+#MOBILITY =
+
+
+#if enabled this console option,this application cat work by windows cmd , but the power will down gread...
+#if you have mintty, it works naturally !!
+#CONFIG += console

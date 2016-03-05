@@ -1,6 +1,7 @@
 #include "pieteditor.h"
 #include <QtWidgets>
 #include <stdio.h>
+#include <QThread>
 #include "defines.h"
 
 PietEditor::PietEditor(QWidget *parent) : QWidget (parent) {
@@ -416,7 +417,7 @@ void PietEditor::saveImage(bool asNew){
     if(filePath.isEmpty() || filePath.isNull()){ QApplication::setOverrideCursor(Qt::ArrowCursor); return;}
     if(!image.save(filePath)){QApplication::setOverrideCursor(Qt::ArrowCursor);MSGBOX("Cannot Save...");return;}
     loadedFilePath = filePath;
-    Sleep(100);
+    QThread::msleep(100);
     emit OpenedImage(loadedFilePath);
     QApplication::setOverrideCursor(Qt::ArrowCursor);
 }

@@ -1,11 +1,12 @@
 #include "glgamewidget.h"
 #include "defines.h"
 #include <QKeyEvent>
+#define ___DONT_USE_OPENGL_ES2_
 
 GLGameWidget* GLGameWidget::UniqueGLWidget = nullptr;
 GLGameWidget::GLGameWidget(QWidget *parent):QGLWidget(parent){
     setFormat(QGLFormat(QGL::DoubleBuffer ));
-    connect(this,GLGameWidget::destroyed ,[=](){UniqueGLWidget = nullptr;});
+    connect(this,&GLGameWidget::destroyed ,[=](){UniqueGLWidget = nullptr;});
 }
 
 GLGameWidget* GLGameWidget::MakeUniqueGLWidget (QWidget *parent ){
@@ -16,6 +17,7 @@ GLGameWidget* GLGameWidget::MakeUniqueGLWidget (QWidget *parent ){
 
 
 void GLGameWidget::initializeGL(){
+#ifdef ___DONT_USE_OPENGL_ES2_
     glShadeModel(GL_FLAT);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
@@ -25,12 +27,15 @@ void GLGameWidget::initializeGL(){
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     qglClearColor(Qt::black);
     glOrtho(0.0, w, 0.0, h , -1.0, 1.0);
+#endif
 }
 
 void GLGameWidget::resizeGL(int width,int height){
+#ifdef ___DONT_USE_OPENGL_ES2_
     glViewport(0, 0, width, height);
     glLoadIdentity();
     glOrtho(0.0, w, 0.0, h, -1.0, 1.0);
+#endif
 }
 void GLGameWidget::refresh (){
     qglClearColor(Qt::black);
@@ -39,6 +44,7 @@ void GLGameWidget::refresh (){
 
 
 void GLGameWidget::drawRect(int x ,int y,int w,int h,QColor color){
+#ifdef ___DONT_USE_OPENGL_ES2_
     qglColor(color);
     glBegin(GL_QUADS);
     glVertex2d(x,y);
@@ -46,6 +52,7 @@ void GLGameWidget::drawRect(int x ,int y,int w,int h,QColor color){
     glVertex2d(x+w,y+h);
     glVertex2d(x,y+h);
     glEnd();
+#endif
 }
 
 // 0   : Miss, > 1 : Succ
@@ -58,6 +65,7 @@ int GLGameWidget::loadImage(QString path){
 }
 
 void GLGameWidget::drawImage(int x,int y,int handle){
+#ifdef ___DONT_USE_OPENGL_ES2_
     unsigned int uihandle = (unsigned int)(handle);
     if(!imageSizeHash.contains(uihandle)) return;
     QSize size = imageSizeHash[uihandle];
@@ -68,6 +76,7 @@ void GLGameWidget::drawImage(int x,int y,int handle){
         glTexCoord2f(1,1); glVertex2d(x+size.width(),y+size.height());
         glTexCoord2f(0,1); glVertex2d(x,y+size.height());
     glEnd();
+#endif
 }
 
 bool GLGameWidget::getKeyDown(int keyCode){

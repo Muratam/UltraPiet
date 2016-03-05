@@ -27,24 +27,24 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->action_Open,   SIGNAL(triggered(bool)),ui->pietEditor,SLOT(openImage()));
     connect(ui->action_New,    SIGNAL(triggered(bool)),ui->pietEditor,SLOT(newImage()));
     connect(ui->actionResize,  SIGNAL(triggered(bool)),ui->pietEditor,SLOT(resize()));
-    connect(ui->action_Save,QAction::triggered,[=](){ui->pietEditor->saveImage(false);});
-    connect(ui->actionSave_as_New,QAction::triggered,[=](){ui->pietEditor->saveImage(true);});
-    connect(ui->actionDebug_1_Step,QAction::triggered,[=](){
+    connect(ui->action_Save,&QAction::triggered,[=](){ui->pietEditor->saveImage(false);});
+    connect(ui->actionSave_as_New,&QAction::triggered,[=](){ui->pietEditor->saveImage(true);});
+    connect(ui->actionDebug_1_Step,&QAction::triggered,[=](){
         ui->pietEditor->exec1Step(ui->outputTextEdit,ui->inputTextEdit,ui->stackTextEdit,ui->StatusLabel); });
-    connect(ui->actionDebug,QAction::triggered,[=](){
+    connect(ui->actionDebug,&QAction::triggered,[=](){
         ui->pietEditor->execPiet(ui->outputTextEdit,ui->inputTextEdit,ui->stackTextEdit,ui->StatusLabel,true);});
-    connect(ui->actionRelease,QAction::triggered,[=](){
+    connect(ui->actionRelease,&QAction::triggered,[=](){
         ui->pietEditor->execPiet(ui->outputTextEdit,ui->inputTextEdit,ui->stackTextEdit,ui->StatusLabel,false);});
-    connect(ui->changeAsNumber,     QPushButton::clicked,[=](){ui->pietEditor->ChangeShowStackAsNumber(ui->stackTextEdit);});
-    connect(ui->actionShow_As_Number,QAction::triggered,[=](){ui->pietEditor->ChangeShowStackAsNumber(ui->stackTextEdit);});
-    connect(ui->actionCancel,QAction::triggered,[=](){ui->pietEditor->execCancel(ui->inputTextEdit,ui->stackTextEdit);});
+    connect(ui->changeAsNumber,     &QPushButton::clicked,[=](){ui->pietEditor->ChangeShowStackAsNumber(ui->stackTextEdit);});
+    connect(ui->actionShow_As_Number,&QAction::triggered,[=](){ui->pietEditor->ChangeShowStackAsNumber(ui->stackTextEdit);});
+    connect(ui->actionCancel,&QAction::triggered,[=](){ui->pietEditor->execCancel(ui->inputTextEdit,ui->stackTextEdit);});
     connect(ui->pietEditor,SIGNAL(changedPenColor(const QColor &)),this,SLOT(setEditColor(const QColor &)));
     connect(ui->pietEditor,SIGNAL(OpenedImage(QString)),this,SLOT(MoveCurrentDirectrory(QString)));
-    connect(ui->pietEditor,PietEditor::MovedPos,[=](int x,int y){
+    connect(ui->pietEditor,&PietEditor::MovedPos,[=](int x,int y){
         ui->scrollArea->horizontalScrollBar()->setValue(x - ui->scrollArea->viewport()->width()  / 2);
         ui->scrollArea->verticalScrollBar()->setValue(y - ui->scrollArea->viewport()->height() / 2);
     });
-    connect(ui->setinitialstackstatus,QPushButton::clicked,[=](){ui->pietEditor->SetUpInitialStack(ui->stackTextEdit);});
+    connect(ui->setinitialstackstatus,&QPushButton::clicked,[=](){ui->pietEditor->SetUpInitialStack(ui->stackTextEdit);});
 
     auto TreeWidgetSelectItem = [=,this](QTreeWidgetItem* item,int n){
         QString str = item->text(0);
@@ -52,8 +52,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         while(item->parent() != nullptr){str = item->parent()->text(0) + QDir::separator() + str ; item = item->parent();}
         ui->pietEditor->openImage(str);
     };
-    connect(ui->projectTreeWidget,QTreeWidget::itemDoubleClicked,TreeWidgetSelectItem);
-    connect(ui->projectTreeWidget,QTreeWidget::itemActivated,TreeWidgetSelectItem);
+    connect(ui->projectTreeWidget,&QTreeWidget::itemDoubleClicked,TreeWidgetSelectItem);
+    connect(ui->projectTreeWidget,&QTreeWidget::itemActivated,TreeWidgetSelectItem);
     #define CB(i,j) \
         {  auto c = QColor(PietCore::normalColors[i][j]); \
            auto strrgb = QString("background-color : rgb(%1,%2,%3);\n").arg(c.red()).arg(c.green()).arg(c.blue()); \
@@ -62,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
            ui->B ## i ## j->setStyleSheet(strrgb + strrgbfontcolor+"selection-"+strrgbfontcolor); \
            ui->B##i##j->setText( PietCore::normalOrders[i][j]); \
         }\
-        connect(ui->B ## i ## j,QPushButton::clicked,[=](){ \
+        connect(ui->B ## i ## j,&QPushButton::clicked,[=](){ \
             auto c = PietCore::normalColors[i][j]; \
             ui->pietEditor->setPenColor(c); setEditColor(c); \
         })

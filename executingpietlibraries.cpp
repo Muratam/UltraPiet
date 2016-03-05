@@ -4,6 +4,7 @@
 #include <QtWidgets>
 #include <glgamewidget.h>
 #include <random>
+#include <QThread>
 
 QHash<QString,std::function<void(std::vector<PietTree>&)>> ExecutingPietLibraries::functionHash;
 bool ExecutingPietLibraries::Hash_HadSet = false;
@@ -57,7 +58,7 @@ void ExecutingPietLibraries::MakeGLView (std::vector<PietTree> & pt){
     QDockWidget* dw = new QDockWidget(nullptr);
     dw->setFloating(true);
     dw->setAllowedAreas(Qt::NoDockWidgetArea);
-    dw->connect(dw,QDockWidget::dockLocationChanged,[=](){ dw->setFloating(true);});
+    dw->connect(dw,&QDockWidget::dockLocationChanged,[=](){ dw->setFloating(true);});
     dw->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     dw->setWidget(glgw);
     dw->setAttribute(Qt::WA_DeleteOnClose);
@@ -67,7 +68,7 @@ void ExecutingPietLibraries::MakeGLView (std::vector<PietTree> & pt){
 
 void ExecutingPietLibraries::GLProcessAll (std::vector<PietTree> & pt){
     QApplication::processEvents();
-    Sleep(1);
+    QThread::msleep(1);
     if(GLGameWidget::getUniqueGLWidget() == nullptr){pt.push_back(PietTree(0)); return ;}
     GLGameWidget::getUniqueGLWidget()->updateGL();
     GLGameWidget::getUniqueGLWidget()->refresh();
