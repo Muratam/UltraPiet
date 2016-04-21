@@ -3,7 +3,7 @@
 ## 遊び方
 1. https://github.com/Muratam/UltraPiet/releases/ へ移動して！
 1. 対応するOS版バイナリをダウンロード！
-1. ./ultrapiet を実行するとIDEが起動！ 
+1. ./ultrapiet を実行するとIDEが起動！
 1. ./ultrapiet G/C_HelloWorld.png のように引数に渡すとCUI上でも動作するよ！
 1. 同梱のsampleフォルダの画像やG フォルダの画像でテスト出来ますよ！
 1. sample/HangGliderGame/Sky.png で実際にultrapiet製のゲームが遊べるよ！
@@ -63,3 +63,34 @@ UltraPietはあくまでもPietです.
   ./ultrapiet G/C_HelloWorld.png のようにして実行出来ます。
   ultrapietのあるディレクトリにパスを通せばperlやpythonと同じように利用できます
 
+# How to build
+
+## Mac OSX
+
+NOTE: You should change all paths of qt5 unless you installed qt5 via homebrew.
+
+### 1. Setup Environment
+
+- Install QT5
+  - `% brew install qt5`
+    - `qt5` is keg-only so it is not linked.
+- Add environment value
+  - `% export LDFLAGS="-L/usr/local/opt/qt5/lib"`
+  - `% export CPPFLAGS="-I/usr/local/opt/qt5/include"`
+
+### 2. Apply Patch
+
+- Apply patch for build on MacOSX
+  - `% curl -s https://github.com/pastak/UltraPiet/commit/5c794d0c53557645b8a2d1edcef2d18b348e641f.patch | git apply`
+
+### 3. qmake && make
+
+- `% cd /path/to/ultrapiet`
+- `% /usr/local/opt/qt5/bin/qmake`
+- `% make`
+
+Then there is `ultrapiet.app`.
+
+### Create distribution dmg
+
+- `% /usr/local/opt/qt5/bin/macdeployqt ultrapiet.app -dmg`
