@@ -123,6 +123,7 @@ void ExecutingPietLibraries::GLDrawImage(std::vector<PietTree> & pt){
        GLGameWidget::getUniqueGLWidget()->drawImage(x,y,handle);
 }
 
+
 void ExecutingPietLibraries::GLGetKey(std::vector<PietTree> & pt){
     if(pt.size() == 0 )return;
     if(pt[0].isLeaf()) return;

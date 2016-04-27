@@ -63,6 +63,7 @@ private :
     void processWall();
 public :
     static QString rootpath;
+    static bool outputMediumFile;
     static const QRgb normalColors[3][7] ;
     static const QString normalOrders[3][7];
     static const EOrder normalEOrders[3][7];
@@ -81,9 +82,9 @@ public :
     bool showStackAsNumber = true;
     QString ImagePath = QString("");
     //実行前には必ずSetImageを忘れないで下さい
-    PietCore (std::function<void(QString)>outPutFunction = [](QString qs){}, std::function<QChar(void)> inPutCharFunction = [](){return QChar(72);}, std::function<int(bool&)> inPutNumFunction = [](bool&b){return 0;});
-    void init(std::function<void(QString)>outPutFunction,std::function<QChar(void)>inPutCharFunction, std::function<int(bool&)>inPutNumFunction);
-    void init(std::function<void(QString)>outPutFunction,std::function<QChar(void)>inPutCharFunction,std::function<int(bool&)>inPutNumFunction, const QImage & image,QString ImagePath,bool UpdateImage = false){ init(outPutFunction,inPutCharFunction,inPutNumFunction);setImage(image,ImagePath,UpdateImage);}
+    PietCore (std::function<void(QString)>outPutFunction = [](QString qs){}, std::function<QChar(void)> inPutCharFunction = [](){return QChar(72);}, std::function<int(bool&)> inPutNumFunction = [](bool&b){return 0;},bool outputMedium = false);
+    void init(std::function<void(QString)>outPutFunction                    ,std::function<QChar(void)>inPutCharFunction                           , std::function<int(bool&)>inPutNumFunction);
+    void init(std::function<void(QString)>outPutFunction                    ,std::function<QChar(void)>inPutCharFunction                           ,std::function<int(bool&)>inPutNumFunction, const QImage & image,QString ImagePath,bool UpdateImage = false){ init(outPutFunction,inPutCharFunction,inPutNumFunction);setImage(image,ImagePath,UpdateImage);}
     void setStack(std::vector<PietTree> &nstack ){stack.clear();stack = nstack;}
     std::vector<PietTree> getStack(){return stack;}
     void ExecOtherPietCore(QImage CorrectImage, QString newFilePath);

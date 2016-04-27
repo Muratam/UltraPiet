@@ -7,12 +7,12 @@
 #include <unordered_set>
 #include <QPoint>
 #include <QDir>
+#include <QTextStream>
 #include <tuple>
 using namespace std;
 
 QString PietCore::rootpath ;
-
-
+bool PietCore::outputMediumFile;
 const QRgb PietCore::normalColors[3][7] =  {
     { qRgb(255,192,192),qRgb(255,255,192),qRgb(192,255,192),qRgb(192,255,255),qRgb(192,192,255),qRgb(255,192,255),qRgb(255,255,255)},
     { qRgb(255,  0,  0),qRgb(255,255,  0),qRgb(  0,255,  0),qRgb(  0,255,255),qRgb(  0,  0,255),qRgb(255,  0,255),qRgb(  0,  0,  0)},
@@ -30,10 +30,11 @@ const EOrder PietCore::normalEOrders[3][7] = {
 };
 QHash<QString,std::tuple<std::vector<std::vector<int>>,std::vector<std::vector<Point8>> >> PietCore::Coded_Pos8_Hash;
 
-PietCore::PietCore( function<void(QString)> outPutFunction, function<QChar(void)>inPutCharFunction , function<int(bool &)> inPutNumFunction){
+PietCore::PietCore( function<void(QString)> outPutFunction, function<QChar(void)>inPutCharFunction , function<int(bool &)> inPutNumFunction,bool outputMedium){
     stack = vector<PietTree>();
     coded = vector<vector<int>>();
     pos8 = vector<vector<Point8>>();
+    PietCore::outputMediumFile = outputMedium;
     init(outPutFunction,inPutCharFunction,inPutNumFunction);
 }
 void PietCore::init(function<void(QString)> outPutFunction, function<QChar(void)>inPutCharFunction , function<int(bool &)> inPutNumFunction){
@@ -60,8 +61,8 @@ namespace std{
 
 void PietCore::search(QPoint me){//実行前にメモ化しておく
     if(Pos8(me).defined) return;
-    const QPoint dR =QPoint(1,0),dD = QPoint(0,1),dL = QPoint(-1,0),dU = QPoint(0,-1);
-    const QPoint dir[]{dR,dD,dL,dU};
+    constexpr QPoint dR =QPoint(1,0),dD = QPoint(0,1),dL = QPoint(-1,0),dU = QPoint(0,-1);
+    constexpr QPoint dir[]{dR,dD,dL,dU};
 
     // 1Blockな可能性は高いので先に処理
     bool is1Block = true;
@@ -136,26 +137,75 @@ void PietCore::setImage(const QImage & image, QString ImagePath, bool UpdateImag
     if(!UpdateImage && PietCore::Coded_Pos8_Hash.contains(ImagePath)){
         coded = get<0>(PietCore::Coded_Pos8_Hash[ImagePath]);
         pos8 = get<1>(PietCore::Coded_Pos8_Hash[ImagePath]);
-    }else {
-        coded.clear();
-        coded = vector<vector<int>>(image.width(), vector<int>(image.height()));
-        for(auto x : range(w)){
-            for(auto y : range(h)){
-                for(auto i : range(3)) for (auto j:range(7)) if(image.pixel(x,y) == normalColors[i][j]){
-                    coded[x][y] = 3*j+i;
-                    goto COLORMATCHED;
-                }
-                coded[x][y] = -1* image.pixel(x,y);
-                COLORMATCHED:;
+        return ;
+    }
+    if (QFile::exists( ImagePath + ".ultra" ) ){
+        QFile file(ImagePath + ".ultra");
+        if (file.open(QIODevice::ReadOnly)) {
+            QTextStream in(&file);
+            int w ,h;
+            in >> w >> h;
+            coded.clear();
+            coded = vector<vector<int>>(w, vector<int>(h));
+            pos8.clear();
+            pos8 =  vector<vector<Point8>>(w, vector<Point8>(h));
+            while(!in.atEnd()){
+                int x,y;
+                in  >> x >> y ;
+                in  >> coded[x][y] >>  pos8[x][y].BlockSize;
+                int X,Y;
+                in >> X >> Y; pos8[x][y].RL.setX(X);pos8[x][y].RL.setY(Y);
+                in >> X >> Y; pos8[x][y].RR.setX(X);pos8[x][y].RR.setY(Y);
+                in >> X >> Y; pos8[x][y].DL.setX(X);pos8[x][y].DL.setY(Y);
+                in >> X >> Y; pos8[x][y].DR.setX(X);pos8[x][y].DR.setY(Y);
+                in >> X >> Y; pos8[x][y].LL.setX(X);pos8[x][y].LL.setY(Y);
+                in >> X >> Y; pos8[x][y].LR.setX(X);pos8[x][y].LR.setY(Y);
+                in >> X >> Y; pos8[x][y].UL.setX(X);pos8[x][y].UL.setY(Y);
+                in >> X >> Y; pos8[x][y].UR.setX(X);pos8[x][y].UR.setY(Y);
+            }
+            return;
+        }
+    }
+
+    coded.clear();
+    coded = vector<vector<int>>(image.width(), vector<int>(image.height()));
+    for(auto x : range(w)){
+        for(auto y : range(h)){
+            for(auto i : range(3)) for (auto j:range(7)) if(image.pixel(x,y) == normalColors[i][j]){
+                coded[x][y] = 3*j+i;
+                goto COLORMATCHED;
+            }
+            coded[x][y] = -1* image.pixel(x,y);
+            COLORMATCHED:;
+        }
+    }
+    //if(coded[0][0] < 0 || coded[0][0] >= 18 ) coded[0][0] = normalColors[0][0]; //普通のPietでは無い場合
+
+    pos8.clear();
+    pos8 =  vector<vector<Point8>>(image.width(), vector<Point8>(image.height()));
+    for(auto x: range(image.width())) for(auto y:range(image.height())) search(QPoint(x,y));
+    PietCore::Coded_Pos8_Hash[ImagePath] = make_tuple(coded,pos8);
+    if(this->outputMediumFile){
+        QFile file(ImagePath + ".ultra");
+        if (file.open(QIODevice::WriteOnly)){
+            QTextStream out(&file);
+            out << image.width() << " " << image.height() << endl;
+            for(auto x: range(image.width())) for(auto y:range(image.height())){
+                out <<               x << " " <<               y << " "
+                    << coded[x][y]    << " "<<  pos8[x][y].BlockSize << " "
+                    <<  pos8[x][y].RL.x() << " " <<  pos8[x][y].RL.y() << " "
+                    <<  pos8[x][y].RR.x() << " " <<  pos8[x][y].RR.y() << " "
+                    <<  pos8[x][y].DL.x() << " " <<  pos8[x][y].DL.y() << " "
+                    <<  pos8[x][y].DR.x() << " " <<  pos8[x][y].DR.y() << " "
+                    <<  pos8[x][y].LL.x() << " " <<  pos8[x][y].LL.y() << " "
+                    <<  pos8[x][y].LR.x() << " " <<  pos8[x][y].LR.y() << " "
+                    <<  pos8[x][y].UL.x() << " " <<  pos8[x][y].UL.y() << " "
+                    <<  pos8[x][y].UR.x() << " " <<  pos8[x][y].UR.y() ;
+                if (x != image.width()-1 || y != image.height() -1 )out << endl;
             }
         }
-        //if(coded[0][0] < 0 || coded[0][0] >= 18 ) coded[0][0] = normalColors[0][0]; //普通のPietでは無い場合
-
-        pos8.clear();
-        pos8 =  vector<vector<Point8>>(image.width(), vector<Point8>(image.height()));
-        for(auto x: range(image.width())) for(auto y:range(image.height())) search(QPoint(x,y));
-        PietCore::Coded_Pos8_Hash[ImagePath] = make_tuple(coded,pos8);
     }
+
 }
 EOrder PietCore::fromRelativeColor(int from,int to){
     if (from < 0 || to < 0) return EOrder::Exception; // 未実装
